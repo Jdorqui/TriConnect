@@ -1,7 +1,8 @@
 <?php
 session_start(); // Iniciamos la sesión
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['password'])) { // Si el usuario no ha iniciado sesión
+if (!isset($_SESSION['usuario']) || !isset($_SESSION['password']))  // Si el usuario no ha iniciado sesión
+{ 
     header("Location: index.html"); // Redirecciona al index
     exit();
 }
@@ -10,11 +11,14 @@ if (!isset($_SESSION['usuario']) || !isset($_SESSION['password'])) { // Si el us
 $usuario = $_SESSION['usuario'];
 $password = $_SESSION['password'];
 
-// Conectar a la base de datos
-try {
+
+try // Conectar a la base de datos
+{
     $pdo = new PDO('mysql:host=localhost;dbname=chatterly', 'root', ''); // Ajusta los parámetros de conexión
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) 
+{
     echo "Error de conexión: " . $e->getMessage();
     exit();
 }
@@ -23,7 +27,8 @@ try {
 $stmt = $pdo->prepare("SELECT id_user FROM usuarios WHERE username = ?");
 $stmt->execute([$usuario]);
 $usuarioData = $stmt->fetch(PDO::FETCH_ASSOC);
-if (!$usuarioData) {
+if (!$usuarioData) 
+{
     echo "Usuario no encontrado.";
     exit();
 }
@@ -35,6 +40,20 @@ $stmt = $pdo->prepare("SELECT usuarios.alias, amigos.id_user1 FROM amigos
                        WHERE amigos.id_user2 = ? AND amigos.estado = 'pendiente'");
 $stmt->execute([$id_usuario_actual]);
 $solicitudes_pendientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Obtener la lista de amigos del usuario
+$stmt = $pdo->prepare("
+    SELECT usuarios.alias, 
+           usuarios.profile_picture, 
+           amigos.id_user1 
+    FROM amigos 
+    JOIN usuarios ON amigos.id_user1 = usuarios.id_user OR amigos.id_user2 = usuarios.id_user 
+    WHERE (amigos.id_user1 = :id_usuario OR amigos.id_user2 = :id_usuario) 
+    AND amigos.estado = 'aceptado' 
+    AND usuarios.id_user != :id_usuario
+");
+$stmt->execute(['id_usuario' => $id_usuario_actual]);
+$amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 
@@ -64,13 +83,31 @@ $solicitudes_pendientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div style="background-color: #2b2d31; width: 10%; padding: 10px; color: white; min-width: 170px;"> <!-- barra2 -->
                         <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
                             <div>
-                                <button id="options-button" style="text-align: center; display: flex; align-items: center;">
+                                <button id="options-button" style="text-align: center; display: flex; align-items: center; onclick="closechat()">
                                     <img src="../assets/imgs/friends_logo.png" alt="account" style="width: 20px; height: 20px; margin-right: 15px;">
                                     Amigos
                                 </button>
                                 <div style="height: 2px; background-color:rgb(57, 62, 66)"></div>
                                 <p style="text-align: center;">MENSAJES DIRECTOS</p>
-                                <button id="options-button" style="text-align: center;">Amigo</button>
+                                <?php
+                                if (count($amigos) > 0) 
+                                {
+                                    foreach ($amigos as $amigo) 
+                                    {
+                                        $foto = $amigo['profile_picture'] ?? '../assets/imgs/default_profile.png';
+                                        echo "
+                                            <button onclick='openchat()' id='options-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; margin-bottom: 5px; cursor: pointer; width: 100%; text-align: left;'>
+                                                <img src='$foto' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
+                                                <span>{$amigo['alias']}</span>
+                                            </button>
+                                        ";
+                                    }
+                                } 
+                                else 
+                                {
+                                    echo "<p>No tienes amigos en la lista.</p>";
+                                }
+                                ?>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px;  background-color: #232428; border-radius: 10px; width: 100%; "> <!-- userpanel -->
                                 
@@ -98,25 +135,25 @@ $solicitudes_pendientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <button class="add-friend-button" onclick="openaddfriendmenu()">Añadir amigo</button>
                         </div>
                         
-                        <div id="addfriendmenu" style="display: column; padding: 30px;" hidden>
+                        <div id="addfriendmenu" style="display: column;  padding: 30px;" hidden>
                                 <span>AÑADIR AMIGO</span>
                                 <p>Puedes añadir amigos con su nombre de usuario de Chatterly.</p>
                             <div style="display: flex; overflow: hidden; background-color: #313338;">
-                                <form action="../php/enviar_solicitud.php" method="post" style="width: 100%;">
-                                    <input id="alias_amigo" name="alias_amigo" required type="text" style="border-color: #1e1f22; background-color: #1e1f22; width: 100%; box-sizing: border-box; height: 50px; padding: 0px; padding-left: 10px;" placeholder="Puedes añadir amigos con su nombre de usuario de Chatterly.">
-                                    <button id="enviar_solicitud" type="submit" style="width: 200px; height: 40px; font-size: 14px; padding: 0px; background-color: #5865F2; margin-top: 5px; cursor: pointer; margin-left: -205px;">Enviar solicitud de amistad</button>
+                                <form action="../php/enviar_solicitud.php" method="post" style="width: 100%; position: relative;">
+                                    <input id="alias_amigo" name="alias_amigo" required type="text" style="border-color: #1e1f22; background-color: #1e1f22; width: 100%; box-sizing: border-box; height: 50px; padding-left: 10px; position: relative;" placeholder="Puedes añadir amigos con su nombre de usuario de Chatterly.">
+                                    <button id="enviar_solicitud" type="submit" style="width: 200px;position: absolute; right: 5px; top: 5px; height: 40px; font-size: 14px; background-color: #5865F2; cursor: pointer; padding: 0 15px; border: none;">Enviar solicitud de amistad</button>
                                 </form>
                             </div>
                             <p id="resultado"></p>
                         </div>
 
-                        <div id="pendingmenu" hidden>
+                        <div id="pendingmenu" style="padding: 30px;" hidden>
                             <h3>Solicitudes Pendientes</h3>
                             <?php
-                            // Verificamos si hay solicitudes pendientes en el backend
-                            if (isset($solicitudes_pendientes) && count($solicitudes_pendientes) > 0) {
-                                // Si hay solicitudes pendientes, las mostramos
-                                foreach ($solicitudes_pendientes as $solicitud): ?>
+                            if (isset($solicitudes_pendientes) && count($solicitudes_pendientes) > 0) 
+                            {
+                                //comprueba si hay solicitudes penddientes
+                                foreach ($solicitudes_pendientes as $solicitud): ?> 
                                     <div class="solicitud">
                                         <span><?php echo htmlspecialchars($solicitud['alias']); ?></span>
                                         <form action="gestionar_solicitud.php" method="post">
@@ -126,9 +163,10 @@ $solicitudes_pendientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </form>
                                     </div>
                                 <?php endforeach;
-                            } else {
-                                // Si no hay solicitudes pendientes, mostramos un mensaje
-                                echo "<p>No hay solicitudes pendientes.</p>";
+                            } 
+                            else 
+                            {
+                                echo "<p>No hay solicitudes pendientes.</p>"; //si no hay solicitudes pendientes
                             }
                             ?>
                         </div>

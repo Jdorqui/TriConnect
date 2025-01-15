@@ -2,6 +2,7 @@ const normalPanel = document.getElementById("bienvenida");
 const optionsPanel = document.getElementById("options");
 const initialpanel = document.getElementById("initialpanel");
 const chat = document.getElementById("chat");
+const pendingMenu = document.getElementById('pendingmenu');
 
 function showoptionspanel()
 {
@@ -15,49 +16,42 @@ function closeoptionspanel()
     optionsPanel.style.display = "none";
 }
 
-function closeoinitialpanel()
+function openchat()
 {
-    chat.style.display = "block";
-    initialpanel.style.display = "none";
+    chat.hidden = false;
+    pendingMenu.hidden = true;
+    document.getElementById("addfriendmenu").style.display = "none";
+    //initialpanel.style.display = "none";
 }
 
-function closeoinitialpanel()
+function closechat()
 {
-    initialpanel.style.display = "block";
-    chat.style.display = "none";
+    chat.hidden = true;
 }
 
 function openaddfriendmenu()
 {
+    pendingMenu.hidden = true;
     document.getElementById("addfriendmenu").style.display = "block";
+    closechat();
 }
 
-function closeaddfriendmenu()
-{
+function openpendingmenu() 
+{    
+    pendingMenu.hidden = false;
     document.getElementById("addfriendmenu").style.display = "none";
+    closechat();
 }
 
-function openpendingmenu() {
-        const pendingMenu = document.getElementById('pendingmenu');
-        const friendTabButton = document.querySelector('.friend-tab-button:nth-child(3)');
-        
-        // Si el menú está oculto, lo mostramos, si no lo ocultamos
-        if (pendingMenu.hidden) {
-            pendingMenu.hidden = false;
-            friendTabButton.innerHTML = "Cerrar Pendientes";
-        } else {
-            pendingMenu.hidden = true;
-            friendTabButton.innerHTML = "Pendiente";
-        }
-    }
-
-function fetchPendingRequests() {
+function fetchPendingRequests() 
+{
     fetch('../php/get_pending_requests.php')
         .then(response => response.json())
         .then(data => {
             const pendingMenu = document.getElementById('pendingmenu');
-            if (data.length > 0) {
-                pendingMenu.innerHTML = ''; // Limpiar contenido previo
+            if (data.length > 0) 
+            {
+                pendingMenu.innerHTML = '';
                 data.forEach(request => {
                     const div = document.createElement('div');
                     div.innerHTML = `
@@ -67,14 +61,17 @@ function fetchPendingRequests() {
                     `;
                     pendingMenu.appendChild(div);
                 });
-            } else {
+            } 
+            else 
+            {
                 pendingMenu.innerHTML = '<p>No tienes solicitudes pendientes.</p>';
             }
         })
         .catch(error => console.error('Error al obtener solicitudes pendientes:', error));
 }
 
-function manageRequest(id, action) {
+function manageRequest(id, action) 
+{
     fetch('../php/gestionar_solicitud.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -83,7 +80,7 @@ function manageRequest(id, action) {
         .then(response => response.text())
         .then(message => {
             alert(message);
-            fetchPendingRequests(); // Refrescar las solicitudes pendientes
+            fetchPendingRequests();
         })
         .catch(error => console.error('Error al gestionar la solicitud:', error));
 }
