@@ -67,3 +67,18 @@ button {
 button:hover {
     background-color: #25d366;
 }
+/* Estilo del botón para bajar el chat */
+#scroll-to-bottom {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #25d366; /* Color verde similar al de WhatsApp */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    display: none; /* Oculto por defecto */
+    z-index: 999;
+}
