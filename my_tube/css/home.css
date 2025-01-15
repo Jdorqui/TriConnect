@@ -1,0 +1,150 @@
+.content {
+    display: flex;
+    width: 90%;
+    padding: 30px;
+    overflow: scroll;
+    align-items: stretch;
+}
+
+.recoms {
+    width: 100%;
+    margin-left: 1%;
+
+    display: flex;
+}
+
+.recom {
+    width: 33.3%;
+
+    margin: 15px;
+}
+
+.thumbnail {
+    width: 100%;
+}
+
+.recom_title {
+    font-size: 20px;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+}
+
+.profile_pic {
+    width: 30px;
+    border-radius: 50px;
+}
+
+.user_stats {
+    font-size: 20px;
+    margin-left: 10px;
+}
+
+.user_subs {
+    font-size: 15px;
+}
+
+.main_login {
+    background-color: black;
+    color: white;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Iniciar sesión. */
+.login_div {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+
+    background-color: rgb(12, 12, 12);
+    border: 1px solid white;
+    border-radius: 20px;
+
+    width: 30%;
+    height: 60%;
+
+    /* width: fit-content; */
+}
+
+#logo {
+    width: 20%;
+
+    margin-bottom: 50px;
+}
+
+.login_div form {
+    font-size: 3vh;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.login_div button {
+    border-radius: 0.5vh;
+    padding: 1vh;
+
+    width: 30%;
+}
+
+.login_div div {
+    margin-bottom: 2vh;
+}
+
+/*
+.login_div {
+    background-color: rgb(10, 6, 6);
+    color: white;
+
+    width: 30%;
+    height: 60%;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+    font-size: 3vh;
+
+    position: absolute;
+    z-index: 2;
+}
+
+.login_div form {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+*/
+
+.close_img {
+    position: absolute;
+    right: 2%;
+    top: 2%;
+    
+    width: 4%;
+
+    z-index: 1;
+
+    cursor: pointer;
+}
