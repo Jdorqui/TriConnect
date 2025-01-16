@@ -28,13 +28,7 @@ $id_usuario_actual = $usuarioData['id_user'];
 
 // Obtener los mensajes entre el usuario actual y el destinatario
 if (isset($_POST['destinatario'])) {
-    $destinatario = (int) $_POST['destinatario'];
-    if ($destinatario <= 0) {
-        echo json_encode(['error' => 'Destinatario no válido']);
-        exit();
-    }
-
-    // Preparar y ejecutar la consulta para obtener los mensajes
+    $destinatario = $_POST['destinatario'];
     $stmt = $pdo->prepare("
         SELECT m.contenido, m.fecha_envio, u.alias
         FROM mensajes m
@@ -43,23 +37,15 @@ if (isset($_POST['destinatario'])) {
            OR (m.id_emisor = :destinatario AND m.id_receptor = :id_usuario)
         ORDER BY m.fecha_envio ASC
     ");
-    
     $stmt->execute(['id_usuario' => $id_usuario_actual, 'destinatario' => $destinatario]);
     $mensajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($mensajes); // Devuelve los mensajes en formato JSON
 }
 
-
-// Enviar mensaje
-if (isset($_POST['mensaje']) && isset($_POST['destinatario'])) {
+// Enviar un mensaje
+if (isset($_POST['mensaje'])) {
     $mensaje = $_POST['mensaje'];
-    $destinatario = (int) $_POST['destinatario'];
-    if ($destinatario <= 0) {
-        echo "Destinatario no válido.";
-        exit();
-    }
-
-    // Preparar y ejecutar la consulta para insertar el mensaje en la base de datos
+    $destinatario = $_POST['destinatario'];
     $stmt = $pdo->prepare("INSERT INTO mensajes (id_emisor, id_receptor, contenido, tipo) VALUES (:id_emisor, :id_receptor, :contenido, 'texto')");
     $stmt->execute([
         'id_emisor' => $id_usuario_actual,
@@ -67,6 +53,5 @@ if (isset($_POST['mensaje']) && isset($_POST['destinatario'])) {
         'contenido' => $mensaje
     ]);
     echo "Mensaje enviado";
-    echo "<pre>" . json_encode($mensajes, JSON_PRETTY_PRINT) . "</pre>";
 }
 ?>

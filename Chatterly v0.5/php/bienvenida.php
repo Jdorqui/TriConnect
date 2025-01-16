@@ -90,30 +90,24 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <div style="height: 2px; background-color:rgb(57, 62, 66)"></div>
                                 <p style="text-align: center;">MENSAJES DIRECTOS</p>
                                 <?php
-                        if (count($amigos) > 0) {
-                            foreach ($amigos as $amigo) {
-                                // Obtener la foto de perfil o valor por defecto
-                                $foto = $amigo['profile_picture'] ?? '../assets/imgs/default_profile.png';
-                                // Asegurar que el alias esté correctamente escapado
-                                $alias = htmlspecialchars($amigo['alias'], ENT_QUOTES, 'UTF-8');
-                                $id_user = $amigo['id_user1'];
-
-                                // Imprimir el nombre del usuario actual y el nombre del amigo
-                                echo "<p>El usuario actual va a chatear con: $alias</p>";
-                                        
-                                echo "
-                                    <button class='contacto' data-id='$id_user' data-nombre='$alias' onclick='openchat()' id='options-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; margin-bottom: 5px; cursor: pointer; width: 100%; text-align: left;'>
-                                        <img src='$foto' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
-                                        <span>$alias</span>
-                                    </button>
-                                ";
-                            }
-                        } else {
-                            echo "<p>No tienes amigos en la lista.</p>";
-                        }
-                        ?>
-
-
+                                if (count($amigos) > 0) 
+                                {
+                                    foreach ($amigos as $amigo) 
+                                    {
+                                        $foto = $amigo['profile_picture'] ?? '../assets/imgs/default_profile.png';
+                                        echo "
+                                            <button onclick='openchat()' id='options-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; margin-bottom: 5px; cursor: pointer; width: 100%; text-align: left;'>
+                                                <img src='$foto' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
+                                                <span>{$amigo['alias']}</span>
+                                            </button>
+                                        ";
+                                    }
+                                } 
+                                else 
+                                {
+                                    echo "<p>No tienes amigos en la lista.</p>";
+                                }
+                                ?>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px;  background-color: #232428; border-radius: 10px; width: 100%; "> <!-- userpanel -->
                                 
@@ -229,108 +223,42 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>// Variables globales
-let destinatario = null; // Cambiado a null, ya que no debe ser 1 por defecto
-let nombreDestinatario = '';
-let usuarioActual = '<?php echo htmlspecialchars($usuario); ?>'; // Nombre del usuario actual desde PHP
-
-// Función para actualizar el destinatario
-function actualizarDestinatario(idDestinatario, nombreDest) {
-    destinatario = idDestinatario; // Establece el destinatario correctamente
-    nombreDestinatario = nombreDest;
-    console.log("Usuario actual:", usuarioActual); // Verificar que se pase correctamente
-    console.log("Destinatario seleccionado:", nombreDestinatario); // Verificar que se pase correctamente
-    cargarMensajes();  // Cargar mensajes para el nuevo destinatario
-}
-
-// Detectar el click en un contacto y actualizar el destinatario
-document.querySelectorAll('.contacto').forEach(button => {
-    button.addEventListener('click', (e) => {
-        const idDestinatario = e.target.dataset.id;
-        const nombreDest = e.target.dataset.nombre;
-
-        console.log("Usuario actual:", usuarioActual);
-        console.log("Destinatario seleccionado:", nombreDest);
-
-        actualizarDestinatario(idDestinatario, nombreDest);
-    });
-});
-
-// Función para cargar los mensajes
-async function cargarMensajes() {
-    if (destinatario === null) {
-        console.log("No se ha seleccionado destinatario.");
-        return; // No cargar mensajes si no se ha seleccionado un destinatario
-    }
-
+    <script>
+        let destinatario = 1;  // Asigna el ID del usuario con quien estás chateando.
+        
+        // Función para cargar los mensajes
+        function cargarMensajes() {
+           $.post('chat.php', { destinatario: destinatario }, function(data) {
     try {
-        const response = await fetch('chat.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                destinatario: destinatario
-            })
+        const mensajes = JSON.parse(data); // Intentamos parsear la respuesta JSON
+        $('#chat-messages').empty();
+        mensajes.forEach(function(mensaje) {
+            $('#chat-messages').prepend('<div><strong>' + mensaje.alias + ':</strong> ' + mensaje.mensaje + '</div>');
+        });
+    } catch (e) {
+        console.error("Error al parsear JSON:", e);
+        console.log("Respuesta del servidor:", data); // Muestra la respuesta del servidor para depurar
+    }
+});
+        }
+
+        // Enviar mensaje
+        $('#enviarMensaje').click(function() {
+            const mensaje = $('#mensaje').val();
+            if (mensaje.trim() !== '') {
+                $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() {
+                    $('#mensaje').val('');
+                    cargarMensajes(); // Cargar los mensajes actualizados
+                });
+            }
         });
 
-        const mensajes = await response.json(); // Parseamos los mensajes recibidos
-        const chatMessages = document.getElementById('chat-messages');
-        chatMessages.innerHTML = ''; // Limpiar los mensajes existentes
+        // Cargar mensajes cada 2 segundos para mantener el chat actualizado
+        setInterval(cargarMensajes, 2000);
 
-        if (mensajes.length === 0) {
-            chatMessages.innerHTML = '<div>No hay mensajes.</div>';
-        } else {
-            mensajes.forEach(function(mensaje) {
-                const messageElement = document.createElement('div');
-                messageElement.innerHTML = `<strong>${mensaje.alias}</strong>: ${mensaje.contenido}`;
-                chatMessages.appendChild(messageElement);
-            });
-        }
-    } catch (e) {
-        console.error("Error al cargar los mensajes:", e);
-    }
-}
-
-
-// Función para enviar un mensaje
-document.getElementById('enviarMensaje').addEventListener('click', async function() {
-    const mensaje = document.getElementById('mensaje').value.trim();
-    if (mensaje !== '') {
-        try {
-            await fetch('chat.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({
-                    mensaje: mensaje,
-                    destinatario: destinatario
-                })
-            });
-
-            document.getElementById('mensaje').value = ''; // Limpiar campo de mensaje
-            cargarMensajes(); // Cargar los mensajes actualizados
-        } catch (e) {
-            console.error("Error al enviar mensaje:", e);
-        }
-    }
-});
-
-// Actualizar mensajes cada 2 segundos
-setInterval(() => {
-    if (destinatario !== null) {
+        // Inicializar el chat cargando los mensajes al principio
         cargarMensajes();
-    }
-}, 2000);
-
-// Inicializar el chat cargando los mensajes al principio si hay un destinatario
-if (destinatario !== null) {
-    cargarMensajes();
-}
-
-</script>
-
+    </script>
         <script defer src="../javascript/js_bienvenida.js"></script>
     </body>
 </html>
