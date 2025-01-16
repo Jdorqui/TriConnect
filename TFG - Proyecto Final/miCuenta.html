@@ -1,4 +1,3 @@
-<!-- /public/micuenta.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -24,7 +23,8 @@
 
     <section class="account-section">
         <div class="profile-card">
-            <img src="https://via.placeholder.com/150" alt="Foto de Perfil" class="profile-img" id="profile-img">
+            <!-- Imagen y nombre de perfil cargados dinámicamente -->
+            <img src="profile-image-placeholder.jpg" alt="Foto de Perfil" class="profile-img" id="profile-img">
             <h2 id="profile-name">Juan Pérez</h2>
             <p id="profile-location">Ubicación: Madrid</p>
             <button class="btn-edit-profile" id="edit-profile-btn">Editar perfil</button>
@@ -33,7 +33,7 @@
         <!-- Formulario de edición de perfil (inicialmente oculto) -->
         <div class="edit-profile-form" id="edit-profile-form">
             <h3>Editar perfil</h3>
-            <form id="edit-profile">
+            <form id="edit-profile" action="update_profile.php" method="POST" enctype="multipart/form-data">
                 <label for="name">Nombre:</label>
                 <input type="text" id="name" name="name" value="Juan Pérez">
 
@@ -52,10 +52,10 @@
             <h3>Opciones de Cuenta</h3>
             <ul>
                 <li><a href="#">Mis Anuncios</a></li>
-                <li><a href="#">Ver Mensajes</a></li>
+                <li><a href="mensajes.php">Ver Mensajes</a></li>
                 <li><a href="#">Historial de Compras</a></li>
                 <li><a href="#">Ajustes</a></li>
-                <li><a href="#">Cerrar sesión</a></li>
+                <li><a href="logout.php">Cerrar sesión</a></li>
             </ul>
         </div>
     </section>

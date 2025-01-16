@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = " ";
+$password = "";
 $dbname = "chat";
 
 error_reporting(error_level: E_ERROR | E_PARSE);
