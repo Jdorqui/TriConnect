@@ -303,15 +303,3 @@ button.active
 {
     background-color: #43c46b;
 }
-
-.add-friend-button:active 
-{
-    color: #2dc76e;
-    background-color: #313338;
-}
-
-.add-friend-button:focus 
-{
-    color: #2dc76e;
-    background-color: #313338;
-}

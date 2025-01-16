@@ -1,8 +1,10 @@
 const normalPanel = document.getElementById("bienvenida");
 const optionsPanel = document.getElementById("options");
 const initialpanel = document.getElementById("initialpanel");
-const chat = document.getElementById("chat");
+const chat = document.getElementById("chatcontainer");
 const pendingMenu = document.getElementById('pendingmenu');
+
+//chat.style.display === "none";
 
 function showoptionspanel()
 {
@@ -18,15 +20,18 @@ function closeoptionspanel()
 
 function openchat()
 {
-    chat.hidden = false;
+    chat.style.display = "block";
+    //chat.hidden = false;
     pendingMenu.hidden = true;
     document.getElementById("addfriendmenu").style.display = "none";
-    //initialpanel.style.display = "none";
+    initialpanel.style.display = "none";
 }
 
 function closechat()
 {
-    chat.hidden = true;
+    chat.style.display = "none";
+    //chat.hidden = true;
+    initialpanel.style.display = "block";
 }
 
 function openaddfriendmenu()

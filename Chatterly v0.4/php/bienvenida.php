@@ -83,7 +83,7 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div style="background-color: #2b2d31; width: 10%; padding: 10px; color: white; min-width: 170px;"> <!-- barra2 -->
                         <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
                             <div>
-                                <button id="options-button" style="text-align: center; display: flex; align-items: center; onclick="closechat()">
+                                <button id="options-button" style="text-align: center; display: flex; align-items: center;" onclick="closechat();">
                                     <img src="../assets/imgs/friends_logo.png" alt="account" style="width: 20px; height: 20px; margin-right: 15px;">
                                     Amigos
                                 </button>
@@ -170,15 +170,19 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             }
                             ?>
                         </div>
-
-                        <div id="chat" hidden>
-                            <div id="chat" style="flex: 1; padding: 10px; color: white;"> <!-- chat -->
-                            </div>
-                            <div style="padding: 10px; overflow: hidden; background-color: #313338;"> <!-- barra chat -->
-                                <input type="text" style="border-color: #383a40; background-color: #383a40; width: 100%; box-sizing: border-box; height: 30px; padding: 0px; padding-left: 10px;" placeholder="Escribe un mensaje a...">
-                            </div>
-                        </div>
                     </div>
+                    
+                    <div id="chatcontainer" style="display: none; flex: 1; flex-direction: column; min-width: 200px; background-color: #313338;">
+        <div id="chat-messages" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px;">
+            <!-- Los mensajes se cargarán aquí -->
+        </div>
+        <div style="padding: 10px; overflow: hidden;">
+            <input type="text" id="mensaje" style="border-color:#383a40; background-color: #383a40; width: 100%; box-sizing: border-box; height: 30px; padding-left: 10px;" placeholder="Escribe un mensaje..." />
+            <button id="enviarMensaje" style="background-color: #5865F2; cursor: pointer; border: none; padding: 0 15px;">Enviar</button>
+        </div>
+    </div>
+
+
                 </div>
             </div>
         </div>
@@ -218,6 +222,43 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
             </div>
         </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let destinatario = 1;  // Asigna el ID del usuario con quien estás chateando.
+        
+        // Función para cargar los mensajes
+        function cargarMensajes() {
+           $.post('chat.php', { destinatario: destinatario }, function(data) {
+    try {
+        const mensajes = JSON.parse(data); // Intentamos parsear la respuesta JSON
+        $('#chat-messages').empty();
+        mensajes.forEach(function(mensaje) {
+            $('#chat-messages').prepend('<div><strong>' + mensaje.alias + ':</strong> ' + mensaje.mensaje + '</div>');
+        });
+    } catch (e) {
+        console.error("Error al parsear JSON:", e);
+        console.log("Respuesta del servidor:", data); // Muestra la respuesta del servidor para depurar
+    }
+});
+        }
+
+        // Enviar mensaje
+        $('#enviarMensaje').click(function() {
+            const mensaje = $('#mensaje').val();
+            if (mensaje.trim() !== '') {
+                $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() {
+                    $('#mensaje').val('');
+                    cargarMensajes(); // Cargar los mensajes actualizados
+                });
+            }
+        });
+
+        // Cargar mensajes cada 2 segundos para mantener el chat actualizado
+        setInterval(cargarMensajes, 2000);
+
+        // Inicializar el chat cargando los mensajes al principio
+        cargarMensajes();
+    </script>
         <script defer src="../javascript/js_bienvenida.js"></script>
     </body>
 </html>
