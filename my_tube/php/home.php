@@ -27,6 +27,7 @@
     <div class="nav_content_container">
       <div class="navbar">navbar</div>
       <div class="content">
+        <!--
         <div class="recoms">
           <div class="recom">
             <img src="../img/thumbnail.webp" class="thumbnail">
@@ -55,29 +56,69 @@
             <img src="../img/thumbnail.webp" class="thumbnail">
           </div>
         </div>
+-->
       </div>
     </div>
   </div>
 
-  <div class="login_div" style="display: none">
-    <img class="close_img" src="../img/x_button.png" onclick="closeLoginDiv()"/>
+  <div class="login_div">
+    <img class="close_img" src="../img/x_button.png" onclick="closeLoginDiv()" />
 
-    <form>
+    <div id="login_section_1">
       <img src="../img/mytube_logo.png" id="logo">
       <div>
-        <label for="alias">Usuario:</label>
-        <input type="text" id="alias" name="alias" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{3,15}" required />
+        Iniciar sesión
+      </div>
+    </div>
+
+    <div id="login_section_2">
+      <form id="register-form" onsubmit="validateRegisterForm(event)">
+        <div id="user_div">
+          <label for="USERNAME">Usuario</label>
+          <div>
+            <input type="text" id="USERNAME" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{3,15}" placeholder="..."
+              required />
+          </div>
+
+          <div class="buttons_div">
+            <a onclick="showLoginDiv()" id="create_account_button">Crear cuenta</a>
+            <button type="button" onclick="validateUsername()" id="next_button">Siguiente</button>
+          </div>
+        </div>
+
+        <div id="password_div" style="display: none">
+          <label for="PASSWORD">Contraseña:</label>
+          <div>
+            <input type="password" id="PASSWORD" name="PASSWORD" minlength="5" maxlength="20" required />
+          </div>
+          <div class="buttons_div">
+            <button type="submit" id="login_button">Iniciar sesión</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="register_div" style="display: none">
+    <img class="close_img" src="../img/x_button.png" onclick="closeLoginDiv()" />
+
+    <form id="register-form" onsubmit="validateRegisterForm(event)">
+      <img src="../img/mytube_logo.png" id="logo">
+      <div>
+        <label for="USERNAME">Usuario:</label>
+        <input type="text" id="USERNAME" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{3,15}" required />
       </div>
 
       <div>
-        <label for="password">Contraseña:</label>
-        <input type="password" id="password" name="password" minlength="5" maxlength="20" required />
+        <label for="PASSWORD">Contraseña:</label>
+        <input type="password" id="PASSWORD" name="PASSWORD" minlength="5" maxlength="20" required />
       </div>
 
       <button type="submit">Iniciar sesión</button>
       <button>Registrarse</button>
     </form>
   </div>
+
   <script src="../js/main_js.js"></script>
 </body>
 
