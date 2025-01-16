@@ -98,7 +98,7 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         echo "
                                             <button onclick='openchat()' id='options-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; margin-bottom: 5px; cursor: pointer; width: 100%; text-align: left;'>
                                                 <img src='$foto' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
-                                                <span>{$amigo['alias']}</span>
+                                                <span id='nombreboton'>{$amigo['alias']}</span>
                                             </button>
                                         ";
                                     }
@@ -223,42 +223,6 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        let destinatario = 1;  // Asigna el ID del usuario con quien estás chateando.
-        
-        // Función para cargar los mensajes
-        function cargarMensajes() {
-           $.post('chat.php', { destinatario: destinatario }, function(data) {
-    try {
-        const mensajes = JSON.parse(data); // Intentamos parsear la respuesta JSON
-        $('#chat-messages').empty();
-        mensajes.forEach(function(mensaje) {
-            $('#chat-messages').prepend('<div><strong>' + mensaje.alias + ':</strong> ' + mensaje.mensaje + '</div>');
-        });
-    } catch (e) {
-        console.error("Error al parsear JSON:", e);
-        console.log("Respuesta del servidor:", data); // Muestra la respuesta del servidor para depurar
-    }
-});
-        }
-
-        // Enviar mensaje
-        $('#enviarMensaje').click(function() {
-            const mensaje = $('#mensaje').val();
-            if (mensaje.trim() !== '') {
-                $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() {
-                    $('#mensaje').val('');
-                    cargarMensajes(); // Cargar los mensajes actualizados
-                });
-            }
-        });
-
-        // Cargar mensajes cada 2 segundos para mantener el chat actualizado
-        setInterval(cargarMensajes, 2000);
-
-        // Inicializar el chat cargando los mensajes al principio
-        cargarMensajes();
-    </script>
         <script defer src="../javascript/js_bienvenida.js"></script>
     </body>
 </html>

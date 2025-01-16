@@ -3,7 +3,7 @@ const optionsPanel = document.getElementById("options");
 const initialpanel = document.getElementById("initialpanel");
 const chat = document.getElementById("chatcontainer");
 const pendingMenu = document.getElementById('pendingmenu');
-
+let destinatario = null;  // Asigna el ID del usuario con quien estás chateando.
 //chat.style.display === "none";
 
 function showoptionspanel()
@@ -25,6 +25,18 @@ function openchat()
     pendingMenu.hidden = true;
     document.getElementById("addfriendmenu").style.display = "none";
     initialpanel.style.display = "none";
+    if(document.getElementById("nombreboton").innerHTML == "a")
+        {
+            
+            destinatario = 1;
+            console.log(destinatario);
+        }
+    else
+        {
+            
+            destinatario = 3;
+            console.log(destinatario);
+        }
 }
 
 function closechat()
@@ -95,3 +107,38 @@ function actualizarResultado(mensaje)
 {
     document.getElementById('resultado').innerText = mensaje;
 }
+
+
+        
+// Función para cargar los mensajes
+function cargarMensajes() {
+   $.post('chat.php', { destinatario: destinatario }, function(data) {
+try {
+const mensajes = JSON.parse(data); // Intentamos parsear la respuesta JSON
+$('#chat-messages').empty();
+mensajes.forEach(function(mensaje) {
+    $('#chat-messages').prepend('<div><strong>' + mensaje.alias + ':</strong> ' + mensaje.contenido + '</div>');
+});
+} catch (e) {
+console.error("Error al parsear JSON:", e);
+console.log("Respuesta del servidor:", data); // Muestra la respuesta del servidor para depurar
+}
+});
+}
+
+// Enviar mensaje
+$('#enviarMensaje').click(function() {
+    const mensaje = $('#mensaje').val();
+    if (mensaje.trim() !== '') {
+        $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() {
+            $('#mensaje').val('');
+            cargarMensajes(); // Cargar los mensajes actualizados
+        });
+    }
+});
+
+// Cargar mensajes cada 2 segundos para mantener el chat actualizado
+setInterval(cargarMensajes, 2000);
+
+// Inicializar el chat cargando los mensajes al principio
+cargarMensajes();
