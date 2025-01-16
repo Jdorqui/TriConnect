@@ -11,7 +11,7 @@
 </head>
 
 <body>
-  <div class="main" style="filter: brightness(20%)">
+  <div class="main">
     <div class="bar">
       <div class="mytube_logo_div" onclick="location.href='home.html'">
         <img src="../img/mytube_logo.png" id="mytube_logo" />My<span style="color: red">Tube</span>
@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  <div class="login_div">
+  <div class="login_div" style="display: none">
     <img class="close_img" src="../img/x_button.png" onclick="closeLoginDiv()"/>
 
     <form>

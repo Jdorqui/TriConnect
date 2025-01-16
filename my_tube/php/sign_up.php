@@ -17,7 +17,7 @@ $DATABASE_NAME = "MYTUBE";
 try {
     $CONN = new mysqli($SERVER_NAME, $SERVER_USERNAME, $SERVER_PASSWORD, $DATABASE_NAME);
 } catch (Exception $e) {
-    ECHO "ERROR-000: Conexión fallida con la base de datos. " . $e->getMessage();
+    echo "ERROR-000: Conexión fallida con la base de datos. " . $e->getMessage();
 
     die(0);
 }
@@ -29,12 +29,12 @@ if ($CHECK_EXISTING_USER_QUERY->num_rows == 0) {
 
     $CONN->query($SQL);
 } else {
-    ECHO "ERROR-001: El usuario '$USERNAME' ya existe.";
+    echo "ERROR-001: El usuario '$USERNAME' ya existe.";
 
     die(1);
 }
 
-ECHO "SUCCESS";
+echo "SUCCESS";
 
 /*
 $sql = "SELECT * FROM usuario";
