@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Walla</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="fondo-oscuro">
+        <div class="contenedor-login">
+            <button class="boton-regreso">&#8592;</button>
+            <h1>¡Te damos la bienvenida!</h1>
+            <form action="login.php" method="POST">
+                <div class="grupo-formulario">
+                    <input type="email" id="email" name="email" placeholder="Dirección de e-mail" required>
+                </div>
+                <div class="grupo-formulario">
+                    <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña" required>
+                </div>
+                <div class="enlace-contrasena">
+                    <a href="#">¿Has olvidado tu contraseña?</a>
+                </div>
+                <button type="submit" class="boton-login">Acceder a Walla</button>
+            </form>
+        </div> 
+        <br>
+        <footer class="pie-pagina"> 
+            <p>Sitio protegido. Consulta la <a href="https://policies.google.com/privacy">Política de Privacidad</a> y los <a href="https://policies.google.com/terms">Términos del Servicio</a>.</p>
+        </footer>
+    </div>
+</body>
+</html>

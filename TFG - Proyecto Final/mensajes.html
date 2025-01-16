@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensajes - DeTo'</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <img src="..//img/logoWalla.png" alt="Logo de DeTo'">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="inicio.html">Inicio</a></li>
+                <li><a href="#">Vender</a></li>
+                <li><a href="#">Mi Cuenta</a></li>
+                <li><a href="mensajes.html" class="active">Mensajes</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="messages-section">
+        <h2>Tus Conversaciones</h2>
+
+        <!-- Lista de conversaciones -->
+        <div class="conversations-list">
+            <div class="conversation-item" onclick="openChat('juan')">
+                <div class="conversation-user">
+                    <img src="https://via.placeholder.com/50" alt="Juan Pérez">
+                    <div class="user-info">
+                        <p class="user-name">Juan Pérez</p>
+                        <p class="last-message">¿Aún está disponible el móvil?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="conversation-item" onclick="openChat('maria')">
+                <div class="conversation-user">
+                    <img src="https://via.placeholder.com/50" alt="María López">
+                    <div class="user-info">
+                        <p class="user-name">María López</p>
+                        <p class="last-message">¿Puedes bajar un poco el precio?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="conversation-item" onclick="openChat('carlos')">
+                <div class="conversation-user">
+                    <img src="https://via.placeholder.com/50" alt="Carlos García">
+                    <div class="user-info">
+                        <p class="user-name">Carlos García</p>
+                        <p class="last-message">Interesado en la bicicleta, ¿está en buen estado?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ventana de chat -->
+        <div class="chat-window" id="chat-window">
+            <div class="chat-header">
+                <button onclick="closeChat()">Volver a conversaciones</button>
+                <p id="chat-header-name"></p>
+            </div>
+            <div class="chat-box" id="chat-box">
+                <!-- Mensajes del chat aparecerán aquí -->
+            </div>
+            <div class="input-area">
+                <textarea id="message-input" placeholder="Escribe un mensaje..."></textarea>
+                <button onclick="sendMessage()">Enviar</button>
+                <!-- Emoji selector -->
+                <button class="emoji-btn" onclick="toggleEmojiSelector()">😊</button>
+                <div class="emoji-selector" id="emoji-selector">
+                    <span onclick="addEmoji('😊')">😊</span>
+                    <span onclick="addEmoji('😂')">😂</span>
+                    <span onclick="addEmoji('😍')">😍</span>
+                    <span onclick="addEmoji('😎')">😎</span>
+                    <span onclick="addEmoji('😢')">😢</span>
+                    <span onclick="addEmoji('👍')">👍</span>
+                    <span onclick="addEmoji('👎')">👎</span>
+                    <span onclick="addEmoji('🎉')">🎉</span>
+                </div>
+                <!-- Botones para enviar imágenes y videos -->
+                <input type="file" id="image-input" accept="image/*" onchange="sendImage()" style="display:none">
+                <input type="file" id="video-input" accept="video/*" onchange="sendVideo()" style="display:none">
+                <button class="media-btn" onclick="document.getElementById('image-input').click()">📸 Imagen</button>
+                <button class="media-btn" onclick="document.getElementById('video-input').click()">🎥 Video</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 DeTo'</p>
+    </footer>
+
+    <script>
+        let currentChat = '';
+        let chatHistory = {
+            juan: [
+                "Hola, el móvil sigue disponible.",
+                "Sí, está en excelente estado."
+            ],
+            maria: [
+                "¿Puedo pagar un poco menos?",
+                "¿El precio es negociable?"
+            ],
+            carlos: [
+                "¿La bicicleta está nueva?",
+                "Está en perfecto estado."
+            ]
+        };
+
+        function openChat(chat) {
+            currentChat = chat;
+            document.getElementById('chat-window').style.display = 'block';
+            document.querySelector('.conversations-list').style.display = 'none';
+            document.getElementById('chat-header-name').textContent = chat.charAt(0).toUpperCase() + chat.slice(1) + " Pérez";
+            
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = ''; // Limpiar la ventana de chat
+            chatHistory[chat].forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('chat-message');
+                messageDiv.textContent = msg;
+                chatBox.appendChild(messageDiv);
+            });
+        }
+
+        function closeChat() {
+            document.getElementById('chat-window').style.display = 'none';
+            document.querySelector('.conversations-list').style.display = 'block';
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const chatBox = document.getElementById('chat-box');
+            const message = messageInput.value.trim();
+            if (message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('chat-message', 'sent');
+                messageDiv.textContent = message;
+                chatBox.appendChild(messageDiv);
+                messageInput.value = ''; // Limpiar el campo de texto
+            }
+        }
+
+        // Emoji selector
+        function toggleEmojiSelector() {
+            const emojiSelector = document.getElementById('emoji-selector');
+            emojiSelector.style.display = emojiSelector.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function addEmoji(emoji) {
+            const messageInput = document.getElementById('message-input');
+            messageInput.value += emoji; // Agregar emoji al campo de texto
+            document.getElementById('emoji-selector').style.display = 'none'; // Ocultar el selector
+        }
+
+        // Función para enviar imágenes
+        function sendImage() {
+            const fileInput = document.getElementById('image-input');
+            const file = fileInput.files[0];
+            if (file) {
+                const chatBox = document.getElementById('chat-box');
+                const imageDiv = document.createElement('div');
+                imageDiv.classList.add('chat-message', 'sent');
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.style.maxWidth = '200px';
+                img.style.maxHeight = '200px';
+                imageDiv.appendChild(img);
+                chatBox.appendChild(imageDiv);
+            }
+        }
+
+        // Función para enviar videos
+        function sendVideo() {
+            const fileInput = document.getElementById('video-input');
+            const file = fileInput.files[0];
+            if (file) {
+                const chatBox = document.getElementById('chat-box');
+                const videoDiv = document.createElement('div');
+                videoDiv.classList.add('chat-message', 'sent');
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.controls = true;
+                video.style.maxWidth = '300px';
+                video.style.maxHeight = '200px';
+                videoDiv.appendChild(video);
+                chatBox.appendChild(videoDiv);
+            }
+        }
+    </script>
+
+</body>
+</html>
