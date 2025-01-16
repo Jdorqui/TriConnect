@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $SERVER_NAME = "localhost";
 $SERVER_USERNAME = "root";
-$SERVER_PASSWORD = "root";
+$SERVER_PASSWORD = "";
 $DATABASE_NAME = "MYTUBE";
 
 try {
