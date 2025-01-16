@@ -56,7 +56,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Cuenta - Wallapop</title>
+    <title>Mi Cuenta - DeTo'</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -122,7 +122,7 @@ try {
     </section>
 
     <footer>
-        <p>&copy; 2025 Wallapop</p>
+        <p>&copy; 2025 DeTo'</p>
     </footer>
 
     <script src="script.js"></script>

@@ -6,7 +6,7 @@ session_start();
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "wallapop_db";
+$dbname = "chat_app";
 
 // Crear conexión
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -29,17 +29,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $contrasena = $conn->real_escape_string($contrasena);
 
         // Buscar el usuario en la base de datos
-        $sql = "SELECT * FROM usuarios WHERE correo_electronico = '$email'";
+        $sql = "SELECT * FROM usuarios WHERE email = '$email'";  // Cambié 'correo_electronico' a 'email'
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
             // Si el usuario existe, comprobar la contraseña
             $usuario = $result->fetch_assoc();
-            if (password_verify($contrasena, $usuario['contrasena'])) {
+            if (password_verify($contrasena, $usuario['password'])) {  // Cambié 'contrasena' a 'password'
                 // Contraseña correcta, iniciar sesión
                 $_SESSION['usuario_id'] = $usuario['id'];
-                $_SESSION['nombre_usuario'] = $usuario['nombre_usuario'];
-                $_SESSION['correo_electronico'] = $usuario['correo_electronico'];
+                $_SESSION['nombre_usuario'] = $usuario['alias'];  // Cambié 'nombre_usuario' a 'alias'
+                $_SESSION['correo_electronico'] = $usuario['email'];  // Cambié 'correo_electronico' a 'email'
 
                 // Redirigir al inicio o panel de usuario
                 header("Location: inicio.php");  // Redirigir a la página de inicio
