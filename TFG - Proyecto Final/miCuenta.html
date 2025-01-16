@@ -1,0 +1,69 @@
+<!-- /public/micuenta.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cuenta - Wallapop</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Wallapop_Logo.svg/1280px-Wallapop_Logo.svg.png" alt="Logo de Wallapop">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="inicio.html">Inicio</a></li>
+                <li><a href="buscar.html">Buscar</a></li>
+                <li><a href="vender.html">Vender</a></li>
+                <li><a href="micuenta.html" class="active">Mi Cuenta</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="account-section">
+        <div class="profile-card">
+            <img src="https://via.placeholder.com/150" alt="Foto de Perfil" class="profile-img" id="profile-img">
+            <h2 id="profile-name">Juan Pérez</h2>
+            <p id="profile-location">Ubicación: Madrid</p>
+            <button class="btn-edit-profile" id="edit-profile-btn">Editar perfil</button>
+        </div>
+
+        <!-- Formulario de edición de perfil (inicialmente oculto) -->
+        <div class="edit-profile-form" id="edit-profile-form">
+            <h3>Editar perfil</h3>
+            <form id="edit-profile">
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" name="name" value="Juan Pérez">
+
+                <label for="location">Ubicación:</label>
+                <input type="text" id="location" name="location" value="Madrid">
+
+                <label for="profile-image">Foto de perfil:</label>
+                <input type="file" id="profile-image" name="profile-image" accept="image/*">
+
+                <button type="submit">Guardar cambios</button>
+                <button type="button" id="cancel-edit">Cancelar</button>
+            </form>
+        </div>
+
+        <div class="account-actions">
+            <h3>Opciones de Cuenta</h3>
+            <ul>
+                <li><a href="#">Mis Anuncios</a></li>
+                <li><a href="#">Ver Mensajes</a></li>
+                <li><a href="#">Historial de Compras</a></li>
+                <li><a href="#">Ajustes</a></li>
+                <li><a href="#">Cerrar sesión</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Wallapop</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
