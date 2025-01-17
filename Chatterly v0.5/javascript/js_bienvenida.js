@@ -28,13 +28,13 @@ function openchat()
     if(document.getElementById("nombreboton").innerHTML == "a")
         {
             
-            destinatario = 1;
+            destinatario = 3;
             console.log(destinatario);
         }
     else
         {
             
-            destinatario = 3;
+            destinatario = 1;
             console.log(destinatario);
         }
 }
