@@ -3,14 +3,16 @@
 ini_set('display_errors', 1);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $alias = trim($_POST['alias']);
+    $TYPE = trim($_POST['']);
+
+    $alias = trim($_POST['USERNAME']);
     $password = trim($_POST['password']);
 }
 
 $servername = "localhost";
 $username = "root";
 $pass = "root";
-$dbname = "practica3";
+$dbname = "MYTUBE";
 
 try {
     $conn = new mysqli($servername, $username, $pass, $dbname);
