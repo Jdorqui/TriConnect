@@ -3,8 +3,7 @@ const optionsPanel = document.getElementById("options");
 const initialpanel = document.getElementById("initialpanel");
 const chat = document.getElementById("chatcontainer");
 const pendingMenu = document.getElementById('pendingmenu');
-let destinatario = null;  // Asigna el ID del usuario con quien estás chateando.
-//chat.style.display === "none";
+let destinatario = null;
 
 function showoptionspanel()
 {
@@ -18,31 +17,9 @@ function closeoptionspanel()
     optionsPanel.style.display = "none";
 }
 
-function openchat()
-{
-    chat.style.display = "block";
-    //chat.hidden = false;
-    pendingMenu.hidden = true;
-    document.getElementById("addfriendmenu").style.display = "none";
-    initialpanel.style.display = "none";
-    if(document.getElementById("nombreboton").innerHTML == "a")
-        {
-            
-            destinatario = 1;
-            console.log(destinatario);
-        }
-    else
-        {
-            
-            destinatario = 3;
-            console.log(destinatario);
-        }
-}
-
 function closechat()
 {
     chat.style.display = "none";
-    //chat.hidden = true;
     initialpanel.style.display = "block";
 }
 
@@ -60,6 +37,7 @@ function openpendingmenu()
     closechat();
 }
 
+//amigos
 function fetchPendingRequests() 
 {
     fetch('../php/get_pending_requests.php')
@@ -102,36 +80,52 @@ function manageRequest(id, action)
         .catch(error => console.error('Error al gestionar la solicitud:', error));
 }
 
-
 function actualizarResultado(mensaje) 
 {
     document.getElementById('resultado').innerText = mensaje;
 }
 
-
+//chat
+function openchat(destinatarioID) // Función para abrir el chat y configurar el destinatario
+{
+    destinatario = destinatarioID;  // Establecemos el destinatario dinámicamente
+    chat.style.display = "block";
+    pendingMenu.hidden = true;
+    document.getElementById("addfriendmenu").style.display = "none";
+    initialpanel.style.display = "none";
+    
+    //console.log("Destinatario: ", destinatario);
+    cargarMensajes();  // Cargar los mensajes de inmediato cuando se abre el chat
+}
         
-// Función para cargar los mensajes
-function cargarMensajes() {
-   $.post('chat.php', { destinatario: destinatario }, function(data) {
-try {
-const mensajes = JSON.parse(data); // Intentamos parsear la respuesta JSON
-$('#chat-messages').empty();
-mensajes.forEach(function(mensaje) {
-    $('#chat-messages').prepend('<div><strong>' + mensaje.alias + ':</strong> ' + mensaje.contenido + '</div>');
-});
-} catch (e) {
-console.error("Error al parsear JSON:", e);
-console.log("Respuesta del servidor:", data); // Muestra la respuesta del servidor para depurar
-}
-});
+function cargarMensajes() 
+{
+    if (destinatario === null) return; // Verifica que el destinatario esté definido
+    $.post('chat.php', { destinatario: destinatario }, function(data) 
+    {
+        try 
+        {
+            const mensajes = JSON.parse(data); // Intentamos parsear la respuesta JSON
+            $('#chat-messages').empty();
+            mensajes.forEach(function(mensaje) {
+                $('#chat-messages').prepend('<div><strong>' + mensaje.alias + ':</strong> ' + mensaje.contenido + '</div>');
+            });
+        } 
+        catch (e) 
+        {
+            console.error("Error al parsear JSON:", e);
+            console.log("Respuesta del servidor:", data); // Muestra la respuesta del servidor para depurar
+        }
+    });
 }
 
-// Enviar mensaje
-$('#enviarMensaje').click(function() {
+$('#enviarMensaje').click(function()
+{
     const mensaje = $('#mensaje').val();
-    if (mensaje.trim() !== '') {
+    if (mensaje.trim() !== '') 
+    {
         $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() {
-            $('#mensaje').val('');
+            $('#mensaje').val('');  // Limpiar el campo de entrada
             cargarMensajes(); // Cargar los mensajes actualizados
         });
     }
@@ -142,3 +136,16 @@ setInterval(cargarMensajes, 2000);
 
 // Inicializar el chat cargando los mensajes al principio
 cargarMensajes();
+
+//
+  // Seleccionamos el input y el botón
+  const inputMensaje = document.getElementById('mensaje');
+  const botonEnviar = document.getElementById('enviarMensaje');
+
+  // Añadimos un event listener al input para escuchar la tecla 'Enter'
+  inputMensaje.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      // Simulamos un clic en el botón cuando se presiona 'Enter'
+      botonEnviar.click();
+    }
+  });

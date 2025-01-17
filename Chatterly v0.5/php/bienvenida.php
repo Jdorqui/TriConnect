@@ -45,7 +45,8 @@ $solicitudes_pendientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $stmt = $pdo->prepare("
     SELECT usuarios.alias, 
            usuarios.profile_picture, 
-           amigos.id_user1 
+           amigos.id_user1,
+           amigos.id_user2
     FROM amigos 
     JOIN usuarios ON amigos.id_user1 = usuarios.id_user OR amigos.id_user2 = usuarios.id_user 
     WHERE (amigos.id_user1 = :id_usuario OR amigos.id_user2 = :id_usuario) 
@@ -54,8 +55,8 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute(['id_usuario' => $id_usuario_actual]);
 $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
 
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -75,7 +76,7 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div style="display: flex; flex: 1;">
                     <div style="background-color: #1e1f22; width: 2.7vw; padding: 10px; color: white; min-width: 50px;"> <!-- barra1 -->
                         <div>
-                            <img id="message" src="../assets/imgs/message_logo.png" alt="logo" onclick=""><br>
+                            <img id="message-logo" src="../assets/imgs/message_logo.png" alt="logo" onclick=""><br>
                             <div style="height: 2px; background-color:rgb(57, 62, 66)"></div><br>
                             <img id="message" src="../assets/imgs/newServer_logo.png" alt="logo" onclick="" style="padding: 10px; width: 30px; height: 30px;"><br>
                         </div>
@@ -95,8 +96,9 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     foreach ($amigos as $amigo) 
                                     {
                                         $foto = $amigo['profile_picture'] ?? '../assets/imgs/default_profile.png';
+                                        $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1'];
                                         echo "
-                                            <button onclick='openchat()' id='options-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; margin-bottom: 5px; cursor: pointer; width: 100%; text-align: left;'>
+                                            <button onclick='openchat($destinatario)' id='options-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; margin-bottom: 5px; cursor: pointer; width: 100%; text-align: left;'>
                                                 <img src='$foto' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
                                                 <span id='nombreboton'>{$amigo['alias']}</span>
                                             </button>
@@ -173,16 +175,16 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     
                     <div id="chatcontainer" style="display: none; flex: 1; flex-direction: column; min-width: 200px; background-color: #313338;">
-        <div id="chat-messages" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px;">
-            <!-- Los mensajes se cargarán aquí -->
-        </div>
-        <div style="padding: 10px; overflow: hidden;">
-            <input type="text" id="mensaje" style="border-color:#383a40; background-color: #383a40; width: 100%; box-sizing: border-box; height: 30px; padding-left: 10px;" placeholder="Escribe un mensaje..." />
-            <button id="enviarMensaje" style="background-color: #5865F2; cursor: pointer; border: none; padding: 0 15px;">Enviar</button>
-        </div>
-    </div>
-
-
+                        <div id="chat-messages" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px;">
+                        </div>
+                        <div style="padding: 10px; display: flex; position: relative; overflow: hidden;">
+                            <input type="text" id="mensaje" style="border-color:#383a40; background-color: #383a40; width: 100%; box-sizing: border-box; height: 45px; padding-left: 10px; position: relative;" placeholder="Escribe un mensaje..." />
+                            <img src="../assets/imgs/upload.png" style="width: 35px; position: absolute; right: 5px; top: 15px; height: 35px; cursor: pointer; padding: 0 15px; border: none;"></img>
+                            <img src="../assets/imgs/emojis.png" style="width: 40px; position: absolute; right: 43px; top: 12px; height: 40px; cursor: pointer; padding: 0 15px; border: none;"></img>
+                            <img src="../assets/imgs/gif.png" style="width: 37px; position: absolute; right: 85px; top: 17px; height: 32px; cursor: pointer; padding: 0 15px; border: none;"></img>
+                            <button id="enviarMensaje" style="width: 100px; position: absolute; right: 800%; top: 15px; height: 20px; background-color: #5865F2; cursor: pointer; padding: 0 15px; border: none;">Enviar</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -217,7 +219,7 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <button id="options-button" style="text-align: center;" onclick="closeoptionspanel()">Volver</button>
                         </div>
                     </div>
-                        <div style="background-color: #313338; width: 100%; padding: 10px; color: white;"> <!-- barra2 -->
+                    <div style="background-color: #313338; width: 100%; padding: 10px; color: white;"> <!-- barra2 -->
                     </div>
                 </div>
             </div>
