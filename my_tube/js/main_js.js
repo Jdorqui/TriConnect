@@ -1,77 +1,115 @@
 let main = document.querySelector(".main");
-let loginDiv = document.querySelector(".login_div");
-let userDiv = document.getElementById("user_div");
-let passwordDiv = document.getElementById("password_div");
-let registerDiv = document.querySelector(".register_div");
 
-// Mostrar la ventana de inicio de sesión.
-function displayLoginDiv() {
-    userDiv.style.display = "";
-    passwordDiv.style.display = "none";
+let loginAPIWrapper = document.getElementById("mytube_login_API_wrapper");
+let loginDiv = document.getElementById("login_div");
+let registerDiv = document.getElementById("register_div");
 
+// Mostrar la ventana de inicio de sesión (API).
+function displayLoginAPIWrapper() {
+    loginAPIWrapper.style.display = "";
     loginDiv.style.display = "";
     main.style.filter = "brightness(20%)";
 }
 
-// Cerrar la ventana de inicio de sesión.
-function closeLoginDiv() {
-    loginDiv.style.display = "none";
+// Cerrar la ventana de inicio de sesión (API).
+function closeLoginAPIWrapper() {
+    loginAPIWrapper.style.display = "none";
     main.style.filter = "brightness(100%)";
 }
 
 function showLoginDiv() {
-    userDiv.style.display = "none";
-    passwordDiv.style.display = "";
+    hideRegisterDiv();
+
+    loginDiv.style.display = "";
 }
 
-function validateUsername() {
+function hideLoginDiv() {
+    loginDiv.style.display = "none";
+}
+
+// Mostrar la ventana de registro.
+function showRegisterDiv() {
+    hideLoginDiv();
+
+    registerDiv.style.display = "";
+}
+
+// Cerrar la ventana de registro.
+function hideRegisterDiv() {
+    registerDiv.style.display = "none";
+}
+
+function validateLoginForm() {
     event.preventDefault();
-
-    let usernameInput = document.getElementById("USERNAME");
-
-    let form = new FormData();
-    form.append(usernameInput.getAttribute("name"), usernameInput.value);
-
-    console.log(form);
 
     fetch("../php/login.php", {
         method: "POST",
-        body: form,
+        body: new FormData(document.getElementById("login_form")),
     })
         .then((response) => response.text())
         .then((data) => {
-            console.log(data);
-            checkErrors(data);
+            checkLoginErrors(data);
         })
         .catch((error) => {
             console.error("Error:", error);
         });
 }
 
-function checkErrors(data) {
-    document.getElementsByTagName("label")[0].innerHTML = "Usuario:";
-    document.getElementsByTagName("label")[0].style.color = "black";
+function validateRegisterForm() {
+    event.preventDefault();
 
-    document.getElementsByTagName("label")[1].innerHTML = "Contraseña:";
-    document.getElementsByTagName("label")[1].style.color = "black";
+    fetch("../php/sign_up.php", {
+        method: "POST",
+        body: new FormData(document.getElementById("register_form")),
+    })
+        .then((response) => response.text())
+        .then((data) => {
+            checkRegisterErrors(data);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+}
 
-    let currentLabel;
+function checkRegisterErrors(data) {
     if (data.includes("ERROR-001")) {
-        currentLabel = document.getElementsByTagName("label")[0];
-        currentLabel.innerHTML = "Usuario: (el usuario no existe)";
-        currentLabel.style.color = "red";
-    } else if (data.includes("ERROR-002")) {
-        currentLabel = document.getElementsByTagName("label")[1];
-        currentLabel.innerHTML = "Contraseña: (la contraseña no es correcta)";
-        currentLabel.style.color = "red";
+        createNotification("El usuario ya existe.");
     } else if (data.includes("SUCCESS")) {
-        window.location.href = '../php/bienvenida.php';
+        location.reload();
     }
 
     // Debug.
     // alert(data);
 }
 
+function checkLoginErrors(data) {
+    console.log(data);
+
+    if (data.includes("ERROR-001")) {
+        createNotification("El usuario no existe.");
+    } else if (data.includes("ERROR-002")) {
+        createNotification("La contraseña no es correcta.");
+    } else if (data.includes("SUCCESS")) {
+        location.reload();
+    } else {
+        alert(data)
+    }
+}
+
+let notifications = document.getElementById("notifications");
+async function createNotification(message) {
+    if (!notifications.innerHTML.includes(message)) {
+        notifications.innerHTML += "<div class='notification'>" + message + "</div>";
+    }
+}
+
+setInterval(function () {
+    if (notifications.lastElementChild) {
+        notifications.lastElementChild.remove();
+    }
+}, 1000);
+
+/*
 function validateLoginForm() {
     event.preventDefault();
 
@@ -87,22 +125,7 @@ function validateLoginForm() {
             console.error("Error:", error);
         });
 }
-
-
-// Mostrar la ventana de registro.
-function displayRegisterDiv() {
-    registerDiv.style.display = "";
-    main.style.filter = "brightness(20%)";
-}
-
-// Cerrar la ventana de registro.
-function closeRegisterDiv() {
-    registerDiv.style.display = "none";
-    main.style.filter = "brightness(100%)";
-}
-
-
-
+*/
 
 let stream = null;
 let audio = null;
