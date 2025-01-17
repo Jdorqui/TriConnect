@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,20 +17,50 @@
 <body>
   <div class="main">
     <div class="bar">
-      <div class="mytube_logo_div" onclick="location.href='home.html'">
+      <div class="mytube_logo_div" onclick="location.href='home.php'">
         <img src="../img/mytube_logo.png" id="mytube_logo" />My<span style="color: red">Tube</span>
       </div>
 
       <input tpye="text" class="search_bar" placeholder="Buscar vídeo" />
-      <div class="user_tab" onclick="displayLoginDiv()">
-        <img src="../img/profile_pic.jpg" id="login_pic">
-        <div>Iniciar sesión</div>
-      </div>
 
+      <?php
+      if (isset($_SESSION["USERNAME"]) && isset($_SESSION["PASSWORD"])) {
+        echo '<div class="user_logged_in_tab">
+                <img src="../img/profile_pic_example.jpg" id="logged_pic">
+              </div>';
+      } else {
+        echo '<div class="user_tab" onclick="displayLoginAPIWrapper()">
+                <img src="../img/profile_pic.jpg" id="login_pic">
+                <div>Iniciar sesión</div>
+              </div>';
+      }
+      ?>
     </div>
     <div class="nav_content_container">
-      <div class="navbar">navbar</div>
+      <div class="navbar">
+        <div>
+          Home
+        </div>
+
+        <div>
+          Explore
+        </div>
+
+        <div>
+          Suscripciones
+        </div>
+
+        <div>
+          Historial
+        </div>
+
+        <div>
+          Liked vídeos
+        </div>
+
+      </div>
       <div class="content">
+        <button onclick="location.href='logout.php'">CERRAR SESIÓN</button>
         <!--
         <div class="recoms">
           <div class="recom">
@@ -61,62 +95,80 @@
     </div>
   </div>
 
-  <div class="login_div">
-    <img class="close_img" src="../img/x_button.png" onclick="closeLoginDiv()" />
+  <div id="mytube_login_API_wrapper" style="display: none">
+    <img class="close_img" src="../img/x_button.png" onclick="closeLoginAPIWrapper()" />
 
-    <div id="login_section_1">
-      <img src="../img/mytube_logo.png" id="logo">
-      <div>
-        Iniciar sesión
+    <div id="login_div">
+      <div class="section_1">
+        <img src="../img/mytube_logo.png" id="logo">
+        <div>Iniciar sesión</div>
+      </div>
+
+      <div class="section_2">
+        <form id="login_form" onsubmit="validateLoginForm(event)">
+          <div id="user_div">
+            <label for="USERNAME">Usuario</label>
+            <div>
+              <input type="text" id="USERNAME" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{1,15}" placeholder="..."
+                required />
+            </div>
+          </div>
+
+          <div id="password_div">
+            <label for="PASSWORD">Contraseña</label>
+            <div>
+              <input type="password" id="PASSWORD" name="PASSWORD" required />
+            </div>
+          </div>
+
+          <div class="buttons_div">
+            <a onclick="showRegisterDiv()" id="create_account_button">Crear cuenta</a>
+            <button type="submit" id="login_button">Iniciar sesión</button>
+          </div>
+        </form>
       </div>
     </div>
 
-    <div id="login_section_2">
-      <form id="register-form" onsubmit="validateRegisterForm(event)">
-        <div id="user_div">
-          <label for="USERNAME">Usuario</label>
+    <div id="register_div" style="display: none">
+      <div class="section_1">
+        <img src="../img/mytube_logo.png" id="logo">
+        <div>Crear cuenta</div>
+      </div>
+
+      <div class="section_2">
+        <form id="register_form" onsubmit="validateRegisterForm(event)">
           <div>
-            <input type="text" id="USERNAME" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{3,15}" placeholder="..."
-              required />
+            <label for="USERNAME">Usuario</label>
+            <div>
+              <input type="text" id="USERNAME" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{1,15}" placeholder="..."
+                required />
+            </div>
+          </div>
+
+          <div>
+            <label for="EMAIL">Email</label>
+            <div>
+              <input type="email" id="EMAIL" name="EMAIL" required />
+            </div>
+          </div>
+
+          <div>
+            <label for="PASSWORD">Contraseña</label>
+            <div>
+              <input type="password" id="PASSWORD" name="PASSWORD" required />
+            </div>
           </div>
 
           <div class="buttons_div">
-            <a onclick="showLoginDiv()" id="create_account_button">Crear cuenta</a>
-            <button type="button" onclick="validateUsername()" id="next_button">Siguiente</button>
+            <a onclick="showLoginDiv()" id="create_account_button">Iniciar sesión</a>
+            <button type="submit" id="login_button">Crear cuenta</button>
           </div>
-        </div>
-
-        <div id="password_div" style="display: none">
-          <label for="PASSWORD">Contraseña:</label>
-          <div>
-            <input type="password" id="PASSWORD" name="PASSWORD" minlength="5" maxlength="20" required />
-          </div>
-          <div class="buttons_div">
-            <button type="submit" id="login_button">Iniciar sesión</button>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 
-  <div class="register_div" style="display: none">
-    <img class="close_img" src="../img/x_button.png" onclick="closeLoginDiv()" />
-
-    <form id="register-form" onsubmit="validateRegisterForm(event)">
-      <img src="../img/mytube_logo.png" id="logo">
-      <div>
-        <label for="USERNAME">Usuario:</label>
-        <input type="text" id="USERNAME" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{3,15}" required />
-      </div>
-
-      <div>
-        <label for="PASSWORD">Contraseña:</label>
-        <input type="password" id="PASSWORD" name="PASSWORD" minlength="5" maxlength="20" required />
-      </div>
-
-      <button type="submit">Iniciar sesión</button>
-      <button>Registrarse</button>
-    </form>
+  <div id="notifications">
   </div>
 
   <script src="../js/main_js.js"></script>
