@@ -46,12 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <h1>Login</h1>
     <form action="login.php" method="POST">
@@ -61,6 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </form>
     <p>Aún no tienes cuenta? <a href="register.php">Regístrate</a></p>
 
-    <?php if (isset($error)) { echo "<p style='color: red;'>$error</p>"; } // Mostrar errores ?>
+    <?php if (isset($error)) {
+        echo "<p style='color: red;'>$error</p>";
+    } // Mostrar errores ?>
 </body>
+
 </html>
