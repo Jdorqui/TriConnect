@@ -45,7 +45,8 @@ $solicitudes_pendientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $stmt = $pdo->prepare("
     SELECT usuarios.alias, 
            usuarios.profile_picture, 
-           amigos.id_user1 
+           amigos.id_user1,
+           amigos.id_user2
     FROM amigos 
     JOIN usuarios ON amigos.id_user1 = usuarios.id_user OR amigos.id_user2 = usuarios.id_user 
     WHERE (amigos.id_user1 = :id_usuario OR amigos.id_user2 = :id_usuario) 
@@ -54,6 +55,7 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute(['id_usuario' => $id_usuario_actual]);
 $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 
@@ -95,8 +97,9 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     foreach ($amigos as $amigo) 
                                     {
                                         $foto = $amigo['profile_picture'] ?? '../assets/imgs/default_profile.png';
+                                        $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1'];
                                         echo "
-                                            <button onclick='openchat()' id='options-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; margin-bottom: 5px; cursor: pointer; width: 100%; text-align: left;'>
+                                            <button onclick='openchat($destinatario)' id='options-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; margin-bottom: 5px; cursor: pointer; width: 100%; text-align: left;'>
                                                 <img src='$foto' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
                                                 <span id='nombreboton'>{$amigo['alias']}</span>
                                             </button>
