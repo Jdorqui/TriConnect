@@ -17,12 +17,14 @@ function closeLoginAPIWrapper() {
     main.style.filter = "brightness(100%)";
 }
 
+// Mostrar el div de inicio de sesión.
 function showLoginDiv() {
     hideRegisterDiv();
 
     loginDiv.style.display = "";
 }
 
+// Ocultar el div de inicio de sesión.
 function hideLoginDiv() {
     loginDiv.style.display = "none";
 }
@@ -39,6 +41,7 @@ function hideRegisterDiv() {
     registerDiv.style.display = "none";
 }
 
+// Validar el form de inicio de sesión.
 function validateLoginForm() {
     event.preventDefault();
 
@@ -55,6 +58,7 @@ function validateLoginForm() {
         });
 }
 
+// Validar el form de registro.
 function validateRegisterForm() {
     event.preventDefault();
 
@@ -71,17 +75,7 @@ function validateRegisterForm() {
         });
 }
 
-function checkRegisterErrors(data) {
-    if (data.includes("ERROR-001")) {
-        createNotification("El usuario ya existe.");
-    } else if (data.includes("SUCCESS")) {
-        location.reload();
-    }
-
-    // Debug.
-    // alert(data);
-}
-
+// Comprobar si existen errores en el inicio de sesión.
 function checkLoginErrors(data) {
     console.log(data);
 
@@ -96,6 +90,16 @@ function checkLoginErrors(data) {
     }
 }
 
+// Comprobar si existen errores en el registro.
+function checkRegisterErrors(data) {
+    if (data.includes("ERROR-001")) {
+        createNotification("El usuario ya existe.");
+    } else if (data.includes("SUCCESS")) {
+        location.reload();
+    }
+}
+
+// Crear notificaciones.
 let notifications = document.getElementById("notifications");
 async function createNotification(message) {
     if (!notifications.innerHTML.includes(message)) {
@@ -103,88 +107,9 @@ async function createNotification(message) {
     }
 }
 
+// Eliminar la última notificación cada segundo.
 setInterval(function () {
     if (notifications.lastElementChild) {
         notifications.lastElementChild.remove();
     }
 }, 1000);
-
-/*
-function validateLoginForm() {
-    event.preventDefault();
-
-    fetch("../php/login.php", {
-        method: "POST",
-        body: new FormData(document.getElementById("login-form")),
-    })
-        .then((response) => response.text())
-        .then((data) => {
-            checkErrors(data);
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
-}
-*/
-
-let stream = null;
-let audio = null;
-let mixedStream = null;
-let chunks = [];
-let recorder = null;
-let startButton = null;
-let stopButton = null;
-let downloadButton = null;
-let recordedVideo = null;
-
-// video stuff.
-async function setupStream() {
-    try {
-        // bruh
-        let videoDefaultConstraintString = '{"frameRate": 60\n}';
-        videoConstraints = JSON.parse(videoDefaultConstraintString);
-
-        stream = await navigator.mediaDevices.getDisplayMedia({
-            video: videoConstraints,
-        });
-
-        audio = await navigator.mediaDevices.getDisplayMedia({
-            audio: {
-                echoCancellation: true,
-                noiseSuppression: true,
-                sampleRate: 44100,
-            },
-        });
-
-        setupVideoFeedback();
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-function setupVideoFeedback() {
-    if (stream) {
-        const video = document.querySelector(".video");
-        video.srcObject = stream;
-
-        video.srcObject.getVideoTracks()[0].applyConstraints();
-
-        video.play();
-    } else {
-        console.warn("NO STREAM.");
-    }
-}
-
-/*
-async function startRecording() {
-    await setupStream();
-
-    if (stream && audio) {
-        mixedStream = new MediaStream([...stream.getTracks(), ...audio.getTracks()]);
-        recorder = new MediaStream(mixedStream);
-        recorder.ondataavailable = handleDataAvailable;
-        recorder.onstop = handleStop;
-        recorder.start(200);
-    }
-}
-*/

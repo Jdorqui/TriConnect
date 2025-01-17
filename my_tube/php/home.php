@@ -23,18 +23,16 @@ session_start();
 
       <input tpye="text" class="search_bar" placeholder="Buscar vídeo" />
 
-      <?php
-      if (isset($_SESSION["USERNAME"]) && isset($_SESSION["PASSWORD"])) {
-        echo '<div class="user_logged_in_tab">
-                <img src="../img/profile_pic_example.jpg" id="logged_pic">
-              </div>';
-      } else {
-        echo '<div class="user_tab" onclick="displayLoginAPIWrapper()">
-                <img src="../img/profile_pic.jpg" id="login_pic">
-                <div>Iniciar sesión</div>
-              </div>';
-      }
-      ?>
+      <?php if (isset($_SESSION["USERNAME"]) && isset($_SESSION["PASSWORD"])): ?>
+        <div class="user_logged_in_tab" onclick="displayUserSettings()">
+          <img src="../img/profile_pic_example.jpg" id="logged_pic">
+        </div>
+      <?php else: ?>
+        <div class="user_tab" onclick="displayLoginAPIWrapper()">
+          <img src="../img/profile_pic.jpg" id="login_pic">
+          <div>Iniciar sesión</div>
+        </div>
+      <?php endif; ?>
     </div>
     <div class="nav_content_container">
       <div class="navbar">
