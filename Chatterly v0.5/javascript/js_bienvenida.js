@@ -132,12 +132,11 @@ $('#enviarMensaje').click(function()
 });
 
 // Cargar mensajes cada 2 segundos para mantener el chat actualizado
-setInterval(cargarMensajes, 2000);
+setInterval(cargarMensajes, 500);
 
 // Inicializar el chat cargando los mensajes al principio
 cargarMensajes();
 
-//
   // Seleccionamos el input y el botón
   const inputMensaje = document.getElementById('mensaje');
   const botonEnviar = document.getElementById('enviarMensaje');

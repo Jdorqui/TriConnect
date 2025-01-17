@@ -74,5 +74,5 @@ $stmt = $pdo->prepare("INSERT INTO amigos (id_user1, id_user2, estado) VALUES (?
 $stmt->execute([$emisor, $id_amigo]);
 
 echo "Solicitud de amistad enviada correctamente.";
-header('Location: bienvenida.php');
+header('Location: chatterly.php');
 ?>

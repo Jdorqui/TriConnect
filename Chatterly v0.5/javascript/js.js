@@ -86,7 +86,7 @@ function loginUsuario()
         .then(data => {
             if (data.status === "success") 
             {
-                window.location.href = "../php/bienvenida.php";
+                window.location.href = "../php/chatterly.php";
             } 
             else 
             {
