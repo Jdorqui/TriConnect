@@ -6,7 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $USERNAME = trim($_POST['USERNAME']);
     $PASSWORD = password_hash(trim($_POST['PASSWORD']), PASSWORD_DEFAULT);
     $EMAIL = trim($_POST['EMAIL']);
-    $CREATION_DATE = trim($_POST['CREATION_DATE']);
 }
 
 $SERVER_NAME = "localhost";
@@ -25,7 +24,7 @@ try {
 $CHECK_EXISTING_USER_QUERY = $CONN->query("SELECT '1' FROM USERS WHERE USERNAME = '$USERNAME'");
 
 if ($CHECK_EXISTING_USER_QUERY->num_rows == 0) {
-    $SQL = "INSERT INTO USERS VALUES ('$USERNAME', '$PASSWORD', STR_TO_DATE('$CREATION_DATE', '%Y-%m-%d'));";
+    $SQL = "INSERT INTO USERS VALUES ('$USERNAME', '$PASSWORD', '$EMAIL', NOW());";
 
     $CONN->query($SQL);
 } else {

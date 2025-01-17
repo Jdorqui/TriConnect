@@ -34,6 +34,21 @@ body {
     height: 10vh;
 }
 
+.navbar {
+    width: 10%;
+    flex-direction: column;
+}
+
+.navbar>div {
+    width: 100%;
+    font-size: 30px;
+
+    border-top: 1px white solid;
+    border-bottom: 1px white solid;
+
+    margin-bottom: 10px;
+}
+
 #mytube_logo {
     width: 2vw;
     margin-right: 0.5vw;
@@ -62,10 +77,6 @@ body {
     height: 90vh;
 }
 
-.navbar {
-    width: 10%;
-}
-
 .user_tab {
     display: flex;
     font-size: 2vh;
@@ -84,8 +95,36 @@ body {
     cursor: pointer;
 }
 
+.user_logged_in_tab {
+    display: flex;
+    font-size: 2vh;
+
+    align-items: center;
+
+    border-radius: 20px;
+
+    margin-left: auto;
+
+    height: 50%;
+
+    padding: 5px;
+
+    cursor: pointer;
+}
+
 #login_pic {
-    width: 35px;
+    width: 45px;
+    height: 45px;
+
+    border-radius: 50px;
+
+    margin: 5px 5px;
+}
+
+#logged_pic {
+    width: 60px;
+    height: 60px;
+
     border-radius: 50px;
 
     margin: 5px 5px;
@@ -94,4 +133,3 @@ body {
 .mytube_logo_div {
     cursor: pointer;
 }
-

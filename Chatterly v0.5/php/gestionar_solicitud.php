@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
     }
 
     // Redirige después de procesar la acción
-    header('Location: bienvenida.php');
+    header('Location: chatterly.php');
     exit();
 }
 ?>

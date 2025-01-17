@@ -1,3 +1,11 @@
+body {
+    color: black
+}
+
+body div {
+    color: white;
+}
+
 .content {
     display: flex;
     width: 90%;
@@ -33,7 +41,8 @@
 }
 
 .profile_pic {
-    width: 30px;
+    width: 50px;
+    height: 50px;
     border-radius: 50px;
 }
 
@@ -47,7 +56,7 @@
 }
 
 /* Iniciar sesión. */
-.login_div {
+#mytube_login_API_wrapper {
     position: absolute;
     left: 0;
     right: 0;
@@ -60,14 +69,18 @@
     border-radius: 20px;
 
     width: 60%;
-    height: 50%;
+    height: 60%;
 
     display: flex;
 
     /* width: fit-content; */
 }
 
-#login_section_1 {
+#mytube_login_API_wrapper > div {
+    display: flex;
+}
+
+.section_1 {
     display: flex;
 
     width: 40%;
@@ -84,14 +97,14 @@
     height: 45%;
 }
 
-#login_section_1 div {
+.section_1 div {
     position: absolute;
     bottom: 10%;
 
     font-size: 30px;
 }
 
-#login_section_2 {
+.section_2 {
     display: flex;
 
     width: 60%;
@@ -101,7 +114,7 @@
     align-items: center;
 }
 
-#register-form {
+form {
     width: 80%;
 
     display: flex;
@@ -110,11 +123,11 @@
     font-size: 30px;
 }
 
-#user_div {
-    width: 100%;
+form div {
+    margin-bottom: 10px;
 }
 
-#register-form input {
+form input {
     width: 100%;
 
     font-size: 30px;
@@ -148,7 +161,7 @@
     text-decoration-line: underline;
 }
 
-#register-form button {
+form button {
     font-size: 20px;
     background-color: transparent;
     color: white;
@@ -165,12 +178,52 @@
     transition: all 0.2s;
 }
 
-#next_button:hover {
+#login_button:hover {
     background-color: red;
 }
 
 #create_account_button {
     border: 0
+}
+
+#notifications {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    margin-right: 1%;
+    margin-bottom: 1%;
+
+    /*background-color: rgb(166, 70, 70);
+    border: 1px solid white;
+    border-radius: 20px;*/
+    color: red;
+
+    width: 15%;
+    height: 80%;
+
+    font-size: 25px;
+
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.notification {
+    background-color: rgb(12, 12, 12);
+    border: 1px solid white;
+    border-radius: 20px;
+
+    width: 100%;
+    height: 15%;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    font-size: 25px;
+    margin-top: 5px;
+
+    /* width: fit-content; */
 }
 
 
