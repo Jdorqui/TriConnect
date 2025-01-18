@@ -129,7 +129,7 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div style="background-color: #313338; display: flex; padding: 10px; align-items: center; color: white; gap: 10px;"> 
                             <img src="../assets/imgs/friends_logo.png" alt="friends" style="padding: 10px; width: 24px; height: 24px;">
                             <span style="font-size: 16px;">Amigos</span>
-                            <div style="width: 2px; background-color:rgb(57, 62, 66); height: 100%;"></div>
+                            <div id="divisor" style="width: 2px; background-color:rgb(57, 62, 66); height: 100%;"></div>
                             <button class="friend-tab-button" style="width: 60px;">En linea</button>
                             <button class="friend-tab-button" style="width: 50px;">Todos</button>
                             <button class="friend-tab-button" onclick="openpendingmenu()">Pendiente</button>
@@ -180,9 +180,14 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div style="padding: 10px; display: flex; position: relative; overflow: hidden;">
                             <input type="text" id="mensaje" style="border-color:#383a40; background-color: #383a40; width: 100%; box-sizing: border-box; height: 45px; padding-left: 10px; position: relative;" placeholder="Escribe un mensaje..." />
                             <img src="../assets/imgs/upload.png" style="width: 35px; position: absolute; right: 5px; top: 15px; height: 35px; cursor: pointer; padding: 0 15px; border: none;"></img>
-                            <img src="../assets/imgs/emojis.png" style="width: 40px; position: absolute; right: 43px; top: 12px; height: 40px; cursor: pointer; padding: 0 15px; border: none;"></img>
+                            <img src="../assets/imgs/emojis.png" onclick="showEmojis()" style="width: 40px; position: absolute; right: 43px; top: 12px; height: 40px; cursor: pointer; padding: 0 15px; border: none;"></img>
                             <img src="../assets/imgs/gif.png" style="width: 37px; position: absolute; right: 85px; top: 17px; height: 32px; cursor: pointer; padding: 0 15px; border: none;"></img>
                             <button id="enviarMensaje" style="width: 100px; position: absolute; right: 800%; top: 15px; height: 20px; background-color: #5865F2; cursor: pointer; padding: 0 15px; border: none;">Enviar</button>
+                        </div>
+                        <div style="position: relative;">
+                            <div id="emojisDiv" style="display: none; position: absolute; right: 10px; top: 60px; width: 350px; max-height: 400px; overflow-y: auto; background: #2b2d31; border-color: #383a3f; border-style: solid; border-radius: 10px; padding: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 1000;">
+                                <div id="emojiList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -3,6 +3,8 @@ const optionsPanel = document.getElementById("options");
 const initialpanel = document.getElementById("initialpanel");
 const chat = document.getElementById("chatcontainer");
 const pendingMenu = document.getElementById('pendingmenu');
+const inputMensaje = document.getElementById('mensaje');
+const botonEnviar = document.getElementById('enviarMensaje');
 let destinatario = null;
 
 function showoptionspanel()
@@ -86,26 +88,24 @@ function actualizarResultado(mensaje)
 }
 
 //chat
-function openchat(destinatarioID) // Función para abrir el chat y configurar el destinatario
+function openchat(destinatarioID) //abrir chat
 {
-    destinatario = destinatarioID;  // Establecemos el destinatario dinámicamente
+    destinatario = destinatarioID;  //seteamos el destinatario
     chat.style.display = "block";
     pendingMenu.hidden = true;
     document.getElementById("addfriendmenu").style.display = "none";
     initialpanel.style.display = "none";
-    
-    //console.log("Destinatario: ", destinatario);
-    cargarMensajes();  // Cargar los mensajes de inmediato cuando se abre el chat
+    cargarMensajes();  //carga los mensajes
 }
         
 function cargarMensajes() 
 {
-    if (destinatario === null) return; // Verifica que el destinatario esté definido
+    if (destinatario === null) return; //verifica que el destinatario este definido
     $.post('chat.php', { destinatario: destinatario }, function(data) 
     {
         try 
         {
-            const mensajes = JSON.parse(data); // Intentamos parsear la respuesta JSON
+            const mensajes = JSON.parse(data); //parsear la respuesta del servidor
             $('#chat-messages').empty();
             mensajes.forEach(function(mensaje) {
                 $('#chat-messages').prepend('<div><strong>' + mensaje.alias + ':</strong> ' + mensaje.contenido + '</div>');
@@ -114,7 +114,7 @@ function cargarMensajes()
         catch (e) 
         {
             console.error("Error al parsear JSON:", e);
-            console.log("Respuesta del servidor:", data); // Muestra la respuesta del servidor para depurar
+            console.log("Respuesta del servidor:", data);
         }
     });
 }
@@ -124,27 +124,120 @@ $('#enviarMensaje').click(function()
     const mensaje = $('#mensaje').val();
     if (mensaje.trim() !== '') 
     {
-        $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() {
-            $('#mensaje').val('');  // Limpiar el campo de entrada
-            cargarMensajes(); // Cargar los mensajes actualizados
+        $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() 
+        {
+            $('#mensaje').val(''); //limpiar el input
+            cargarMensajes();
         });
     }
 });
 
-// Cargar mensajes cada 2 segundos para mantener el chat actualizado
-setInterval(cargarMensajes, 500);
+setInterval(cargarMensajes, 500); //cargar mensajes cada 500ms
 
-// Inicializar el chat cargando los mensajes al principio
 cargarMensajes();
 
-  // Seleccionamos el input y el botón
-  const inputMensaje = document.getElementById('mensaje');
-  const botonEnviar = document.getElementById('enviarMensaje');
+//chat enter mandar mensaje
+inputMensaje.addEventListener('keydown', function(event) //evento al presionar enter
+{
+  if (event.key === 'Enter') 
+  {
+    botonEnviar.click();
+  }
+});
 
-  // Añadimos un event listener al input para escuchar la tecla 'Enter'
-  inputMensaje.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      // Simulamos un clic en el botón cuando se presiona 'Enter'
-      botonEnviar.click();
-    }
-  });
+//emojis
+// Emojis organizados por categorías
+const emojis = {
+    "😄 Gente": [
+        "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "🥲", "😊", "😇", "🙂", "🙃", "😉", "😌",
+        "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😜", "😝", "🤪", "🤨", "🧐", "🤓", "😎",
+        "🥸", "🤩", "🥳", "😏", "😒", "🙄", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫",
+        "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰",
+        "😥", "😓", "🤗", "🤔", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😯", "😦", "😧",
+        "😮", "😲", "🥱", "😴", "🤤", "😪", "😵", "🤐", "🤑", "🤠", "😷", "🤒", "🤕", "🤢", "🤮",
+        "🤧", "😵‍💫", "😎", "🥳"
+    ],
+    "🐾 Animales y naturaleza": [
+        "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷", "🐽", "🐸",
+        "🐵", "🙈", "🙉", "🙊", "🐒", "🐔", "🐧", "🐦", "🐤", "🐣", "🐥", "🦆", "🦅", "🦉", "🦇",
+        "🐺", "🐗", "🐴", "🦄", "🐝", "🪲", "🐛", "🦋", "🐌", "🐞", "🐜", "🪳", "🦂", "🦟", "🦗",
+        "🐢", "🐍", "🦎", "🦖", "🦕", "🐙", "🦑", "🦀", "🦞", "🦐", "🦪", "🐡", "🐠", "🐟", "🐬",
+        "🐳", "🐋", "🦈", "🐊", "🐅", "🐆", "🦓", "🦍", "🦧", "🦣", "🐘", "🦛", "🦏", "🐪", "🐫",
+        "🦙", "🐃", "🐂", "🐄", "🐎", "🐖", "🐏", "🐑", "🦌", "🦃", "🐓", "🦤", "🦚", "🦜", "🦢",
+        "🦩", "🦔", "🦦", "🦥", "🐿️", "🦨", "🦡", "🦃"
+    ],
+    "🍕 Comida y bebida": [
+        "🍇", "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏", "🍐", "🍑", "🍒", "🍓",
+        "🫐", "🥝", "🍅", "🫒", "🥥", "🥑", "🍆", "🥔", "🥕", "🌽", "🌶️", "🫑", "🥒", "🥦", "🧄",
+        "🧅", "🍄", "🥜", "🌰", "🍞", "🥐", "🥖", "🫓", "🥨", "🥯", "🥞", "🧇", "🧀", "🍖", "🍗",
+        "🥩", "🥓", "🍔", "🍟", "🍕", "🌭", "🥪", "🌮", "🌯", "🫔", "🥙", "🧆", "🥗", "🥘", "🫕",
+        "🍝", "🍜", "🍲", "🍛", "🍣", "🍤", "🍚", "🍙", "🍘", "🍥", "🥠", "🥮", "🍢", "🍡", "🍧",
+        "🍨", "🍦", "🥧", "🧁", "🍰", "🎂", "🍮", "🍭", "🍬", "🍫", "🍿", "🧂", "🥤", "🧋", "🧃",
+        "🍵", "🍶", "🍾", "🍷", "🍸", "🍹", "🍺", "🍻", "🥂", "🥃"
+    ],
+    "⚙️ Herramientas y objetos": [
+        "🪓", "🔪", "🗡️", "⚔️", "🛡️", "🔧", "🔨", "⛏️", "⚒️", "🛠️", "🪛", "🔩", "⚙️", "🗜️", "🧱",
+        "🪜", "🧰", "🪠", "🔗", "⛓️", "🪝", "🧲", "🪤", "🪜", "🪦", "🛢️", "🛡️", "🔒", "🔓", "🔑",
+        "🗝️", "🧨", "🪃", "📿", "💎", "🪙"
+    ],
+    "🚗 Transporte y vehículos": [
+        "🚗", "🚕", "🚙", "🚌", "🚎", "🏎️", "🚓", "🚑", "🚒", "🚐", "🚚", "🚛", "🚜", "🛴", "🚲",
+        "🛵", "🏍️", "🛺", "🚁", "✈️", "🛫", "🛬", "🛸", "🚢", "🛳️", "⛴️", "🛥️", "🚤", "🛶", "⛵"
+    ],
+    "🌍 Lugares y naturaleza": [
+        "🏔️", "⛰️", "🗻", "🌋", "🏕️", "🏖️", "🏝️", "🏜️", "🏞️", "🏟️", "🏛️", "🏗️", "🗽", "🗿",
+        "🗼", "🏰", "🏯", "🏚️", "🏠", "🏡", "🏢", "🏣", "🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫",
+        "🏬", "🏭", "⛪", "🕌", "🛕", "🕍", "⛩️", "🕋", "⛲"
+    ],
+    "⚽ Deportes": [
+        "⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🏉", "🥏", "🎱", "🏓", "🏸", "🥋", "🥊", "🎯", "🤿",
+        "🏹", "⛷️", "🏂", "🏋️", "🏌️", "🏄", "🏊", "🚴", "🚵"
+    ]
+};
+
+
+
+
+const emojiList = document.getElementById('emojiList');
+const mensajeInput = document.getElementById('mensaje');
+
+// Recorrer categorías y emojis
+for (let category in emojis) 
+{
+    // Crear un título de categoría
+    const categoryTitle = document.createElement('div');
+    categoryTitle.textContent = category;
+    categoryTitle.style = "font-size: 14px; color: #fff; padding-bottom: 10px; padding-top: 10px; font-weight: bold;";
+    emojiList.appendChild(categoryTitle);
+
+    // Crear un contenedor para los emojis de esa categoría
+    const emojiContainer = document.createElement('div');
+    emojiContainer.style = "display: flex; flex-wrap: wrap; gap: 10px;";  // Flexbox para los emojis
+
+    // Crear los emojis de esa categoría
+    emojis[category].forEach((emoji) => {
+        const emojiItem = document.createElement('div');
+        emojiItem.textContent = emoji;
+        emojiItem.style = `font-size: 20px; cursor: pointer; gap: 5px; text-align: center;`;
+        
+        // Agregar evento para insertar emoji en el input
+        emojiItem.addEventListener('click', () => {
+            mensajeInput.value += emoji; // Agrega el emoji al input
+        });
+
+        emojiContainer.appendChild(emojiItem);
+    });
+
+    emojiList.appendChild(emojiContainer);
+
+    // Crear un divisor entre las categorías
+    const divisor = document.createElement('div');
+    divisor.style = "height: 1px; background-color: #444; margin: 15px 0;";
+    emojiList.appendChild(divisor);
+}
+
+function showEmojis()
+{
+    const emojisDiv = document.getElementById('emojisDiv');
+    emojisDiv.style.display = emojisDiv.style.display === 'none' ? 'block' : 'none';
+}
