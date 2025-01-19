@@ -109,6 +109,7 @@ async function createNotification(message) {
     }
 }
 
+// TODO
 // Eliminar la última notificación cada segundo.
 setInterval(function () {
     if (notifications.lastElementChild) {

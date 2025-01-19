@@ -1,5 +1,6 @@
 <?php
-// error_reporting(E_ERROR | E_PARSE);
+require 'db_connection.php';
+
 ini_set('display_errors', 1);
 session_start();
 
@@ -8,23 +9,13 @@ $USERNAME = $_SESSION['USERNAME'];
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $CHANNEL_ID = $_GET['channel_id'];
 
-    $SERVER_NAME = "localhost";
-    $SERVER_USERNAME = "root";
-    $SERVER_PASSWORD = "root";
-    $DATABASE_NAME = "MYTUBE";
-
-    try {
-        $CONN = new mysqli($SERVER_NAME, $SERVER_USERNAME, $SERVER_PASSWORD, $DATABASE_NAME);
-    } catch (Exception $e) {
-        header('Location: home.php');
-    }
-
     $CHECK_EXISTING_USER_QUERY = $CONN->query("SELECT '1' FROM USERS WHERE USERNAME = '$CHANNEL_ID'");
     if ($CHECK_EXISTING_USER_QUERY->num_rows == 0) {
         header('Location: home.php');
     }
 
     $CHECK_USER_SUBSCRIBED_QUERY = $CONN->query("SELECT '1' FROM SUBS WHERE USERNAME = '$USERNAME' AND SUBSCRIBED_TO = '$CHANNEL_ID'");
+    $CHECK_CHANNEL_SUBSCRIBED_TO_USER_QUERY = $CONN->query("SELECT '1' FROM SUBS WHERE USERNAME = '$CHANNEL_ID' AND SUBSCRIBED_TO = '$USERNAME'");
 }
 ?>
 
@@ -86,18 +77,21 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 <div style="width: 100%; height: fit-content; border-bottom: 2px white solid;">
                     <div id="user_channel">
                         <img src="../img/profile_pic_example.jpg" id="user_channel_profile_pic">
-                        <div style="flex-grow: 1; display:flex; flex-direction: column; padding: 10px;">
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; padding: 10px;">
                             <?php
                             echo $CHANNEL_ID;
                             ?>
-                            <div style="display:flex; flex-grow:1">
-                                <?php if ($CHECK_USER_SUBSCRIBED_QUERY->num_rows == 0): ?>
-                                    <div class="subscribe_button" onclick="subscribe(username, channelID)"
-                                        id="subscription">Suscribirse</div>
-                                <?php else: ?>
+                            <div style="display: flex; flex-grow: 1">
+                                <?php if ($CHECK_CHANNEL_SUBSCRIBED_TO_USER_QUERY->num_rows > 0 && $CHECK_USER_SUBSCRIBED_QUERY->num_rows > 0): ?>
+                                    <div class="subscribe_button" onclick="unsubscribe(username, channelID)"
+                                        id="subscription" style="background-color: blue">Amigos</div>
+                                    <div id="chat_button">Enviar mensaje</div>
+                                <?php elseif ($CHECK_USER_SUBSCRIBED_QUERY->num_rows > 0): ?>
                                     <div class="subscribe_button" onclick="unsubscribe(username, channelID)"
                                         id="subscription">Suscrito</div>
-                                    <div id="chat_button">Enviar mensaje</div>
+                                <?php else: ?>
+                                    <div class="subscribe_button" onclick="subscribe(username, channelID)"
+                                        id="subscription">Suscribirse</div>
                                 <?php endif; ?>
                             </div>
 

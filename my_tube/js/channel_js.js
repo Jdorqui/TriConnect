@@ -7,7 +7,11 @@ function subscribe(username, channelID) {
         .then((response) => response.text())
         .then((data) => {
             console.log(data);
-            subscribe_button.parentElement.innerHTML = '<div class="subscribe_button" onclick="unsubscribe(username, channelID)" id="subscription">Suscrito</div><div id="chat_button">Enviar mensaje</div>';
+            if (data.match('0')) {
+                subscribe_button.parentElement.innerHTML = '<div class="subscribe_button" onclick="unsubscribe(username, channelID)" id="subscription">Suscrito</div>';
+            } else if (data.match('1')) {
+                subscribe_button.parentElement.innerHTML = '<div class="subscribe_button" onclick="unsubscribe(username, channelID)" id="subscription" style="background-color: blue">Amigos</div><div id="chat_button">Enviar mensaje</div>';
+            }
         })
         .catch((error) => {
             console.error("Error:", error);
