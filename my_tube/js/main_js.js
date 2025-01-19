@@ -77,9 +77,9 @@ function validateRegisterForm() {
 
 // Comprobar si existen errores en el inicio de sesión.
 function checkLoginErrors(data) {
-    console.log(data);
-
-    if (data.includes("ERROR-001")) {
+    if (data.includes("ERROR-000")) {
+        createNotification("Conexión fallida con la base datos. Inténtelo más tarde.");
+    } else if (data.includes("ERROR-001")) {
         createNotification("El usuario no existe.");
     } else if (data.includes("ERROR-002")) {
         createNotification("La contraseña no es correcta.");
@@ -92,7 +92,9 @@ function checkLoginErrors(data) {
 
 // Comprobar si existen errores en el registro.
 function checkRegisterErrors(data) {
-    if (data.includes("ERROR-001")) {
+    if (data.includes("ERROR-000")) {
+        createNotification("Conexión fallida con la base datos. Inténtelo más tarde.");
+    } else if (data.includes("ERROR-001")) {
         createNotification("El usuario ya existe.");
     } else if (data.includes("SUCCESS")) {
         location.reload();
@@ -107,6 +109,7 @@ async function createNotification(message) {
     }
 }
 
+// TODO
 // Eliminar la última notificación cada segundo.
 setInterval(function () {
     if (notifications.lastElementChild) {

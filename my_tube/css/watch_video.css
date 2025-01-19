@@ -1,15 +1,3 @@
-.content {
-    display: flex;
-
-    width: 90%;
-
-    padding: 30px;
-
-    overflow: scroll;
-
-    align-items: stretch;
-}
-
 .vid_wrapper {
     width: 80%;
 

@@ -59,6 +59,8 @@ session_start();
       </div>
       <div class="content">
         <button onclick="location.href='logout.php'">CERRAR SESIÓN</button>
+
+        <button onclick="location.href='channel.php?channel_id=z'">Z</button>
         <!--
         <div class="recoms">
           <div class="recom">
