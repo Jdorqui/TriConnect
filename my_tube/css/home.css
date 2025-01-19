@@ -6,14 +6,6 @@ body div {
     color: white;
 }
 
-.content {
-    display: flex;
-    width: 90%;
-    padding: 30px;
-    overflow: scroll;
-    align-items: stretch;
-}
-
 .recoms {
     width: 100%;
     margin-left: 1%;

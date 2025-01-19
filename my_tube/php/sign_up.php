@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $SERVER_NAME = "localhost";
 $SERVER_USERNAME = "root";
-$SERVER_PASSWORD = "";
+$SERVER_PASSWORD = "root";
 $DATABASE_NAME = "MYTUBE";
 
 try {
@@ -27,6 +27,11 @@ if ($CHECK_EXISTING_USER_QUERY->num_rows == 0) {
     $SQL = "INSERT INTO USERS VALUES ('$USERNAME', '$PASSWORD', '$EMAIL', NOW());";
 
     $CONN->query($SQL);
+
+    session_start();
+
+    $_SESSION["USERNAME"] = $USERNAME;
+    $_SESSION["PASSWORD"] = $PASSWORD;
 } else {
     echo "ERROR-001: El usuario '$USERNAME' ya existe.";
 

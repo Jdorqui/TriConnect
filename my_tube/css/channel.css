@@ -1,0 +1,41 @@
+#user_channel {
+    width: 100%;
+    height: fit-content;
+
+    display: flex;
+}
+
+#user_channel_profile_pic {
+    width: 200px;
+    height: 200px;
+
+    border-radius: 100px;
+
+    margin: 5px 5px;
+}
+
+#channel_navbar {
+    font-size: 25px;
+}
+
+#channel_navbar>span {
+    margin-right: 15px;
+}
+
+.subscribe_button,
+#chat_button {
+    border: 2px white solid;
+    border-radius: 20px;
+    padding: 10px;
+
+    font-size: 25px;
+
+    margin-top: auto;
+    margin-right: 10px;
+
+    cursor: pointer;
+}
+
+#subscription {
+    background-color: red;
+}

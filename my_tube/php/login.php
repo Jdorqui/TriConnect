@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $SERVER_NAME = "localhost";
 $SERVER_USERNAME = "root";
-$SERVER_PASSWORD = "";
+$SERVER_PASSWORD = "root";
 $DATABASE_NAME = "MYTUBE";
 
 try {
@@ -21,7 +21,6 @@ try {
 }
 
 $CHECK_EXISTING_USER_QUERY = $CONN->query("SELECT '1' FROM USERS WHERE USERNAME = '$USERNAME'");
-
 if ($CHECK_EXISTING_USER_QUERY->num_rows == 0) {
     echo "ERROR-001: El usuario '$USERNAME' no existe.";
 
