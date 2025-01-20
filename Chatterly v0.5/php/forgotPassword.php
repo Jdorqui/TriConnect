@@ -1,13 +1,11 @@
 <?php
-// Configuración de la base de datos
-$host = 'localhost'; // Cambiar si es necesario
+$host = 'localhost'; 
 $db = 'chatterly';
-$user = 'root'; // Cambiar por tu usuario
-$pass = ''; // Cambiar por tu contraseña
+$user = 'root'; 
+$pass = ''; 
 $charset = 'utf8mb4';
 
-// Configurar la conexión a la base de datos
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset"; // Configurar la conexión a la base de datos
 $options = [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -23,7 +21,6 @@ catch (\PDOException $e)
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
-// Si se envió el correo
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) 
 {
     $email = $_POST['email'];
@@ -31,25 +28,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email']))
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
-    // Si el correo está registrado
-    if ($user) 
+    if ($user)  // Si el correo está registrado
     {
         echo "<script>document.getElementById('new-password-fields').style.display = 'block';</script>";
-
-        // Si se envió una nueva contraseña
-        if (isset($_POST['new_password']) && isset($_POST['confirm_password'])) 
+        
+        if (isset($_POST['new_password']) && isset($_POST['confirm_password']))  // Si se envió una nueva contraseña
         {
             $new_password = $_POST['new_password'];
             $confirm_password = $_POST['confirm_password'];
 
-            // Verificar si las contraseñas coinciden
-            if ($new_password === $confirm_password) 
+            
+            if ($new_password === $confirm_password) // Verificar si las contraseñas coinciden
             {
-                // Encriptar la nueva contraseña
-                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT); // Encriptar la nueva contraseña
 
-                // Actualizar la contraseña en la base de datos
-                $update_stmt = $pdo->prepare("UPDATE usuarios SET password = ? WHERE email = ?");
+                $update_stmt = $pdo->prepare("UPDATE usuarios SET password = ? WHERE email = ?"); // Actualizar la contraseña en la base de datos
                 $update_stmt->execute([$hashed_password, $email]);
 
                 echo "<script>document.getElementById('mensaje').innerText = 'Contraseña restablecida exitosamente';</script>";
@@ -79,26 +72,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email']))
         <div id="login" class="active">
             <form action="forgotPassword.php" method="POST">
                 <div style="margin: 0px;">
-                    <div align-items="center class="input-group"">
-                        <div>
-                            <h1 id="ms1">Recuperar cuenta</h1>
-                        </div>
-                        <div>
-                            <label for="email">Introduce un correo asociado a la cuenta *</label>
-                            <input type="email" name="email" id="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">
-                        </div>
-                        <div>
-                            <label for="new_password">Nueva contraseña *</label>
-                            <input type="password" name="new_password" id="new_password" required>
-                        </div>
-                        <div>
-                            <label for="confirm_password">Confirmar nueva contraseña *</label>
-                            <input type="password" name="confirm_password" id="confirm_password" required>
-                        </div>
-                        <div style="display: flex; gap: 8px; justify-content:">
-                            <button type="submit" id="btn-submit-login">Restablecer Contraseña</button>
-                            <button type="button" onclick="window.location.href='../html/index.html'">Volver</button>
-                        </div>
+                    <div>
+                        <h1 id="ms1">Recuperar cuenta</h1>
+                    </div>
+                    <div class="input-group" style="width: 100%;">
+                        <label for="email">Introduce un correo asociado a la cuenta *</label>
+                        <input type="email" name="email" id="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">
+                    </div>
+                    <div class="input-group" style="width: 100%;">
+                        <label for="new_password">Nueva contraseña *</label>
+                        <input type="password" name="new_password" id="new_password" required>
+                    </div>
+                    <div class="input-group" style="width: 100%;">
+                        <label for="confirm_password">Confirmar nueva contraseña *</label>
+                        <input type="password" name="confirm_password" id="confirm_password" required>
+                    </div>
+                    <div style="display: flex; gap: 8px; justify-content:">
+                        <button type="submit" id="btn-submit-login">Restablecer Contraseña</button>
+                        <button type="button" onclick="window.location.href='../html/index.html'">Volver</button>
                     </div>
                 </div>
             </form>

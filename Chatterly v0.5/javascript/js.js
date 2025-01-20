@@ -55,7 +55,8 @@ function registrarUsuario()
         else 
         {
             // Muestra el mensaje de error si hubo un problema
-            errorMessage.style.display = "block";  // Mostramos el mensaje de error
+            errorMessage.style.display = "block";
+            errorMessage.style.color = "#f7767a";  // Mostramos el mensaje de error
             errorMessage.textContent = data.message;
         }
     })
@@ -96,8 +97,8 @@ function loginUsuario()
                 document.getElementById("ms3").style.color = "#f7767a";
                 document.getElementById("ms4").style.color = "#f7767a";
 
-                document.getElementById("ms3").textContent += ` - ${data.message}`;
-                document.getElementById("ms4").textContent += ` - ${data.message}`;
+                document.getElementById("ms3").textContent = document.getElementById("ms3").textContent + ` - ${data.message}`;
+                document.getElementById("ms4").textContent = document.getElementById("ms4").textContent + ` - ${data.message}`;
             }
         })
         .catch(error => {

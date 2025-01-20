@@ -95,7 +95,7 @@ button.active
 
 #login, #form-container
 {
-    background-color: #313338;
+    background-color: #34343c;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
@@ -339,4 +339,35 @@ button.active
 .add-friend-button:hover 
 {
     background-color: #43c46b;
+}
+
+
+#chat-messages 
+{
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+    height: 100%;
+    max-height: calc(100vh - 100px);
+    scrollbar-width: thin;
+    scrollbar-color: #1a1b1e #2b2d31; 
+}
+
+#chat-messages::-webkit-scrollbar
+{
+    width: 15px; 
+}
+
+#chat-messages::-webkit-scrollbar-track
+{
+    background-color: #2b2d31; 
+    border-radius: 15px; 
+}
+
+#chat-messages::-webkit-scrollbar-thumb
+{
+    background-color: #1a1b1e; 
+    border-radius: 15px; 
 }

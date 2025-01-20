@@ -5,6 +5,8 @@ const chat = document.getElementById("chatcontainer");
 const pendingMenu = document.getElementById('pendingmenu');
 const inputMensaje = document.getElementById('mensaje');
 const botonEnviar = document.getElementById('enviarMensaje');
+const emojiList = document.getElementById('emojiList');
+const mensajeInput = document.getElementById('mensaje');
 let destinatario = null;
 
 function showoptionspanel()
@@ -108,7 +110,7 @@ function cargarMensajes()
             const mensajes = JSON.parse(data); //parsear la respuesta del servidor
             $('#chat-messages').empty();
             mensajes.forEach(function(mensaje) {
-                $('#chat-messages').prepend('<div><strong>' + mensaje.alias + ':</strong> ' + mensaje.contenido + '</div>');
+                $('#chat-messages').prepend('<div style="padding-left: 10px;"><strong>' + mensaje.alias + ':</strong> ' + mensaje.contenido + '</div>');
             });
         } 
         catch (e) 
@@ -146,7 +148,6 @@ inputMensaje.addEventListener('keydown', function(event) //evento al presionar e
 });
 
 //emojis
-// Emojis organizados por categorías
 const emojis = {
     "😄 Gente": [
         "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "🥲", "😊", "😇", "🙂", "🙃", "😉", "😌",
@@ -166,14 +167,14 @@ const emojis = {
         "🦙", "🐃", "🐂", "🐄", "🐎", "🐖", "🐏", "🐑", "🦌", "🦃", "🐓", "🦤", "🦚", "🦜", "🦢",
         "🦩", "🦔", "🦦", "🦥", "🐿️", "🦨", "🦡", "🦃"
     ],
-    "🍕 Comida y bebida": [
+    "🍕 Comida": [
         "🍇", "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏", "🍐", "🍑", "🍒", "🍓",
         "🫐", "🥝", "🍅", "🫒", "🥥", "🥑", "🍆", "🥔", "🥕", "🌽", "🌶️", "🫑", "🥒", "🥦", "🧄",
         "🧅", "🍄", "🥜", "🌰", "🍞", "🥐", "🥖", "🫓", "🥨", "🥯", "🥞", "🧇", "🧀", "🍖", "🍗",
         "🥩", "🥓", "🍔", "🍟", "🍕", "🌭", "🥪", "🌮", "🌯", "🫔", "🥙", "🧆", "🥗", "🥘", "🫕",
         "🍝", "🍜", "🍲", "🍛", "🍣", "🍤", "🍚", "🍙", "🍘", "🍥", "🥠", "🥮", "🍢", "🍡", "🍧",
         "🍨", "🍦", "🥧", "🧁", "🍰", "🎂", "🍮", "🍭", "🍬", "🍫", "🍿", "🧂", "🥤", "🧋", "🧃",
-        "🍵", "🍶", "🍾", "🍷", "🍸", "🍹", "🍺", "🍻", "🥂", "🥃"
+        "🍵", "🍶", "🍾", "🍷", "🍸", "🍹", "🍺", "🍻", "🥂", "🥃", "🫖", "🫛", "🫚"
     ],
     "⚙️ Herramientas y objetos": [
         "🪓", "🔪", "🗡️", "⚔️", "🛡️", "🔧", "🔨", "⛏️", "⚒️", "🛠️", "🪛", "🔩", "⚙️", "🗜️", "🧱",
@@ -195,33 +196,24 @@ const emojis = {
     ]
 };
 
-
-
-
-const emojiList = document.getElementById('emojiList');
-const mensajeInput = document.getElementById('mensaje');
-
-// Recorrer categorías y emojis
-for (let category in emojis) 
+for (let category in emojis) // Recorrer categorías y emojis
 {
-    // Crear un título de categoría
-    const categoryTitle = document.createElement('div');
+    
+    const categoryTitle = document.createElement('div'); // Crear un título de categoría
     categoryTitle.textContent = category;
     categoryTitle.style = "font-size: 14px; color: #fff; padding-bottom: 10px; padding-top: 10px; font-weight: bold;";
     emojiList.appendChild(categoryTitle);
 
-    // Crear un contenedor para los emojis de esa categoría
-    const emojiContainer = document.createElement('div');
+   
+    const emojiContainer = document.createElement('div');  // Crear un contenedor para los emojis de esa categoría
     emojiContainer.style = "display: flex; flex-wrap: wrap; gap: 10px;";  // Flexbox para los emojis
 
-    // Crear los emojis de esa categoría
-    emojis[category].forEach((emoji) => {
+    emojis[category].forEach((emoji) => { // Crear los emojis de esa categoría
         const emojiItem = document.createElement('div');
         emojiItem.textContent = emoji;
         emojiItem.style = `font-size: 20px; cursor: pointer; gap: 5px; text-align: center;`;
         
-        // Agregar evento para insertar emoji en el input
-        emojiItem.addEventListener('click', () => {
+        emojiItem.addEventListener('click', () => { // Agregar evento para insertar emoji en el input
             mensajeInput.value += emoji; // Agrega el emoji al input
         });
 
@@ -229,9 +221,8 @@ for (let category in emojis)
     });
 
     emojiList.appendChild(emojiContainer);
-
-    // Crear un divisor entre las categorías
-    const divisor = document.createElement('div');
+    
+    const divisor = document.createElement('div'); // Crear un divisor entre las categorías
     divisor.style = "height: 1px; background-color: #444; margin: 15px 0;";
     emojiList.appendChild(divisor);
 }
