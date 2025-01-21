@@ -232,3 +232,53 @@ function showEmojis()
     const emojisDiv = document.getElementById('emojisDiv');
     emojisDiv.style.display = emojisDiv.style.display === 'none' ? 'block' : 'none';
 }
+
+//upload image
+
+document.getElementById('uploadIcon').addEventListener('click', function() 
+{
+    document.getElementById('fileInput').click();
+});
+
+document.getElementById('fileInput').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+        const allowedExtensions = ['7z', 'rar', 'torrent', 'exe', 'png', 'jpg', 'jpeg', 'mp3', 'mp4', 'txt', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'dll', 'dat'];
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+
+        if (allowedExtensions.includes(fileExtension)) {
+            const destinatario = document.getElementById('destinatario').value;
+
+            if (!destinatario) {
+                alert('Por favor, selecciona un destinatario antes de enviar un archivo.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('archivo', file);
+            formData.append('destinatario', destinatario);
+
+            fetch('chatterly.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Archivo enviado correctamente.');
+                        console.log('Ruta del archivo:', data.ruta);
+                    } else if (data.error) {
+                        alert(data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al enviar el archivo:', error);
+                });
+        } else {
+            alert('Formato de archivo no permitido. Selecciona un archivo válido.');
+            event.target.value = ''; // Resetea el input si el archivo no es válido
+        }
+    } else {
+        alert('No se ha seleccionado ningún archivo.');
+    }
+});

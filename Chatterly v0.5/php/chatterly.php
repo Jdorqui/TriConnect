@@ -70,8 +70,8 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <body>
         <div id="bienvenida">
             <div style="display: flex; flex-direction: column; width: 100vw; height: 100vh;">
-                <div style="background-color: #1e1f22; color: white; padding: 5px; text-align: left; height: 20px; font-size: 15px"> <!-- superior -->
-                    Chatterly
+                <div style="background-color: #1e1f22; color: white; padding: 5px; text-align: left; height: 20px;"> <!-- superior -->
+                    <span style="font-weight: bold; color: #949ba4;">Chatterly</span>
                 </div>
                 <div style="display: flex; flex: 1;">
                     <div style="background-color: #1e1f22; width: 2.7vw; padding: 10px; color: white; min-width: 50px;"> <!-- barra1 -->
@@ -107,7 +107,7 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 } 
                                 else 
                                 {
-                                    echo "<p>No tienes amigos en la lista.</p>";
+                                    echo "<p style='text-align: center;'>No tienes amigos en la lista</p>";
                                 }
                                 ?>
                             </div>
@@ -125,7 +125,7 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                         </div>
                     </div>
-                    <div id="initialpanel" style="background-color: #313338; flex: 1; display: flex; flex-direction: column; min-width: 200px;"> <!-- initialpanel -->
+                    <div id="initialpanel" style="background-color: #313338; flex: 1; display: flex; flex-direction: column; min-width: 500px;"> <!-- initialpanel -->
                         <div style="background-color: #313338; display: flex; padding: 10px; align-items: center; color: white; gap: 10px;"> 
                             <img src="../assets/imgs/friends_logo.png" alt="friends" style="padding: 10px; width: 24px; height: 24px;">
                             <span style="font-size: 16px;">Amigos</span>
@@ -149,19 +149,19 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <p id="resultado"></p>
                         </div>
 
-                        <div id="pendingmenu" style="padding: 30px;" hidden>
-                            <h3>Solicitudes Pendientes</h3>
+                        <div id="pendingmenu" style="padding: 30px; padding-top: 0;" hidden>
+                            <p style="font-size: 20px;">Solicitudes Pendientes</p>
                             <?php
                             if (isset($solicitudes_pendientes) && count($solicitudes_pendientes) > 0) 
                             {
                                 //comprueba si hay solicitudes penddientes
                                 foreach ($solicitudes_pendientes as $solicitud): ?> 
-                                    <div class="solicitud">
-                                        <span><?php echo htmlspecialchars($solicitud['alias']); ?></span>
-                                        <form action="gestionar_solicitud.php" method="post">
+                                    <div class="solicitud" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background-color: #2b2d31; margin-bottom: 10px; border-radius: 5px;">
+                                        <span><?php echo htmlspecialchars($solicitud['alias']) . " quiere ser tu amigo."; ?></span>
+                                        <form action="gestionar_solicitud.php" method="post" style="display: flex; gap: 10px;">
                                             <input type="hidden" name="solicitante" value="<?php echo $solicitud['id_user1']; ?>">
-                                            <button class="" type="submit" name="accion" value="aceptar">Aceptar</button>
-                                            <button type="submit" name="accion" value="rechazar">Rechazar</button>
+                                            <button type="submit" name="accion" value="aceptar" style="background-color: #5865F2; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Aceptar</button>
+                                            <button type="submit" name="accion" value="rechazar" style="background-color: #FF5C5C; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Rechazar</button>
                                         </form>
                                     </div>
                                 <?php endforeach;
@@ -178,9 +178,11 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         
                         <div id="chat-messages" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px; height: 100%; max-height: calc(100vh - 100px);"></div>
 
-                        <div style="padding: 10px; display: flex; position: relative; overflow: hidden;">
+                        <div style="padding: 10px; display: flex; position: relative; overflow: hidden;"> 
                             <input type="text" id="mensaje" style="border-color:#383a40; background-color: #383a40; width: 100%; box-sizing: border-box; height: 45px; padding-left: 10px; position: relative;" placeholder="Escribe un mensaje..." />
-                            <img src="../assets/imgs/upload.png" style="width: 35px; position: absolute; right: 5px; top: 15px; height: 35px; cursor: pointer; padding: 0 15px; border: none;">
+                            <img src="../assets/imgs/upload.png" style="width: 35px; position: absolute; right: 5px; top: 15px; height: 35px; cursor: pointer; padding: 0 15px; border: none;" id="uploadIcon" alt="Upload">
+                            <input type="file" id="fileInput" style="display: none;">
+                            <input type="hidden" id="destinatario">
                             <img src="../assets/imgs/emojis.png" onclick="showEmojis()" style="width: 40px; position: absolute; right: 43px; top: 12px; height: 40px; cursor: pointer; padding: 0 15px; border: none;">
                             <img src="../assets/imgs/gif.png" style="width: 37px; position: absolute; right: 85px; top: 17px; height: 32px; cursor: pointer; padding: 0 15px; border: none;">
                             <button id="enviarMensaje" style="width: 100px; position: absolute; right: 800%; top: 15px; height: 20px; background-color: #5865F2; cursor: pointer; padding: 0 15px; border: none;">Enviar</button>
