@@ -1,0 +1,36 @@
+#chat {
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.message_body {
+    background-color: rgb(206, 230, 173);
+    display: flex;
+    width: 50%;
+    margin-left: auto;
+    padding: 10px;
+
+    margin-top: 20px;
+}
+
+.message {
+    font-size: 30px;
+}
+
+#friend_navbar:not(:first-child) {
+    cursor: pointer;
+    background:red;
+}
+
+#friend_navbar>div>div{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+
+    font-size: 35px;
+    display: flex;
+
+    align-items: center;
+}

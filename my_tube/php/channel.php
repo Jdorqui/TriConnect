@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                 <?php if ($CHECK_CHANNEL_SUBSCRIBED_TO_USER_QUERY->num_rows > 0 && $CHECK_USER_SUBSCRIBED_QUERY->num_rows > 0): ?>
                                     <div class="subscribe_button" onclick="unsubscribe(username, channelID)"
                                         id="subscription" style="background-color: blue">Amigos</div>
-                                    <div id="chat_button">Enviar mensaje</div>
+                                    <div id="chat_button" onclick="location.href='chat.php'">Enviar mensaje</div>
                                 <?php elseif ($CHECK_USER_SUBSCRIBED_QUERY->num_rows > 0): ?>
                                     <div class="subscribe_button" onclick="unsubscribe(username, channelID)"
                                         id="subscription">Suscrito</div>
@@ -94,7 +94,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                         id="subscription">Suscribirse</div>
                                 <?php endif; ?>
                             </div>
-
                         </div>
                     </div>
                     <div id="channel_navbar">
