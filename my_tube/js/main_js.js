@@ -109,6 +109,12 @@ async function createNotification(message) {
     }
 }
 
+function getChannel(input, event) {
+    if (event.key == "Enter" && input.value != "") {
+        location.href = `../php/channel.php?channel_id=${input.value}`;
+    }   
+}
+
 // TODO
 // Eliminar la última notificación cada segundo.
 setInterval(function () {

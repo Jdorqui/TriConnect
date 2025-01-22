@@ -13,25 +13,31 @@ function createFriendDiv() {
 
 createFriendDiv();
 
+let receiverName = "";
 function changeChat(friend) {
-    console.log(friend.childNodes);
+    receiverName = friend.childNodes[3].innerHTML.trim();
+
+    console.log(receiverName);
 
     let userHeader = document.getElementById("user_header");
     userHeader.innerHTML = `<img src="../img/profile_pic_example.jpg" id="logged_pic">
                             <div>
-                                ${friend}
+                                ${receiverName}
                             </div>`;
-}
 
+    refresh();
+}
 
 function sendMessage(input, event) {
     if (event.key == "Enter" && input.value != "") {
         let formData = new FormData();
         formData.append("sender", username);
-        formData.append("receiver", "z");
+        formData.append("receiver", receiverName);
         formData.append("msg", input.value);
 
         input.value = "";
+
+        console.log(formData);
 
         fetch(`../php/send_message.php`, {
             method: "POST",
@@ -49,8 +55,16 @@ function sendMessage(input, event) {
 function createMessage(sender, msg) {
     let chat = document.getElementById("chat");
     let before = chat.innerHTML;
+
+    let style = "";
+    if (sender == username) {
+        style = "margin-left: auto"
+    } else {
+        style = "margin-right: auto"
+    }
+
     chat.innerHTML = `
-                    <div class="message_body">
+                    <div class="message_body" style="${style}">
                         <img src="../img/profile_pic_example.jpg" id="logged_pic">
                         <div style="background-color: blue; width: 100%;">
                             <div style="font-size: 25px;">${sender}</div>
@@ -59,6 +73,7 @@ function createMessage(sender, msg) {
                             </div>
                         </div>
                     </div>`;
+
     chat.innerHTML += before;
 }
 
@@ -66,7 +81,7 @@ let messageNumber = 0;
 function getAllMessages() {
     let formData = new FormData();
     formData.append("sender", username);
-    formData.append("receiver", "z");
+    formData.append("receiver", receiverName);
 
     fetch(`../php/receive_message.php`, {
         method: "POST",
@@ -92,6 +107,14 @@ function getAllMessages() {
             console.error("Error:", error);
         });
 }
+
+function refresh() {
+    messageNumber = 0;
+
+    document.getElementById("chat").innerHTML = "";
+
+}
+
 
 setInterval(function () {
     getAllMessages();

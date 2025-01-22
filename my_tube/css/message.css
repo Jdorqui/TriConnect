@@ -5,17 +5,27 @@
     flex-direction: column-reverse;
 }
 
+#chat::-webkit-scrollbar {
+    display: none;
+}
+
 .message_body {
     background-color: rgb(206, 230, 173);
     display: flex;
     width: 50%;
-    margin-left: auto;
     padding: 10px;
 
     margin-top: 20px;
 }
 
 .message {
+    font-size: 30px;
+
+    overflow: hidden;
+    text-overflow: clip;
+}
+
+#input_text {
     font-size: 30px;
 }
 

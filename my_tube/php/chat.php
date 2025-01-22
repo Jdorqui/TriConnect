@@ -11,7 +11,7 @@ $GET_ALL_FRIENDS_QUERY = $CONN->
                 FROM
                     SUBS s1
                 WHERE
-                    s1.USERNAME = 'a' AND EXISTS(
+                    s1.USERNAME = '$USERNAME' AND EXISTS(
                     SELECT
                         s2.USERNAME
                     FROM
@@ -22,7 +22,6 @@ $GET_ALL_FRIENDS_QUERY = $CONN->
     );
 
 $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
-// echo $FRIENDS_ARRAY;
 ?>
 
 <!DOCTYPE html>
