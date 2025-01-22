@@ -3,8 +3,8 @@
 include_once 'logueado.php';
 include_once 'config.php';
 
-
-$stmt = $conn->prepare("SELECT titulo FROM anuncios WHERE estado = 'activo' OR estado = 'reservado'");  
+$id = $_GET['id'];
+$stmt = $conn->prepare("SELECT * FROM anuncios WHERE id = :id");  
 
 $stmt->execute();
 
@@ -23,14 +23,14 @@ $anuncios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <h1>Anuncios</h1>
 
-<div id="anuncios-list" class="anuncios-list">
+<div id="anuncios-atributos" class="anuncios-atributos">
                     <?php foreach ($anuncios as $anun): ?>
                         <div class="anuncio">
-
-                        <a href="anuncio_info.php">
                             <div class="titulo"><?= $anun['titulo'] ?></div>
-
-                            </a>
+                            <div class="descripcion"><?= $anun['descripcion'] ?></div>
+                            <div class="categoria"><?= $anun['categoria'] ?></div>
+                            <div class="precio"><?= $anun['precio'] ?></div>
+                            <div class="estado"><?= $anun['estado'] ?></div>
                         </div>
                     <?php endforeach; ?>
                 </div>

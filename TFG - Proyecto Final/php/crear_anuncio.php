@@ -16,6 +16,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 
     $stmt = $conn->prepare("INSERT INTO anuncios (user_id, titulo, descripcion, precio, categoria, estado) VALUES (:user_id, :titulo, :descripcion, :precio, :categoria, 'activo')");
 
+
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindParam(':titulo', $titulo, PDO::PARAM_STR);
+    $stmt->bindParam(':descripcion', $descripcion, PDO::PARAM_STR);
+    $stmt->bindParam(':precio', $precio, PDO::PARAM_STR); // PDO::PARAM_STR por si usa decimales
+    $stmt->bindParam(':categoria', $categoria, PDO::PARAM_STR);
+
+
     $stmt->execute();
 
     header("Location:inicio.php");
@@ -30,12 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Crear Anuncio - ToDo'</title>
 </head>
 <body>
     
 </body>
 </html>
+
+<h1>Crear Anuncio</h1>
 
 
 <form action=" crear_anuncio.php" method="POST">
