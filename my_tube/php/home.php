@@ -21,7 +21,7 @@ session_start();
         <img src="../img/mytube_logo.png" id="mytube_logo" />My<span style="color: red">Tube</span>
       </div>
 
-      <input tpye="text" class="search_bar" placeholder="Buscar vídeo" />
+      <input tpye="text" class="search_bar" placeholder="Buscar canal" onkeypress="getChannel(this, event)"/>
 
       <?php if (isset($_SESSION["USERNAME"]) && isset($_SESSION["PASSWORD"])): ?>
         <div class="user_logged_in_tab" onclick="displayUserSettings()">
@@ -60,7 +60,8 @@ session_start();
       <div class="content">
         <button onclick="location.href='logout.php'">CERRAR SESIÓN</button>
 
-        <button onclick="location.href='channel.php?channel_id=z'">Z</button>
+        <button onclick="location.href='channel.php?channel_id=a'">a</button>
+        <button onclick="location.href='channel.php?channel_id=b'">b</button>
         <!--
         <div class="recoms">
           <div class="recom">

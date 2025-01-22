@@ -85,6 +85,10 @@ body {
     align-items: stretch;
 }
 
+.content::-webkit-scrollbar {
+    display: none;
+}
+
 .user_tab {
     display: flex;
     font-size: 2vh;
