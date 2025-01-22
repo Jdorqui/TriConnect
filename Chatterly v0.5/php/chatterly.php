@@ -70,8 +70,8 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <body>
         <div id="bienvenida">
             <div style="display: flex; flex-direction: column; width: 100vw; height: 100vh;">
-                <div style="background-color: #1e1f22; color: white; padding: 5px; text-align: left; height: 20px; font-size: 15px"> <!-- superior -->
-                    Chatterly
+                <div style="background-color: #1e1f22; color: white; padding: 5px; text-align: left; height: 20px;"> <!-- superior -->
+                    <span style="font-weight: bold; color: #949ba4;">Chatterly</span>
                 </div>
                 <div style="display: flex; flex: 1;">
                     <div style="background-color: #1e1f22; width: 2.7vw; padding: 10px; color: white; min-width: 50px;"> <!-- barra1 -->
@@ -81,9 +81,9 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <img id="message" src="../assets/imgs/newServer_logo.png" alt="logo" onclick="" style="padding: 10px; width: 30px; height: 30px;"><br>
                         </div>
                     </div>
-                    <div style="background-color: #2b2d31; width: 10%; padding: 10px; color: white; min-width: 170px;"> <!-- barra2 -->
+                    <div style="background-color: #2b2d31; width: 11%; color: white; min-width: 200px;"> <!-- barra2 -->
                         <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
-                            <div>
+                            <div style="padding: 10px;">
                                 <button id="options-button" style="text-align: center; display: flex; align-items: center;" onclick="closechat();">
                                     <img src="../assets/imgs/friends_logo.png" alt="account" style="width: 20px; height: 20px; margin-right: 15px;">
                                     Amigos
@@ -107,29 +107,29 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 } 
                                 else 
                                 {
-                                    echo "<p>No tienes amigos en la lista.</p>";
+                                    echo "<p style='text-align: center;'>No tienes amigos en la lista</p>";
                                 }
                                 ?>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 10px;  background-color: #232428; border-radius: 10px; width: 100%; "> <!-- userpanel -->
+                            <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background-color: #232428; width: 100%;"> <!-- userpanel -->
                                 
-                                <img src="../assets/imgs/bg.png" alt="profile" style="border-radius: 50%; width: 40px; height: 40px;"> <!-- img -->
+                                <img src="../assets/imgs/bg.png" alt="profile" style="border-radius: 50%; width: 30px; height: 30px;"> <!-- img -->
                                 
                                 <span style="color: white; font-size: 16px; font-weight: bold;"><?php echo htmlspecialchars($usuario); ?></span> <!-- username -->
                                 
-                                <div style="display: flex; gap: 10px; margin-left: auto;"> <!-- iconos -->
-                                    <img src="../assets/imgs/microphone_icon.png" alt="microphone" style="width: 24px; height: 24px; cursor: pointer;">
-                                    <img src="../assets/imgs/headphone_icon.png" alt="headphones" style="width: 24px; height: 24px; cursor: pointer;">
-                                    <img src="../assets/imgs/options_icon.png" alt="options" style="width: 24px; height: 24px; cursor: pointer;" onclick="showoptionspanel()">
+                                <div style="display: flex; gap: 10px; margin-left: 60px;"> <!-- iconos -->
+                                    <img src="../assets/imgs/microphone_icon.png" alt="microphone" style="width: 15px; height: 15px; cursor: pointer;">
+                                    <img src="../assets/imgs/headphone_icon.png" alt="headphones" style="width: 15px; height: 15px; cursor: pointer;">
+                                    <img src="../assets/imgs/options_icon.png" alt="options" style="width: 15px; height: 15px; cursor: pointer;" onclick="showoptionspanel()">
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div id="initialpanel" style="background-color: #313338; flex: 1; display: flex; flex-direction: column; min-width: 200px;"> <!-- initialpanel -->
+                    <div id="initialpanel" style="background-color: #313338; flex: 1; display: flex; flex-direction: column; min-width: 500px;"> <!-- initialpanel -->
                         <div style="background-color: #313338; display: flex; padding: 10px; align-items: center; color: white; gap: 10px;"> 
                             <img src="../assets/imgs/friends_logo.png" alt="friends" style="padding: 10px; width: 24px; height: 24px;">
                             <span style="font-size: 16px;">Amigos</span>
-                            <div style="width: 2px; background-color:rgb(57, 62, 66); height: 100%;"></div>
+                            <div id="divisor" style="width: 2px; background-color:rgb(57, 62, 66); height: 100%;"></div>
                             <button class="friend-tab-button" style="width: 60px;">En linea</button>
                             <button class="friend-tab-button" style="width: 50px;">Todos</button>
                             <button class="friend-tab-button" onclick="openpendingmenu()">Pendiente</button>
@@ -149,19 +149,19 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <p id="resultado"></p>
                         </div>
 
-                        <div id="pendingmenu" style="padding: 30px;" hidden>
-                            <h3>Solicitudes Pendientes</h3>
+                        <div id="pendingmenu" style="padding: 30px; padding-top: 0;" hidden>
+                            <p style="font-size: 20px;">Solicitudes Pendientes</p>
                             <?php
                             if (isset($solicitudes_pendientes) && count($solicitudes_pendientes) > 0) 
                             {
                                 //comprueba si hay solicitudes penddientes
                                 foreach ($solicitudes_pendientes as $solicitud): ?> 
-                                    <div class="solicitud">
-                                        <span><?php echo htmlspecialchars($solicitud['alias']); ?></span>
-                                        <form action="gestionar_solicitud.php" method="post">
+                                    <div class="solicitud" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background-color: #2b2d31; margin-bottom: 10px; border-radius: 5px;">
+                                        <span><?php echo htmlspecialchars($solicitud['alias']) . " quiere ser tu amigo."; ?></span>
+                                        <form action="gestionar_solicitud.php" method="post" style="display: flex; gap: 10px;">
                                             <input type="hidden" name="solicitante" value="<?php echo $solicitud['id_user1']; ?>">
-                                            <button class="" type="submit" name="accion" value="aceptar">Aceptar</button>
-                                            <button type="submit" name="accion" value="rechazar">Rechazar</button>
+                                            <button type="submit" name="accion" value="aceptar" style="background-color: #5865F2; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Aceptar</button>
+                                            <button type="submit" name="accion" value="rechazar" style="background-color: #FF5C5C; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Rechazar</button>
                                         </form>
                                     </div>
                                 <?php endforeach;
@@ -175,14 +175,23 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     
                     <div id="chatcontainer" style="display: none; flex: 1; flex-direction: column; min-width: 200px; background-color: #313338;">
-                        <div id="chat-messages" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px;">
-                        </div>
-                        <div style="padding: 10px; display: flex; position: relative; overflow: hidden;">
+                        
+                        <div id="chat-messages" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px; height: 100%; max-height: calc(100vh - 100px);"></div>
+
+                        <div style="padding: 10px; display: flex; position: relative; overflow: hidden;"> 
                             <input type="text" id="mensaje" style="border-color:#383a40; background-color: #383a40; width: 100%; box-sizing: border-box; height: 45px; padding-left: 10px; position: relative;" placeholder="Escribe un mensaje..." />
-                            <img src="../assets/imgs/upload.png" style="width: 35px; position: absolute; right: 5px; top: 15px; height: 35px; cursor: pointer; padding: 0 15px; border: none;"></img>
-                            <img src="../assets/imgs/emojis.png" style="width: 40px; position: absolute; right: 43px; top: 12px; height: 40px; cursor: pointer; padding: 0 15px; border: none;"></img>
-                            <img src="../assets/imgs/gif.png" style="width: 37px; position: absolute; right: 85px; top: 17px; height: 32px; cursor: pointer; padding: 0 15px; border: none;"></img>
+                            <img src="../assets/imgs/upload.png" style="width: 35px; position: absolute; right: 5px; top: 15px; height: 35px; cursor: pointer; padding: 0 15px; border: none;" id="uploadIcon" alt="Upload">
+                            <input type="file" id="fileInput" style="display: none;">
+                            <input type="hidden" id="destinatario">
+                            <img src="../assets/imgs/emojis.png" onclick="showEmojis()" style="width: 40px; position: absolute; right: 43px; top: 12px; height: 40px; cursor: pointer; padding: 0 15px; border: none;">
+                            <img src="../assets/imgs/gif.png" style="width: 37px; position: absolute; right: 85px; top: 17px; height: 32px; cursor: pointer; padding: 0 15px; border: none;">
                             <button id="enviarMensaje" style="width: 100px; position: absolute; right: 800%; top: 15px; height: 20px; background-color: #5865F2; cursor: pointer; padding: 0 15px; border: none;">Enviar</button>
+                        </div>
+
+                        <div style="position: relative;">
+                            <div id="emojisDiv" style="display: none; position: absolute; right: 10px; bottom: 60px; width: 350px; max-height: 400px; overflow-y: auto; background: #2b2d31; border-color: #383a3f; border-style: solid; border-radius: 10px; padding: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 1000;">
+                                <div id="emojiList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
