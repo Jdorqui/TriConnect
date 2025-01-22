@@ -81,7 +81,7 @@ body {
     display: flex;
     width: 90%;
     padding: 30px;
-    overflow: scroll;
+    overflow-x: scroll;
     align-items: stretch;
 }
 

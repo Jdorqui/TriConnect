@@ -18,11 +18,14 @@
     margin-top: 20px;
 }
 
+.message_body>div {
+    overflow: hidden;
+}
+
 .message {
     font-size: 30px;
 
-    overflow: hidden;
-    text-overflow: clip;
+    overflow-wrap: break-word;
 }
 
 #input_text {

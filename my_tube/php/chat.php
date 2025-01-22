@@ -83,10 +83,10 @@ $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
                 </div>
             </div>
             <div class="content" style="background-color: gray; padding: 0">
-                <div id="friend_navbar" style="background-color: green; width: 20%; min-width: 0px;">
+                <div id="friend_navbar" style="background-color: green; width: 20%;">
                     <div style="text-align: center; font-size: 50px">Amigos</div>
                 </div>
-                <div style="width: 100%; height: 100%; display: flex; flex-direction: column; padding: 0">
+                <div style="height: 100%; display: flex; flex-direction: column; padding: 0; width: 100%;">
                     <div id="user_header" style="background-color: red; width: 100%; display: flex">
                         <img src="../img/profile_pic_example.jpg" id="logged_pic">
                         <div>
