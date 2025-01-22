@@ -109,6 +109,7 @@ function cargarMensajes()
         {
             const mensajes = JSON.parse(data); //parsear la respuesta del servidor
             $('#chat-messages').empty();
+            //debe refrescar solo cuando hay un nuevo mensaje
             mensajes.forEach(function(mensaje) {
                 $('#chat-messages').prepend('<div style="padding-left: 10px;"><strong>' + mensaje.alias + ':</strong> ' + mensaje.contenido + '</div>');
             });

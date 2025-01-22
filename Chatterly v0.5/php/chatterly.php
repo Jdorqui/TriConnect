@@ -112,10 +112,13 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 ?>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background-color: #232428; width: 100%;"> <!-- userpanel -->
+                                <?php
+                                     $foto = $amigo['profile_picture'] ?? '../assets/imgs/default_profile.png';
+                                     echo"<button class='kk' id='kk'> <img src='$foto' alt='profile' style='border-radius: 50%; width: 30px; height: 30px;'> <span style='color: white; font-size: 16px; font-weight: bold;'>$usuario</span> </button>";
+                                ?>
                                 
-                                <img src="../assets/imgs/bg.png" alt="profile" style="border-radius: 50%; width: 30px; height: 30px;"> <!-- img -->
                                 
-                                <span style="color: white; font-size: 16px; font-weight: bold;"><?php echo htmlspecialchars($usuario); ?></span> <!-- username -->
+                                
                                 
                                 <div style="display: flex; gap: 10px; margin-left: 60px;"> <!-- iconos -->
                                     <img src="../assets/imgs/microphone_icon.png" alt="microphone" style="width: 15px; height: 15px; cursor: pointer;">
@@ -228,7 +231,7 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <button id="options-button" style="text-align: center;" onclick="closeoptionspanel()">Volver</button>
                         </div>
                     </div>
-                    <div style="background-color: #313338; width: 100%; padding: 10px; color: white;"> <!-- barra2 -->
+                    <div style="background-color: #313338; width: 100%; padding: 10px; color: white;"> <!-- barra3 -->
                     </div>
                 </div>
             </div>
