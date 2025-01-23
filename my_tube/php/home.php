@@ -1,3 +1,29 @@
+<?php
+include "db_connection.php";
+
+session_start();
+
+$USERNAME = $_SESSION['USERNAME'];
+$GET_ALL_FRIENDS_QUERY = $CONN->
+    query(
+        "SELECT
+                    s1.SUBSCRIBED_TO
+                FROM
+                    SUBS s1
+                WHERE
+                    s1.USERNAME = '$USERNAME' AND EXISTS(
+                    SELECT
+                        s2.USERNAME
+                    FROM
+                        SUBS s2
+                    WHERE
+                        s2.USERNAME = s1.SUBSCRIBED_TO AND s2.SUBSCRIBED_TO = s1.USERNAME
+                )"
+    );
+
+$FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,6 +33,11 @@
     <title>Home</title>
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="stylesheet" href="../css/login_api.css" />
+    <link rel="stylesheet" href="../css/chat.css" />
+    <script>
+        let username = '<?php echo $USERNAME ?>';
+        let friendsArray = JSON.parse('<?php echo $FRIENDS_ARRAY ?>');
+    </script>
 </head>
 
 <body>
@@ -21,8 +52,9 @@
             <!-- TODO -->
 
             <?php if (isset($_SESSION["USERNAME"])): ?>
-                <div class="user_logged_in_tab" onclick="displayUserSettings()">
+                <div id="user_logged_in_tab" onclick="displayUserSettings()">
                     <img src="../img/profile_pic_example.jpg">
+                    <div><?php echo $_SESSION["USERNAME"] ?></div>
                 </div>
             <?php else: ?>
                 <div id="user_logged_out_tab" onclick="displayLoginAPIWrapper()">
@@ -30,7 +62,6 @@
                     <div>Iniciar sesión</div>
                 </div>
             <?php endif; ?>
-
         </div>
         <div id="navbar_and_content">
             <div id="navbar">
@@ -45,86 +76,85 @@
                 <div id="subs_div">SUBS</div>
                 <div id="history_div">HISTORY</div>
                 <div id="liked_videos_div">LIKED_VIDEOS</div>
-                <div id="chat_div">CHAT</div>
+                <div id="chat_div">
+                    <div id="friend_navbar">
+                        <div>Amigos</div>
+                    </div>
+                    <div>
+                        <div id="user_header">
+                            <img src="../img/profile_pic_example.jpg">
+                            <div>
+                                TEST
+                            </div>
+                        </div>
+                        <div id="chat" style="flex-grow: 1; overflow: scroll;"></div>
+                        <div style="">
+                            <input id="input_text" type="text" placeholder="Enviar mensaje"
+                                onkeypress="sendMessage(this, event)"
+                                style="width: 100%; box-sizing: border-box; padding: 10px; margin: 0">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- API para iniciar sesión o registrarse -->
     <div id="mytube_login_API_wrapper" style="display: none">
-        <img class="close_img" src="../img/x_button.png" onclick="closeLoginAPIWrapper()" />
+        <img src="../img/x_button.png" onclick="closeLoginAPIWrapper()" />
 
-        <div id="login_div">
-            <div class="section_1">
-                <img src="../img/mytube_logo.png" id="logo">
-                <div>Iniciar sesión</div>
-            </div>
-
-            <div class="section_2">
-                <form id="login_form" onsubmit="validateLoginForm(event)">
-                    <div id="user_div">
-                        <label for="USERNAME">Usuario</label>
-                        <div>
-                            <input type="text" id="USERNAME" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{1,15}"
-                                placeholder="..." required />
-                        </div>
-                    </div>
-
-                    <div id="password_div">
-                        <label for="PASSWORD">Contraseña</label>
-                        <div>
-                            <input type="password" id="PASSWORD" name="PASSWORD" required />
-                        </div>
-                    </div>
-
-                    <div class="buttons_div">
-                        <a onclick="showRegisterDiv()" id="create_account_button">Crear cuenta</a>
-                        <button type="submit" id="login_button">Iniciar sesión</button>
-                    </div>
-                </form>
-            </div>
+        <div>
+            <img src="../img/mytube_logo.png">
+            <div>Iniciar sesión</div>
         </div>
 
-        <div id="register_div" style="display: none">
-            <div class="section_1">
-                <img src="../img/mytube_logo.png" id="logo">
-                <div>Crear cuenta</div>
+        <form id="login_form" onsubmit="validateLoginForm(event)">
+            <div>
+                <label for="USERNAME">Usuario</label>
+                <input type="text" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{1,15}" required />
             </div>
 
-            <div class="section_2">
-                <form id="register_form" onsubmit="validateRegisterForm(event)">
-                    <div>
-                        <label for="USERNAME">Usuario</label>
-                        <div>
-                            <input type="text" id="USERNAME" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{1,15}"
-                                placeholder="..." required />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="EMAIL">Email</label>
-                        <div>
-                            <input type="email" id="EMAIL" name="EMAIL" required />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="PASSWORD">Contraseña</label>
-                        <div>
-                            <input type="password" id="PASSWORD" name="PASSWORD" required />
-                        </div>
-                    </div>
-
-                    <div class="buttons_div">
-                        <a onclick="showLoginDiv()" id="create_account_button">Iniciar sesión</a>
-                        <button type="submit" id="login_button">Crear cuenta</button>
-                    </div>
-                </form>
+            <div>
+                <label for="PASSWORD">Contraseña</label>
+                <input type="password" name="PASSWORD" required />
             </div>
-        </div>
+
+            <div class="buttons_div">
+                <a onclick="showRegisterForm()" id="create_account_button">Crear cuenta</a>
+                <button type="submit" id="login_button">Iniciar sesión</button>
+            </div>
+        </form>
+
+        <form id="register_form" onsubmit="validateRegisterForm(event)" style="display: none">
+            <div>
+                <label for="USERNAME">Usuario</label>
+                <input type="text" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{1,15}" required />
+            </div>
+
+            <div>
+                <label for="EMAIL">Email</label>
+                <input type="email" name="EMAIL" required />
+            </div>
+
+            <div>
+                <label for="PASSWORD">Contraseña</label>
+                <input type="password" name="PASSWORD" required />
+            </div>
+
+            <div class="buttons_div">
+                <a onclick="showLoginForm()" id="create_account_button">Iniciar sesión</a>
+                <button type="submit" id="login_button">Crear cuenta</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Notificaciones -->
+    <div id="notifications">
     </div>
 
     <script src="../js/main.js"></script>
     <script src="../js/login_api.js"></script>
+    <script src="../js/chat.js"></script>
 </body>
 
 </html>

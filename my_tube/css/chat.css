@@ -1,0 +1,91 @@
+#chat_div {
+    display: flex;
+}
+
+/* div izquierdo */
+#friend_navbar {
+    width: 20%;
+    height: 100%;
+
+    border-right: 0.1vw solid white;
+}
+
+/* div con texto "Amigos" */
+#friend_navbar>:first-child {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    height: 10%;
+
+    font-size: 2vw;
+    border-bottom: 0.1vw solid white;
+}
+
+/* Todos los divs excepto el primero */
+#friend_navbar>:not(:first-child) {
+    display: flex;
+    margin-bottom: 1vw;
+    padding: 0.5vw;
+
+    cursor: pointer;
+
+    align-items: center;
+}
+
+/* Mostrar fondo más claro al pasar el ratón por encima */
+#friend_navbar>:not(:first-child):hover {
+    background-color: rgb(33, 33, 33);
+}
+
+/* La imagen de cada div excepto el primero */
+#friend_navbar>:not(:first-child)>img {
+    display: block;
+
+    width: 3.5vw;
+    height: 3.5vw;
+    border-radius: 2vw;
+
+    margin-right: 1vw;
+}
+
+/* Nombre del amigo */
+#friend_navbar>:not(:first-child)>div {
+    font-size: 2vw;
+}
+
+/* div derecho */
+#chat_div>:last-child {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    padding: 0;
+}
+
+#user_header {
+    display: flex;
+    height: 10%;
+
+    border-bottom: 0.1vw solid white;
+
+    align-items: center;
+}
+
+/* Imagen del amigo seleccionado */
+#user_header>img {
+    display: block;
+
+    width: 3.5vw;
+    height: 3.5vw;
+    border-radius: 2vw;
+
+    margin-left: 1vw;
+    margin-right: 1vw;
+}
+
+/* Nombre del amigo seleccionado */
+#user_header>div {
+    font-size: 2.2vw;
+}

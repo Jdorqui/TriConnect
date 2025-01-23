@@ -17,3 +17,5 @@ function display(id) {
         }
     }
 }
+
+display('chat');

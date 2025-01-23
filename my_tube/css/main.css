@@ -57,13 +57,14 @@ body {
     padding: 1vw;
 }
 
-#user_logged_out_tab {
+#user_logged_out_tab,
+#user_logged_in_tab {
     height: 100%;
     font-size: 1.2vw;
     margin-left: auto;
 
-    padding-left: 0.5vw;
-    padding-right: 0.5vw;
+    padding-left: 1vw;
+    padding-right: 1vw;
 
     background-color: black;
     border: 0.1vw solid white;
@@ -72,14 +73,20 @@ body {
     cursor: pointer;
 }
 
-#user_logged_out_tab>img {
+#user_logged_out_tab>img,
+#user_logged_in_tab>img {
     display: block;
-    box-sizing: border-box;
 
-    margin-right: 0.5vw;
-
-    height: 70%;
+    width: 3.5vw;
+    height: 3.5vw;
     border-radius: 2vw;
+
+    margin-right: 1vw;
+}
+
+#user_logged_out_tab>div,
+#user_logged_in_tab>div {
+    font-size: 2.2vw;
 }
 
 #navbar_and_content {
@@ -119,4 +126,47 @@ body {
     border: 0.1vw solid white;
     border-top: 0;
     border-left: 0;
+}
+
+#content>div {
+    height: 100%;
+    width: 100%;
+}
+
+#notifications {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    margin-right: 1%;
+    margin-bottom: 1%;
+
+    /*background-color: rgb(166, 70, 70);
+    border: 1px solid white;
+    border-radius: 20px;*/
+    color: red;
+
+    width: 15%;
+    height: 80%;
+
+    font-size: 25px;
+
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.notification {
+    background-color: rgb(12, 12, 12);
+    border: 1px solid white;
+    border-radius: 20px;
+
+    width: 100%;
+    height: 15%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+    margin-top: 5px;
 }
