@@ -28,7 +28,7 @@ $anuncios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
 
 
-    <h1>Anuncios</h1>
+    <h1>Información - Anuncio</h1>
 
     <div id="anuncios-atributos" class="anuncios-atributos">
         <?php foreach ($anuncios as $anun): ?>
