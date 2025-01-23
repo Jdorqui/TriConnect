@@ -11,7 +11,6 @@ CREATE TABLE usuarios (
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     imagen_perfil VARCHAR(255)
 );
-USE chat_app;
 
 CREATE TABLE anuncios  (
     id INT AUTO_INCREMENT PRIMARY KEY,

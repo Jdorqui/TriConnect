@@ -21,6 +21,8 @@ $anuncios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anuncios - ToDo'</title>
+
+    <link rel="stylesheet" href="../css/anuncio_info.css">
 </head>
 
 <body>

@@ -6,7 +6,7 @@ include_once 'config.php';
 
 
 
-$stmt = $conn->prepare("SELECT * FROM anuncios WHERE estado = 'activo' OR estado = 'reservado'");  
+$stmt = $conn->prepare("SELECT * FROM anuncios WHERE estado = 'activo' OR estado = 'reservado' OR estado = 'disponible'");  
 
 $stmt->execute();
 
@@ -19,6 +19,8 @@ $anuncios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anuncios - ToDo'</title>
+
+    <link rel="stylesheet" href="../css/anunciosStyle.css">
 </head>
 <body>
     

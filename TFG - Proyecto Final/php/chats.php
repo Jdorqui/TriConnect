@@ -5,6 +5,9 @@ include_once 'config.php';
 
 $user_id = $_SESSION['user_id'];
 
+
+// Mostrar todos los chats del usuario
+
 $stmt = $conn->prepare("SELECT * FROM chats WHERE user_id = :user_id");
 
 $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
@@ -12,6 +15,8 @@ $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 $stmt->execute();
 
 $chats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Mostrar los mensajes del chat seleccionado
 
 if (isset($_GET['chat_id'])) {
     $chat_id = $_GET['chat_id'];
@@ -23,6 +28,7 @@ if (isset($_GET['chat_id'])) {
     $stmt->execute();
 
     $mensajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 }
 
 ?>
@@ -57,10 +63,10 @@ if (isset($_GET['chat_id'])) {
 
             <?php foreach ($chats as $chat): ?>
                 <div class="chat">
-                    <a href="chat.php?chat_id=<?= $chat['id'] ?>">
-                        <div class="anuncio_id"><?= $anun['anuncio_id'] ?></div>
-                        <div class="anuncio_id"><?= $anun['anuncio_id'] ?></div>
-                    </a>
+                   
+                        <div class="chat_id"><?= $chat['id'] ?></div>
+                        <div class="anuncio_id"><?= $chat['anuncio_id'] ?></div>
+                  
                 </div>
 
             <?php endforeach; ?>
@@ -69,18 +75,24 @@ if (isset($_GET['chat_id'])) {
 
 
         <div class="lista-mensajes">
+            <?php
+            if (isset($_GET['chat_id'])): ?>
+                <?php foreach ($mensajes as $mensaje): ?>
 
-            <?php foreach ($mensajes as $mensaje): ?>
+                    <div class="mensaje">
 
-                <div class="mensaje">
+                        <div class="texto"><?= $mensaje['mensaje'] ?></div>
+                        <div class="fecha"><?= $mensaje['fecha_envio'] ?></div>
 
-                    <div class="texto"><?= $mensaje['mensaje'] ?></div>
-                    <div class="fecha"><?= $mensaje['fecha_envio'] ?></div>
+                    </div>
 
-                </div>
+                <?php endforeach; ?>
 
-            <?php endforeach; ?>
 
+            <?php else: ?>
+                <p>Selecciona un chat.</p>
+
+            <?php endif; ?>
 
         </div>
 
