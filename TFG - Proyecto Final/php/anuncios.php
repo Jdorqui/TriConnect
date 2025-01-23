@@ -1,10 +1,12 @@
 <?php
+ini_set(option:'display_erros', value: 1);
 
 include_once 'logueado.php';
 include_once 'config.php';
 
 
-$stmt = $conn->prepare("SELECT titulo FROM anuncios WHERE estado = 'activo' OR estado = 'reservado'");  
+
+$stmt = $conn->prepare("SELECT * FROM anuncios WHERE estado = 'activo' OR estado = 'reservado'");  
 
 $stmt->execute();
 
@@ -27,7 +29,7 @@ $anuncios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php foreach ($anuncios as $anun): ?>
                         <div class="anuncio">
 
-                        <a href="anuncio_info.php">
+                        <a href="anuncio_info.php?id=<?php echo $anun['id'] ?>">
                             <div class="titulo"><?= $anun['titulo'] ?></div>
 
                             </a>
