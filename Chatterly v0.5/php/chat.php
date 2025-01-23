@@ -30,7 +30,7 @@ $id_usuario_actual = $usuarioData['id_user'];
 if (isset($_POST['destinatario'])) {
     $destinatario = $_POST['destinatario'];
     $stmt = $pdo->prepare("
-        SELECT m.contenido, m.fecha_envio, u.alias
+        SELECT m.contenido, m.fecha_envio, u.alias, m.tipo
         FROM mensajes m
         JOIN usuarios u ON m.id_emisor = u.id_user
         WHERE (m.id_emisor = :id_usuario AND m.id_receptor = :destinatario)
@@ -42,16 +42,20 @@ if (isset($_POST['destinatario'])) {
     echo json_encode($mensajes); // Devuelve los mensajes en formato JSON
 }
 
-// Enviar un mensaje
+// Enviar un mensaje de texto
 if (isset($_POST['mensaje'])) {
     $mensaje = $_POST['mensaje'];
     $destinatario = $_POST['destinatario'];
-    $stmt = $pdo->prepare("INSERT INTO mensajes (id_emisor, id_receptor, contenido, tipo) VALUES (:id_emisor, :id_receptor, :contenido, 'texto')");
-    $stmt->execute([
-        'id_emisor' => $id_usuario_actual,
-        'id_receptor' => $destinatario,
-        'contenido' => $mensaje
-    ]);
-    echo "Mensaje enviado";
+
+    // Si es un mensaje de texto
+    if (isset($mensaje) && !empty($mensaje)) {
+        $stmt = $pdo->prepare("INSERT INTO mensajes (id_emisor, id_receptor, contenido, tipo) VALUES (:id_emisor, :id_receptor, :contenido, 'texto')");
+        $stmt->execute([
+            'id_emisor' => $id_usuario_actual,
+            'id_receptor' => $destinatario,
+            'contenido' => $mensaje
+        ]);
+        echo json_encode(['success' => true]);
+    }
 }
 ?>
