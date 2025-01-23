@@ -19,6 +19,7 @@ function closeoptionspanel()
 {
     normalPanel.style.display = "block";
     optionsPanel.style.display = "none";
+    document.getElementById("profileinfo").style.display = "none";
 }
 
 function closechat()
@@ -100,27 +101,32 @@ function openchat(destinatarioID) //abrir chat
     cargarMensajes();  //carga los mensajes
 }
         
-function cargarMensajes() 
-{
-    if (destinatario === null) return; //verifica que el destinatario este definido
-    $.post('chat.php', { destinatario: destinatario }, function(data) 
-    {
-        try 
-        {
-            const mensajes = JSON.parse(data); //parsear la respuesta del servidor
-            $('#chat-messages').empty();
-            //debe refrescar solo cuando hay un nuevo mensaje
+function cargarMensajes() {
+    if (destinatario === null) return; // Verifica que el destinatario esté definido
+
+    $.post('chat.php', { destinatario: destinatario }, function(data) {
+        try {
+            const mensajes = JSON.parse(data); // Parsear la respuesta del servidor
+            $('#chat-messages').empty(); // Limpiar los mensajes previos
+
             mensajes.forEach(function(mensaje) {
-                $('#chat-messages').prepend('<div style="padding-left: 10px;"><strong>' + mensaje.alias + ':</strong> ' + mensaje.contenido + '</div>');
+                let mensajeHtml = '<div style="padding-left: 10px;"><strong>' + mensaje.alias + ':</strong> ' + mensaje.contenido;
+
+                // Verificar si el tipo es 'imagen' y mostrarla
+                if (mensaje.tipo === 'imagen') {
+                    mensajeHtml += `<br><img src="${mensaje.contenido}" alt="Archivo adjunto" style="max-width: 100px; max-height: 100px;">`;
+                }
+
+                mensajeHtml += '</div>';
+                $('#chat-messages').prepend(mensajeHtml); // Añadir el mensaje al principio del chat
             });
-        } 
-        catch (e) 
-        {
+        } catch (e) {
             console.error("Error al parsear JSON:", e);
             console.log("Respuesta del servidor:", data);
         }
     });
 }
+
 
 $('#enviarMensaje').click(function()
 {
@@ -132,6 +138,49 @@ $('#enviarMensaje').click(function()
             $('#mensaje').val(''); //limpiar el input
             cargarMensajes();
         });
+    }
+});
+
+// Enviar archivo
+// Enviar archivo
+// Enviar archivo
+$('#uploadfile').click(function() {
+    document.getElementById('fileInput').click();
+});
+
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file && destinatario !== null) {
+        const allowedExtensions = ['png', 'jpg', 'jpeg', 'mp4', 'mp3', 'pdf', 'zip', 'txt'];
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+
+        if (allowedExtensions.includes(fileExtension)) {
+            const formData = new FormData();
+            formData.append('archivo', file);
+            formData.append('destinatario', destinatario);
+
+            fetch('uploadfiles.php', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Archivo enviado correctamente.');
+                    cargarMensajes(); // Recargar mensajes para incluir el nuevo archivo
+                } else {
+                    alert(data.error || 'Error al subir el archivo.');
+                }
+            })
+            .catch(error => {
+                console.error('Error al enviar el archivo:', error);
+            });
+        } else {
+            alert('Formato de archivo no permitido. Selecciona un archivo válido.');
+            event.target.value = ''; // Resetea el input si el archivo no es válido
+        }
+    } else {
+        alert('No se ha seleccionado ningún archivo o no hay destinatario.');
     }
 });
 
@@ -234,52 +283,43 @@ function showEmojis()
     emojisDiv.style.display = emojisDiv.style.display === 'none' ? 'block' : 'none';
 }
 
-//upload image
+//profile info
 
-document.getElementById('uploadIcon').addEventListener('click', function() 
+function showprofileinfo()
 {
-    document.getElementById('fileInput').click();
+    showoptionspanel();
+    document.getElementById("profileinfo").style.display = "block";
+}
+
+//imagen perfil
+
+const img = document.getElementById('profileImg');
+const fileProfile = document.getElementById('fileProfile');
+const uploadForm = document.getElementById('uploadForm');
+
+// Abre el selector de archivos al hacer clic en la imagen
+img.addEventListener('click', () => {
+    fileProfile.click();
 });
 
-document.getElementById('fileInput').addEventListener('change', function (event) {
-    const file = event.target.files[0];
-    if (file) {
-        const allowedExtensions = ['7z', 'rar', 'torrent', 'exe', 'png', 'jpg', 'jpeg', 'mp3', 'mp4', 'txt', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'dll', 'dat'];
-        const fileExtension = file.name.split('.').pop().toLowerCase();
+// Subir la imagen seleccionada al servidor
+fileProfile.addEventListener('change', () => {
+    const formData = new FormData(uploadForm);
+    formData.append('username', 'nombre_del_usuario'); // Cambia dinámicamente según tu usuario
 
-        if (allowedExtensions.includes(fileExtension)) {
-            const destinatario = document.getElementById('destinatario').value;
-
-            if (!destinatario) {
-                alert('Por favor, selecciona un destinatario antes de enviar un archivo.');
-                return;
+    fetch('upload.php', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                img.src = data.newImagePath; // Actualiza la imagen con la nueva ruta
+                alert('Imagen subida correctamente.');
+            } else {
+                console.error('Error al subir la imagen:', data.error);
+                alert(data.error);
             }
-
-            const formData = new FormData();
-            formData.append('archivo', file);
-            formData.append('destinatario', destinatario);
-
-            fetch('chatterly.php', {
-                method: 'POST',
-                body: formData,
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Archivo enviado correctamente.');
-                        console.log('Ruta del archivo:', data.ruta);
-                    } else if (data.error) {
-                        alert(data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al enviar el archivo:', error);
-                });
-        } else {
-            alert('Formato de archivo no permitido. Selecciona un archivo válido.');
-            event.target.value = ''; // Resetea el input si el archivo no es válido
-        }
-    } else {
-        alert('No se ha seleccionado ningún archivo.');
-    }
+        })
+        .catch(error => console.error('Error en la subida de la imagen:', error));
 });

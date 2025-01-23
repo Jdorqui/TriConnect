@@ -175,6 +175,16 @@ button.active
     display: inline-block;
 }
 
+.panel_button
+{
+    background-color: #232428;
+}
+
+.panel_button:hover
+{
+    background-color: #35373c;
+}
+
 .menu
 {
     position: absolute;

@@ -4,13 +4,12 @@ session_start(); // Iniciamos la sesión
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['password']))  // Si el usuario no ha iniciado sesión
 { 
     header("Location: index.html"); // Redirecciona al index
-    exit();
+    exit(); // Finaliza la ejecución del script
 }
 
 // Recupera el usuario y contraseña de la sesión
 $usuario = $_SESSION['usuario'];
 $password = $_SESSION['password'];
-
 
 try // Conectar a la base de datos
 {
@@ -43,7 +42,7 @@ $solicitudes_pendientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Obtener la lista de amigos del usuario
 $stmt = $pdo->prepare("
-    SELECT usuarios.alias, 
+    SELECT usuarios.username, 
            usuarios.profile_picture, 
            amigos.id_user1,
            amigos.id_user2
@@ -55,7 +54,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute(['id_usuario' => $id_usuario_actual]);
 $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
 
 <!DOCTYPE html>
@@ -70,14 +68,14 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <body>
         <div id="bienvenida">
             <div style="display: flex; flex-direction: column; width: 100vw; height: 100vh;">
-                <div style="background-color: #1e1f22; color: white; padding: 5px; text-align: left; height: 20px;"> <!-- superior -->
+                <div style="background-color: #1e1f22; color: white; padding: 5px; text-align: left; height: 20px;"> <!-- barra superior -->
                     <span style="font-weight: bold; color: #949ba4;">Chatterly</span>
                 </div>
                 <div style="display: flex; flex: 1;">
                     <div style="background-color: #1e1f22; width: 2.7vw; padding: 10px; color: white; min-width: 50px;"> <!-- barra1 -->
                         <div>
                             <img id="message-logo" src="../assets/imgs/message_logo.png" alt="logo" onclick=""><br>
-                            <div style="height: 2px; background-color:rgb(57, 62, 66)"></div><br>
+                            <div style="height: 2px; background-color: #393e42"></div><br>
                             <img id="message" src="../assets/imgs/newServer_logo.png" alt="logo" onclick="" style="padding: 10px; width: 30px; height: 30px;"><br>
                         </div>
                     </div>
@@ -86,21 +84,39 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <div style="padding: 10px;">
                                 <button id="options-button" style="text-align: center; display: flex; align-items: center;" onclick="closechat();">
                                     <img src="../assets/imgs/friends_logo.png" alt="account" style="width: 20px; height: 20px; margin-right: 15px;">
-                                    Amigos
+                                    <span>Amigos</span>
                                 </button>
-                                <div style="height: 2px; background-color:rgb(57, 62, 66)"></div>
+                                <div style="height: 2px; background-color: #393e42"></div>
                                 <p style="text-align: center;">MENSAJES DIRECTOS</p>
                                 <?php
                                 if (count($amigos) > 0) 
                                 {
                                     foreach ($amigos as $amigo) 
                                     {
-                                        $foto = $amigo['profile_picture'] ?? '../assets/imgs/default_profile.png';
-                                        $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1'];
+                                        $amigoDir = "../assets/users/{$amigo['username']}/img_profile/";
+                                        $defaultImage = '../assets/imgs/default_profile.png';
+
+                                        $amigoImages = glob($amigoDir . '*.{jpg,jpeg,png}', GLOB_BRACE); //glob — busca coincidencias de nombres de ruta de acuerdo a un patrón por tanto busca las imagenes en la carpeta del amigo y las guarda en un array para luego ordenarlas por fecha de modificacion y mostrar la mas reciente
+
+                                        if (!empty($amigoImages)) //si hay imagenes en la carpeta del amigo
+                                        {
+                                            usort($amigoImages, function($a, $b) //usort — ordena un array según sus valores usando una función de comparación definida por el usuario  y se ordenan las imagenes por fecha de modificacion 
+                                            {
+                                                return filemtime($b) - filemtime($a); //filemtime — obtiene la fecha de modificación de un archivo y se ordenan las imagenes por fecha de modificacion 
+                                            });
+
+                                            $foto = $amigoImages[0]; //se guarda la imagen mas reciente
+                                        } 
+                                        else 
+                                        {
+                                            $foto = $defaultImage; //si no hay imagenes se muestra la imagen por defecto
+                                        }
+
+                                        $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1']; //se obtiene el id del amigo
                                         echo "
                                             <button onclick='openchat($destinatario)' id='options-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; margin-bottom: 5px; cursor: pointer; width: 100%; text-align: left;'>
                                                 <img src='$foto' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
-                                                <span id='nombreboton'>{$amigo['alias']}</span>
+                                                <span id='nombreboton'>{$amigo['username']}</span>
                                             </button>
                                         ";
                                     }
@@ -112,15 +128,33 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 ?>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background-color: #232428; width: 100%;"> <!-- userpanel -->
-                                <?php
-                                     $foto = $amigo['profile_picture'] ?? '../assets/imgs/default_profile.png';
-                                     echo"<button class='kk' id='kk'> <img src='$foto' alt='profile' style='border-radius: 50%; width: 30px; height: 30px;'> <span style='color: white; font-size: 16px; font-weight: bold;'>$usuario</span> </button>";
-                                ?>
-                                
-                                
-                                
-                                
-                                <div style="display: flex; gap: 10px; margin-left: 60px;"> <!-- iconos -->
+                                <?php 
+                                    $baseDir = "../assets/users/$usuario/img_profile/";
+                                    $defaultImage = '../assets/imgs/default_profile.png';
+                                    
+                                    $profileImages = glob($baseDir . '*.{jpg,jpeg,png}', GLOB_BRACE);
+                                    
+                                    if (!empty($profileImages)) 
+                                    {
+                                        usort($profileImages, function($a, $b) 
+                                        {
+                                            return filemtime($b) - filemtime($a);
+                                        });
+                                    
+                                        $foto = $profileImages[0];
+                                    } 
+                                    else 
+                                    {   
+                                        $foto = $defaultImage;
+                                    }
+
+                                     echo"
+                                     <button id='panel_button' class='panel_button' style='display: flex; align-items: center; gap: 10px; padding: 5px 10px; max-width: 100px; cursor: pointer;' onclick='showprofileinfo()'> 
+                                        <img src='$foto' alt='profile' style='border-radius: 50%; width: 30px; height: 30px;'> 
+                                        <span style='color: white; font-size: 16px;'>$usuario</span>
+                                    </button>";
+                                ?> 
+                                <div style="display: flex; gap: 10px; padding-left: 5%;"> <!-- iconos -->
                                     <img src="../assets/imgs/microphone_icon.png" alt="microphone" style="width: 15px; height: 15px; cursor: pointer;">
                                     <img src="../assets/imgs/headphone_icon.png" alt="headphones" style="width: 15px; height: 15px; cursor: pointer;">
                                     <img src="../assets/imgs/options_icon.png" alt="options" style="width: 15px; height: 15px; cursor: pointer;" onclick="showoptionspanel()">
@@ -128,11 +162,12 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                         </div>
                     </div>
+
                     <div id="initialpanel" style="background-color: #313338; flex: 1; display: flex; flex-direction: column; min-width: 500px;"> <!-- initialpanel -->
                         <div style="background-color: #313338; display: flex; padding: 10px; align-items: center; color: white; gap: 10px;"> 
                             <img src="../assets/imgs/friends_logo.png" alt="friends" style="padding: 10px; width: 24px; height: 24px;">
                             <span style="font-size: 16px;">Amigos</span>
-                            <div id="divisor" style="width: 2px; background-color:rgb(57, 62, 66); height: 100%;"></div>
+                            <div id="divisor" style="width: 2px; background-color: #393e42; height: 100%;"></div>
                             <button class="friend-tab-button" style="width: 60px;">En linea</button>
                             <button class="friend-tab-button" style="width: 50px;">Todos</button>
                             <button class="friend-tab-button" onclick="openpendingmenu()">Pendiente</button>
@@ -140,7 +175,7 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <button class="add-friend-button" onclick="openaddfriendmenu()">Añadir amigo</button>
                         </div>
                         
-                        <div id="addfriendmenu" style="display: column;  padding: 30px;" hidden>
+                        <div id="addfriendmenu" style="display: column; padding: 30px;" hidden>
                                 <span>AÑADIR AMIGO</span>
                                 <p>Puedes añadir amigos con su nombre de usuario de Chatterly.</p>
                             <div style="display: flex; overflow: hidden; background-color: #313338;">
@@ -183,9 +218,8 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                         <div style="padding: 10px; display: flex; position: relative; overflow: hidden;"> 
                             <input type="text" id="mensaje" style="border-color:#383a40; background-color: #383a40; width: 100%; box-sizing: border-box; height: 45px; padding-left: 10px; position: relative;" placeholder="Escribe un mensaje..." />
-                            <img src="../assets/imgs/upload.png" style="width: 35px; position: absolute; right: 5px; top: 15px; height: 35px; cursor: pointer; padding: 0 15px; border: none;" id="uploadIcon" alt="Upload">
+                            <img src="../assets/imgs/upload.png" style="width: 35px; position: absolute; right: 5px; top: 15px; height: 35px; cursor: pointer; padding: 0 15px; border: none;" id="uploadfile" alt="Upload">
                             <input type="file" id="fileInput" style="display: none;">
-                            <input type="hidden" id="destinatario">
                             <img src="../assets/imgs/emojis.png" onclick="showEmojis()" style="width: 40px; position: absolute; right: 43px; top: 12px; height: 40px; cursor: pointer; padding: 0 15px; border: none;">
                             <img src="../assets/imgs/gif.png" style="width: 37px; position: absolute; right: 85px; top: 17px; height: 32px; cursor: pointer; padding: 0 15px; border: none;">
                             <button id="enviarMensaje" style="width: 100px; position: absolute; right: 800%; top: 15px; height: 20px; background-color: #5865F2; cursor: pointer; padding: 0 15px; border: none;">Enviar</button>
@@ -203,35 +237,65 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div id="options" hidden>
             <div style="display: flex; flex-direction: column;  width: 100vw; height: 100vh;">
-                <div style="background-color: #1e1f22; color: white; text-align: left; height: 30px;"> <!-- superior -->
-                    Chatterly
+                <div style="background-color: #1e1f22; color: white; padding: 5px; text-align: left; height: 20px;"> <!-- superior -->
+                    <span style="font-weight: bold; color: #949ba4;">Chatterly</span>
                 </div>
                 <div style="display: flex; flex: 1;">
                     <div style="background-color: #2b2d31; width: 30%; padding: 10px; color: white; display: flex; flex-direction: column; gap: 10px;"> <!-- barra1 -->
-                        <div class="form-container" style="align-items: center;">
-                            <p style="text-align: center;">AJUSTES DE USUARIO</p>
-                            <button id="options-button" style="text-align: center;">Mi cuenta</button>
-                            <button id="options-button" style="text-align: center;">Perfiles</button>
-                            <button id="options-button" style="text-align: center;">Dispositivos</button>
-                            <button id="options-button" style="text-align: center;">Conexiones</button>
+                        <div class="form-container">
+                            <p style="text-align: right;">AJUSTES DE USUARIO</p>
+                            <button id="options-button" style="text-align: right;" onclick="showprofileinfo()">Mi cuenta</button>
+                            <button id="options-button" style="text-align: right;">Perfiles</button>
+                            <button id="options-button" style="text-align: right;">Dispositivos</button>
+                            <button id="options-button" style="text-align: right;">Conexiones</button>
                         </div>
                         <div style="height: 2px; background-color:rgb(57, 62, 66)"></div>
-                        <div class="form-container" style="align-items</div>: center;">
-                            <p id="options-title" style="text-align: center;">AJUSTES DE LA APLICACION</p>
-                            <button id="options-button" style="text-align: center;">Apariencia</button>
-                            <button id="options-button" style="text-align: center;">Accesibilidad</button>
-                            <button id="options-button" style="text-align: center;">Voz y Video</button>
-                            <button id="options-button" style="text-align: center;">Chat</button>
-                            <button id="options-button" style="text-align: center;">Notificaciones</button>
-                            <button id="options-button" style="text-align: center;">Atajos de teclado</button>
+                        <div class="form-container">
+                            <p id="options-title" style="text-align: right;">AJUSTES DE LA APLICACION</p>
+                            <button id="options-button" style="text-align: right;">Apariencia</button>
+                            <button id="options-button" style="text-align: right;">Accesibilidad</button>
+                            <button id="options-button" style="text-align: right;">Voz y Video</button>
+                            <button id="options-button" style="text-align: right;">Chat</button>
+                            <button id="options-button" style="text-align: right;">Notificaciones</button>
+                            <button id="options-button" style="text-align: right;">Atajos de teclado</button>
                         </div>
                         <div style="height: 2px; background-color:rgb(57, 62, 66)"></div>
-                            <div class="form-container" style="align-items: center;">
-                            <button id="options-button" style="text-align: center;" onclick="window.location.href='../php/logout.php'">Cerrar sesión</button>
-                            <button id="options-button" style="text-align: center;" onclick="closeoptionspanel()">Volver</button>
+                            <div class="form-container" style="align-items: right;">
+                            <button id="options-button" style="text-align: right;" onclick="window.location.href='../php/logout.php'">Cerrar sesión</button>
+                            <button id="options-button" style="text-align: right;" onclick="closeoptionspanel()">Volver</button>
                         </div>
                     </div>
                     <div style="background-color: #313338; width: 100%; padding: 10px; color: white;"> <!-- barra3 -->
+                        <div id="profileinfo" style="background-color: #8a4545;" hidden>
+                        <?php
+                            $baseDir = "../assets/users/$usuario/img_profile/";
+                            $defaultImage = '../assets/imgs/default_profile.png';
+                            
+                            $profileImages = glob($baseDir . '*.{jpg,jpeg,png}', GLOB_BRACE);
+                            
+                            if (!empty($profileImages)) 
+                            {
+                                usort($profileImages, function($a, $b) {
+                                    return filemtime($b) - filemtime($a);
+                                });
+                               
+                                $foto = $profileImages[0];
+                            } 
+                            else 
+                            {   
+                                $foto = $defaultImage;
+                            }
+                            
+                            echo "
+                            <div style='display: flex; align-items: center; gap: 10px; padding: 40px;'> 
+                                <form id='uploadForm' method='POST' enctype='multipart/form-data' style='display: flex; align-items: center; gap: 10px;'>
+                                    <input type='file' id='fileProfile' name='profile_picture' accept='.png, .jpg, .jpeg' style='display: none;'>
+                                    <img id='profileImg' src='$foto' alt='profile' style='border-radius: 50%; width: 100px; height: 100px; cursor: pointer;'> 
+                                    <span style='color: white; font-size: 40px;'>$usuario</span>
+                                </form>
+                            </div>";
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>
