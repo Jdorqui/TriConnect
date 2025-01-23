@@ -13,8 +13,17 @@ $stmt->execute();
 
 $chats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+if (isset($_GET['chat_id'])) {
+    $chat_id = $_GET['chat_id'];
 
+    $stmt = $conn->prepare("SELECT * FROM mensajes WHERE chatId = :chat_id");
 
+    $stmt->bindParam(':chat_id', $chat_id, PDO::PARAM_INT);
+
+    $stmt->execute();
+
+    $mensajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 ?>
 
@@ -48,9 +57,9 @@ $chats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <?php foreach ($chats as $chat): ?>
                 <div class="chat">
-
-                    <div class="anuncio_id"><?= $anun['anuncio_id'] ?></div>
-                    <div class="anuncio_id"><?= $anun['anuncio_id'] ?></div>
+                    <a href="chat.php?chat_id=<?= $chat['id'] ?>">
+                        <div class="anuncio_id"><?= $anun['anuncio_id'] ?></div>
+                        <div class="anuncio_id"><?= $anun['anuncio_id'] ?></div>
                     </a>
                 </div>
 
@@ -61,12 +70,12 @@ $chats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="lista-mensajes">
 
-            <?php foreach ($chats as $chat): ?>
+            <?php foreach ($mensajes as $mensaje): ?>
 
                 <div class="mensaje">
 
-                    <div class="texto"><?= $chat['mensaje'] ?></div>
-                    <div class="fecha"><?= $chat['fecha_envio']?></div>
+                    <div class="texto"><?= $mensaje['mensaje'] ?></div>
+                    <div class="fecha"><?= $mensaje['fecha_envio'] ?></div>
 
                 </div>
 
