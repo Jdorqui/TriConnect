@@ -294,6 +294,7 @@ function showprofileinfo()
 //imagen perfil
 
 const img = document.getElementById('profileImg');
+const img2 = document.getElementById('fileProfile2');
 const fileProfile = document.getElementById('fileProfile');
 const uploadForm = document.getElementById('uploadForm');
 
@@ -315,6 +316,7 @@ fileProfile.addEventListener('change', () => {
         .then(data => {
             if (data.success) {
                 img.src = data.newImagePath; // Actualiza la imagen con la nueva ruta
+                img2.src = data.newImagePath;
                 alert('Imagen subida correctamente.');
             } else {
                 console.error('Error al subir la imagen:', data.error);

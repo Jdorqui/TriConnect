@@ -150,7 +150,7 @@ $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                      echo"
                                      <button id='panel_button' class='panel_button' style='display: flex; align-items: center; gap: 10px; padding: 5px 10px; max-width: 100px; cursor: pointer;' onclick='showprofileinfo()'> 
-                                        <img src='$foto' alt='profile' style='border-radius: 50%; width: 30px; height: 30px;'> 
+                                        <img id='fileProfile2' src='$foto' alt='profile' style='border-radius: 50%; width: 30px; height: 30px;'> 
                                         <span style='color: white; font-size: 16px;'>$usuario</span>
                                     </button>";
                                 ?> 
