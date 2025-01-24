@@ -1,4 +1,4 @@
-<?php
+<?php 
 include_once 'logueado.php';
 include_once 'config.php';
 
@@ -94,21 +94,48 @@ if (isset($_GET['chat_id'])) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mensajes en Tiempo Real</title>
+    <title>Mis Conversaciones</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="../css/chats.css">
 </head>
 <body>
-    <h1>Chat</h1>
+    <h1>Mis Conversaciones</h1>
+    
+    <!-- Lista de chats disponibles -->
+    <div>
+        <h2>Chats Disponibles</h2>
+        <ul id="lista-chats">
+            <?php foreach ($chats as $chat): ?>
+                <li>
+                    <a href="chats.php?chat_id=<?= $chat['id'] ?>">
+                        <?= htmlspecialchars($chat['titulo']) ?>
+                        (<?= $chat['anuncio_owner'] == $user_id ? 'Dueño' : 'Comprador' ?>)
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
 
+    <?php if (isset($_GET['chat_id'])): ?>
+    <!-- Chat seleccionado -->
     <div>
         <h2>Mensajes</h2>
         <div id="lista-mensajes" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto;">
             <!-- Los mensajes se cargarán aquí -->
+            <?php foreach ($mensajes as $mensaje): ?>
+                <div class="<?= $mensaje['sender_id'] == $user_id ? 'mensaje-propio' : 'mensaje-otro' ?>">
+                    <strong><?= htmlspecialchars($mensaje['sender_alias']) ?>:</strong>
+                    <?= htmlspecialchars($mensaje['mensaje']) ?>
+                    <small><?= $mensaje['fecha_envio'] ?></small>
+                </div>
+            <?php endforeach; ?>
         </div>
+
+        <!-- Formulario para enviar mensaje -->
         <form id="form-mensaje">
             <textarea id="mensaje" placeholder="Escribe tu mensaje..." required></textarea>
             <button type="submit">Enviar</button>
@@ -165,5 +192,6 @@ if (isset($_GET['chat_id'])) {
         // Cargar mensajes al inicio
         cargarMensajes();
     </script>
+    <?php endif; ?>
 </body>
 </html>

@@ -1,41 +1,37 @@
 <?php
-
 include_once 'logueado.php';
-
 ?>
 
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDo' - Inicio</title>
+    <link rel="stylesheet" href="../css/inicio.css">
 </head>
 
 <body>
 
     <header>
-
         <div class="logo">
-
             <img src="../img/logoToDo.png" alt="Logo de ToDo'">
-
-
         </div>
 
-        <nav>
-
-            <ul>
-
-                <li><a href="inicio.php">Inicio</a></li>
-                <li><a href="cuenta.php">Mi cuenta</a></li>
-                <li><a href="chats.php">Mensajes</a></li>
-                <li><a href="logout.php">Cerrar sesión</a></li>
-
-            </ul>
-
-        </nav>
-
+        <!-- Contenedor para los iconos a la derecha -->
+        <div class="header-icons">
+            <!-- Icono de mensajes -->
+            <a href="chats.php">
+                <img src="../img/icono-mensajes.png" alt="Mensajes">
+            </a>
+            <!-- Icono de configuración -->
+            <a href="cuenta.php">
+                <img src="../img/icono-configuracion.png" alt="Configuración">
+            </a>
+            <!-- Icono para crear anuncio -->
+            <a href="crear_anuncio.php">
+                <img src="../img/icono-anuncio.png" alt="Crear Anuncio">
+            </a>
+        </div>
     </header>
 
     <section class="categorias">
@@ -65,5 +61,4 @@ include_once 'logueado.php';
     </footer>
 
 </body>
-
 </html>

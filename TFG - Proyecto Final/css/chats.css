@@ -1,81 +1,154 @@
+/* Estilos generales para el cuerpo de la página */
 body {
     font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
 }
 
-header {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+h1, h2 {
+    color: #333;
 }
 
-header .logo img {
-    max-height: 50px;
-}
-
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 10px;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-}
-
-.chat-window {
-    display: flex;
+/* Contenedor principal de la página */
+div {
     margin: 20px;
 }
 
-.lista-chats, .lista-mensajes {
-    background: white;
-    padding: 20px;
-    margin-right: 10px;
+/* Lista de chats */
+#lista-chats {
+    list-style-type: none;
+    padding: 0;
+}
+
+#lista-chats li {
+    background-color: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
     border-radius: 5px;
-    flex: 1;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#lista-chats li a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+#lista-chats li a:hover {
+    text-decoration: underline;
+}
+
+/* Contenedor de los mensajes */
+#lista-mensajes {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    max-height: 400px;
     overflow-y: auto;
 }
 
-.lista-mensajes {
-    flex: 2;
-}
-
-.mensaje {
+/* Estilo para los mensajes propios y otros */
+.mensaje-propio {
+    background-color: #dcf8c6;
     margin-bottom: 10px;
-    padding: 10px;
-    background: #f1f1f1;
+    padding: 8px;
     border-radius: 5px;
+    align-self: flex-end;
+    max-width: 70%;
 }
 
-.mensaje strong {
+.mensaje-otro {
+    background-color: #fff;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 5px;
+    align-self: flex-start;
+    max-width: 70%;
+}
+
+.mensaje-propio small,
+.mensaje-otro small {
     display: block;
-    font-weight: bold;
+    font-size: 0.8em;
+    color: #888;
 }
 
-form.form-enviar {
-    margin-top: 10px;
+/* Estilo para el formulario de mensaje */
+#form-mensaje {
     display: flex;
-    gap: 10px;
+    flex-direction: column;
 }
 
-form.form-enviar textarea {
-    flex: 1;
+#mensaje {
+    padding: 10px;
+    font-size: 1em;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
     resize: none;
-    padding: 10px;
+    height: 80px;
 }
 
-form.form-enviar button {
+#form-mensaje button {
     padding: 10px;
-    background-color: #333;
-    color: white;
+    background-color: #007bff;
+    color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+#form-mensaje button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos de la barra lateral (navegación) */
+nav {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+nav a {
+    color: #007bff;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+}
+
+nav a:hover {
+    background-color: #ddd;
+}
+
+/* Estilo del título principal */
+h1 {
+    font-size: 2em;
+    color: #333;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Estilo para el contenedor de chats */
+div {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Estilo para las alertas o mensajes de error */
+.alert {
+    color: #fff;
+    background-color: #f44336;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Estilo para el enlace de chat */
+a {
+    color: #007bff;
+    text-decoration: none;
 }
