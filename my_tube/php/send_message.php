@@ -7,6 +7,6 @@ $SENDER = $_POST["sender"];
 $RECEIVER = $_POST["receiver"];
 $MSG = $_POST["msg"];
 
-$SEND_MESSAGE_QUERY = $CONN->query("INSERT INTO MSGS VALUES ('$SENDER', '$RECEIVER', '$MSG', NOW(6))");
+$SEND_MESSAGE_QUERY = $CONN->query("INSERT INTO MSGS VALUES ('$SENDER', '$RECEIVER', '$MSG', NOW(6), 'FALSE')");
 
 $CONN->close();

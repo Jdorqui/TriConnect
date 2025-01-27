@@ -15,6 +15,19 @@ function changeChat(friend) {
                             </div>`;
 
     refresh();
+
+    let formData = new FormData();
+    formData.append("sender", username);
+    formData.append("receiver", receiverName);
+
+    fetch(`../php/read_message.php`, {
+        method: "POST",
+        body: formData
+    })
+    .then((response) => response.text())
+    .then((data) => {
+        console.log(data);
+    })
 }
 
 function createFriendsDivs() {
@@ -26,8 +39,8 @@ function createFriendsDivs() {
                                     <div>
                                         ${friendsArray[i][0]}
                                     </div>
-                                    <div class="new_messages_each_friend">
-                                        2
+                                    <div class="new_messages_each_friend" style="display: none">
+                                        0
                                     </div>
                                 </div>`;
     }
@@ -37,7 +50,6 @@ createFriendsDivs();
 
 if (friendsArray.length > 0) {
     let a = document.getElementById("friend_navbar").children[1];
-    console.log(a);
 
     changeChat(a);
 }
@@ -88,10 +100,37 @@ function createMessage(sender, msg) {
     chat.innerHTML += before;
 }
 
-function getAllMessages() {
+function updateUnreadMessages(sender) {
+    let newMessagesFriendsChatTab = document.getElementById("friend_navbar").children;
+    for (let i = 1; i < newMessagesFriendsChatTab.length; i++) {
+        console.log("check: " + newMessagesFriendsChatTab[i].children[1].innerHTML.trim());
+        console.log("sender: " + sender);
+        if (newMessagesFriendsChatTab[i].children[1].innerHTML.trim() == sender && receiverName != sender) {
+            let newMessagesSingleFriendChatTab = newMessagesFriendsChatTab[i].children[2]
+
+            let actualUnreadMessages = parseInt(newMessagesSingleFriendChatTab.innerHTML) + 1;
+            console.log("AUM: " + actualUnreadMessages);
+            if (actualUnreadMessages > 99) {
+                newMessagesSingleFriendChatTab.innerHTML = "99+";
+                newMessagesSingleFriendChatTab.style.display = ""
+                newMessagesSingleFriendChatTab.style.fontSize = "0.9vw";
+            } else if (actualUnreadMessages > 0) {
+                newMessagesSingleFriendChatTab.innerHTML = actualUnreadMessages;
+                newMessagesSingleFriendChatTab.style.display = ""
+            } else {
+                newMessagesSingleFriendChatTab.innerHTML = 0;
+                newMessagesSingleFriendChatTab.style.display = "none"
+            }
+
+            break;
+        }
+    }
+}
+
+function getAllMessages(receiver) {
     let formData = new FormData();
     formData.append("sender", username);
-    formData.append("receiver", receiverName);
+    formData.append("receiver", receiver);
 
     fetch(`../php/receive_message.php`, {
         method: "POST",
@@ -103,12 +142,19 @@ function getAllMessages() {
             // console.log(JSON.stringify(json_data, null, 2));
 
             let newMessages = JSON.parse(data).length - messageNumber;
+
             // console.log(newMessages);
 
             for (let i = 0; i < newMessages; i++) {
                 let sender = json_data[messageNumber][0];
                 let msg = json_data[messageNumber][2];
-                createMessage(sender, msg);
+                if (json_data[messageNumber][4] == "0") {
+                    updateUnreadMessages(sender);
+                }
+
+                if (receiver == receiverName) {
+                    createMessage(sender, msg);
+                }
 
                 messageNumber++;
             }
@@ -119,5 +165,7 @@ function getAllMessages() {
 }
 
 setInterval(function () {
-    getAllMessages();
+    for (i = 0; i < friendsArray.length; i++) {
+        getAllMessages(friendsArray[i][0]);
+    }
 }, 200);
