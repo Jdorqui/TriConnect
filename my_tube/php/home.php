@@ -53,12 +53,12 @@ $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
 
             <?php if (isset($_SESSION["USERNAME"])): ?>
                 <div id="user_logged_in_tab" onclick="displayUserSettings()">
-                    <img src="../img/profile_pic_example.jpg">
+                    <img class="every_user_image" src="../img/profile_pic_example.jpg">
                     <div><?php echo $_SESSION["USERNAME"] ?></div>
                 </div>
             <?php else: ?>
                 <div id="user_logged_out_tab" onclick="displayLoginAPIWrapper()">
-                    <img src="../img/logged_out_profile_pic.jpg">
+                    <img class="every_user_image" src="../img/logged_out_profile_pic.jpg">
                     <div>Iniciar sesión</div>
                 </div>
             <?php endif; ?>
@@ -69,7 +69,12 @@ $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
                 <img src="../img/subs_icon.png" onclick="display('subs')">
                 <img src="../img/history_icon.png" onclick="display('history')">
                 <img src="../img/like_icon.png" onclick="display('like')">
-                <img src="../img/chat_icon.png" onclick="display('chat')">
+                <div style="position: relative" onclick="display('chat')">
+                    <img src="../img/chat_icon.png">
+                    <div id="new_messages_chat_tab" style="">
+                        2
+                    </div>
+                </div>
             </div>
             <div id="content">
                 <div id="home_div">HOME</div>
@@ -82,17 +87,21 @@ $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
                     </div>
                     <div>
                         <div id="user_header">
-                            <img src="../img/profile_pic_example.jpg">
-                            <div>
-                                TEST
-                            </div>
+                            <?php if ($GET_ALL_FRIENDS_QUERY->num_rows > 0): ?>
+                                <img class="every_user_image" src="../img/profile_pic_example.jpg">
+                                <div>
+                                    <div>
+                                        <?php
+                                        echo json_decode($FRIENDS_ARRAY)[0][0];
+                                        ?>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                            <?php endif; ?>
                         </div>
-                        <div id="chat" style="flex-grow: 1; overflow: scroll;"></div>
-                        <div style="">
-                            <input id="input_text" type="text" placeholder="Enviar mensaje"
-                                onkeypress="sendMessage(this, event)"
-                                style="width: 100%; box-sizing: border-box; padding: 10px; margin: 0">
-                        </div>
+                        <div id="chat"></div>
+                        <input id="input_text" type="text" placeholder="Enviar mensaje"
+                            onkeypress="sendMessage(this, event)">
                     </div>
                 </div>
             </div>
@@ -152,9 +161,9 @@ $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
     <div id="notifications">
     </div>
 
-    <script src="../js/main.js"></script>
-    <script src="../js/login_api.js"></script>
-    <script src="../js/chat.js"></script>
+    <script type="text/javascript" src="../js/login_api.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <script type="text/javascript" src="../js/chat.js"></script>
 </body>
 
 </html>
