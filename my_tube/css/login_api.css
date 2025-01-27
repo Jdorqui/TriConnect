@@ -50,14 +50,14 @@
     height: 40%;
 }
 
-/* div del texto */
+/* div del texto. */
 #mytube_login_API_wrapper>:nth-child(2)>div {
     position: absolute;
     bottom: 10%;
     font-size: 1.75vw;
 }
 
-/* forms para iniciar sesión y registrarse */
+/* forms para iniciar sesión y registrarse. */
 #mytube_login_API_wrapper form {
     display: flex;
     flex-direction: column;
@@ -71,13 +71,13 @@
     font-size: 1.5vw;
 }
 
-/* Todos los elementos excepto el div de los botones */
+/* Todos los elementos excepto el div de los botones. */
 #mytube_login_API_wrapper form>:not(.buttons_div) {
     width: 70%;
     margin-bottom: 1vw;
 }
 
-/* inputs */
+/* inputs. */
 #mytube_login_API_wrapper form input {
     width: 100%;
 
@@ -93,7 +93,7 @@
     padding: 0.5vw;
 }
 
-/* div de los botones */
+/* div de los botones. */
 .buttons_div {
     position: absolute;
 

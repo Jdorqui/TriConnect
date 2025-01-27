@@ -8,14 +8,19 @@ for (let i = 1; i < contentDivChildren.length; i++) {
 
 // Mostrar div dependiendo de la imagen clicada.
 function display(id) {
-    for (let i = 0; i < contentDivChildren.length; i++) {
-        let child = contentDivChildren[i];
-        if (child.id.includes(id)) {
-            child.style.display = '';
-        } else {
-            child.style.display = 'none';
+    if (id != 'home' && username == '') {
+        displayLoginAPIWrapper();
+    } else {
+        for (let i = 0; i < contentDivChildren.length; i++) {
+            let child = contentDivChildren[i];
+            if (child.id.includes(id)) {
+                child.style.display = '';
+            } else {
+                child.style.display = 'none';
+            }
         }
     }
+
 }
 
 display('chat');

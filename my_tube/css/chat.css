@@ -31,22 +31,25 @@
     cursor: pointer;
 
     align-items: center;
+    height: 10%;
+}
+
+.new_messages_each_friend {
+    position: absolute;
+    right: 0.5vw;
+    background-color: red;
+    width: 2vw;
+    height: 2vw;
+    border-radius: 50%;
+    font-size: 1.2vw !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Mostrar fondo más claro al pasar el ratón por encima */
 #friend_navbar>:not(:first-child):hover {
     background-color: rgb(33, 33, 33);
-}
-
-/* La imagen de cada div excepto el primero */
-#friend_navbar>:not(:first-child)>img {
-    display: block;
-
-    width: 3.5vw;
-    height: 3.5vw;
-    border-radius: 2vw;
-
-    margin-right: 1vw;
 }
 
 /* Nombre del amigo */
@@ -58,7 +61,9 @@
 #chat_div>:last-child {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+
+    width: 80%;
+    height: 100%;
 
     padding: 0;
 }
@@ -87,4 +92,60 @@
 /* Nombre del amigo seleccionado */
 #user_header>div {
     font-size: 2.2vw;
+}
+
+#chat {
+    padding: 1vw;
+
+    display: flex;
+    flex-grow: 1;
+
+    flex-direction: column-reverse;
+    overflow: scroll;
+}
+
+#chat::-webkit-scrollbar {
+    display: none;
+}
+
+/* Cada mensaje. */
+.message_body {
+    display: flex;
+    width: 50%;
+    padding: 0.5vw;
+
+    margin-top: 1vw;
+}
+
+.message_body>img {
+    display: block;
+
+    width: 3.5vw;
+    height: 3.5vw;
+    border-radius: 2vw;
+
+    margin-left: 1vw;
+    margin-right: 1vw;
+}
+
+.message_body>div {
+    overflow: hidden;
+
+    width: 100%;
+    border-radius: 1.5vw;
+    padding: 1vw;
+}
+
+.message {
+    font-size: 1.5vw;
+
+    overflow-wrap: break-word;
+}
+
+#input_text {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5vw;
+    margin: 0;
+    margin-top: auto
 }
