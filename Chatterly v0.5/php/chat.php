@@ -27,19 +27,21 @@ if (!$usuarioData) {
 $id_usuario_actual = $usuarioData['id_user'];
 
 // Obtener los mensajes entre el usuario actual y el destinatario
-if (isset($_POST['destinatario'])) {
+if (isset($_POST['destinatario'])) 
+{
     $destinatario = $_POST['destinatario'];
     $stmt = $pdo->prepare("
-        SELECT m.contenido, m.fecha_envio, u.alias, m.tipo
-        FROM mensajes m
-        JOIN usuarios u ON m.id_emisor = u.id_user
-        WHERE (m.id_emisor = :id_usuario AND m.id_receptor = :destinatario)
-           OR (m.id_emisor = :destinatario AND m.id_receptor = :id_usuario)
-        ORDER BY m.fecha_envio ASC
-    ");
-    $stmt->execute(['id_usuario' => $id_usuario_actual, 'destinatario' => $destinatario]);
-    $mensajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    echo json_encode($mensajes); // Devuelve los mensajes en formato JSON
+    SELECT m.contenido, m.fecha_envio, u.alias, u.id_user AS id_emisor, m.tipo
+    FROM mensajes m
+    JOIN usuarios u ON m.id_emisor = u.id_user
+    WHERE (m.id_emisor = :id_usuario AND m.id_receptor = :destinatario)
+       OR (m.id_emisor = :destinatario AND m.id_receptor = :id_usuario)
+    ORDER BY m.fecha_envio ASC
+");
+$stmt->execute(['id_usuario' => $id_usuario_actual, 'destinatario' => $destinatario]);
+$mensajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+echo json_encode($mensajes); // Devuelve los mensajes en formato JSON
+
 }
 
 // Enviar un mensaje de texto
