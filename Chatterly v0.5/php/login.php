@@ -28,6 +28,7 @@ if ($result->num_rows > 0)
     {
         $_SESSION['usuario'] = $usuario;
         $_SESSION['password'] = $password;
+        
         echo json_encode(["status" => "success", "message" => "Inicio de sesión exitoso."]);
     } 
     else 

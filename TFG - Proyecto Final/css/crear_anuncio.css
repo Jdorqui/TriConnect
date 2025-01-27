@@ -71,6 +71,55 @@ form input[type="submit"]:hover {
     background-color: #45a049;
 }
 
+/* Estilos para la carga de imagen personalizada */
+.upload-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 2px dashed #4CAF50;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.upload-label {
+    display: inline-block;
+    padding: 15px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.upload-label:hover {
+    background-color: #45a049;
+}
+
+.upload-text {
+    font-size: 16px;
+}
+
+.upload-input {
+    display: none; /* Ocultar el campo de entrada real */
+}
+
+.preview-container {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.preview-image {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+}
+
 /* Estilo para los errores o mensajes de validación (si es necesario) */
 .error-message {
     color: red;

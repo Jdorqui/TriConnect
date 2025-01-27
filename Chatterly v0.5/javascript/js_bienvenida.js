@@ -20,6 +20,7 @@ function closeoptionspanel()
     normalPanel.style.display = "block";
     optionsPanel.style.display = "none";
     document.getElementById("profileinfo").style.display = "none";
+    document.getElementById("openonlinemenu").style.display = "none";
 }
 
 function closechat()
@@ -32,6 +33,7 @@ function openaddfriendmenu()
 {
     pendingMenu.hidden = true;
     document.getElementById("addfriendmenu").style.display = "block";
+    document.getElementById("openonlinemenu").style.display = "none";
     closechat();
 }
 
@@ -39,6 +41,16 @@ function openpendingmenu()
 {    
     pendingMenu.hidden = false;
     document.getElementById("addfriendmenu").style.display = "none";
+    document.getElementById("openonlinemenu").style.display = "none";
+    closechat();
+}
+
+function openonlinemenu() 
+{    
+    pendingMenu.hidden = true;
+    document.getElementById("openonlinemenu").style.display = "block";
+    document.getElementById("addfriendmenu").style.display = "none";
+    document.getElementById("profileinfo").style.display = "none";
     closechat();
 }
 
@@ -100,18 +112,48 @@ function openchat(destinatarioID) //abrir chat
     initialpanel.style.display = "none";
     cargarMensajes();  //carga los mensajes
 }
+
+function formatDate(dateString) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', options); // Cambia 'es-ES' por el idioma de tu preferencia
+}
         
 function cargarMensajes() {
     if (destinatario === null) return; // Verifica que el destinatario esté definido
+    
+    // Obtener la imagen de perfil del usuario actual
+    const imgProfileUrl = document.getElementById("profileImg2").src;  // Imagen del usuario actual
+    // Obtener la imagen de perfil del amigo (receptor)
+    const fotoFriendUrl = document.getElementById("fotoFriend").src;  // Imagen del amigo
 
     $.post('chat.php', { destinatario: destinatario }, function(data) {
         try {
+            let imgUrl = null;
             const mensajes = JSON.parse(data); // Parsear la respuesta del servidor
             $('#chat-messages').empty(); // Limpiar los mensajes previos
-
+            
             mensajes.forEach(function(mensaje) {
-                let mensajeHtml = '<div style="padding-left: 10px;"><strong>' + mensaje.alias + ':</strong> ' + mensaje.contenido;
+                // Formatear la fecha
+                let fechaEnvio = mensaje.fecha_envio ? new Date(mensaje.fecha_envio).toLocaleString() : "Fecha no disponible"; 
 
+                let mensajeHtml = '<div style="padding-left: 10px; display: flex; align-items: center;">';
+                let imgUrl = null;
+            
+                // Verificar el emisor y asignar la imagen adecuada
+                if (mensaje.id_emisor == id_usuario_actual) {
+                    imgUrl = imgProfileUrl; // Usar imagen del usuario actual
+                } else if (mensaje.id_emisor != id_usuario_actual) {
+                    imgUrl = fotoFriendUrl; // Usar imagen del amigo
+                }
+            
+                // Agregar la imagen de perfil al lado del nombre
+                mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">`;
+                mensajeHtml += `<strong>${mensaje.alias}:</strong> ${mensaje.contenido}`;
+
+                // Mostrar la fecha dentro del mensaje
+                mensajeHtml += `<div style="font-size: 0.8em; color: #888; min-width: 110px; padding: 5px; align-items: left; margin-left: auto;">${fechaEnvio}</div>`;
+            
                 // Verificar si el tipo es 'imagen' y mostrarla
                 if (mensaje.tipo === 'imagen') {
                     mensajeHtml += `<br><img src="${mensaje.contenido}" alt="Archivo adjunto" style="max-width: 100px; max-height: 100px;">`;
@@ -120,6 +162,7 @@ function cargarMensajes() {
                 mensajeHtml += '</div>';
                 $('#chat-messages').prepend(mensajeHtml); // Añadir el mensaje al principio del chat
             });
+            
         } catch (e) {
             console.error("Error al parsear JSON:", e);
             console.log("Respuesta del servidor:", data);
@@ -141,8 +184,6 @@ $('#enviarMensaje').click(function()
     }
 });
 
-// Enviar archivo
-// Enviar archivo
 // Enviar archivo
 $('#uploadfile').click(function() {
     document.getElementById('fileInput').click();
@@ -294,8 +335,8 @@ function showprofileinfo()
 //imagen perfil
 
 const img = document.getElementById('profileImg');
-const img2 = document.getElementById('fileProfile2');
-const fileProfile = document.getElementById('fileProfile');
+const img2 = document.getElementById('profileImg2');
+const fileProfile = document.getElementById('fotoProfile');
 const uploadForm = document.getElementById('uploadForm');
 
 // Abre el selector de archivos al hacer clic en la imagen
@@ -317,6 +358,7 @@ fileProfile.addEventListener('change', () => {
             if (data.success) {
                 img.src = data.newImagePath; // Actualiza la imagen con la nueva ruta
                 img2.src = data.newImagePath;
+                img3
                 alert('Imagen subida correctamente.');
             } else {
                 console.error('Error al subir la imagen:', data.error);

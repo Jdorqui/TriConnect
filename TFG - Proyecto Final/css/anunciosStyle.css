@@ -1,59 +1,77 @@
-/* Estilo general */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f9;
+    background-color: #f6f6f6;
     color: #333;
 }
 
 h1 {
     text-align: center;
     margin: 20px 0;
-    font-size: 2.5em;
+    font-size: 2em;
     color: #444;
 }
 
-/* Contenedor de los anuncios */
-#anuncios-list {
+.anuncios-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
     padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-/* Estilo de cada anuncio */
 .anuncio {
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 10px;
-    overflow: hidden;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .anuncio:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .anuncio a {
     text-decoration: none;
     color: inherit;
-    display: block;
-    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.imagen-anuncio {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    background-color: #eee;
 }
 
 .titulo {
+    padding: 10px;
     font-size: 1.2em;
     font-weight: bold;
-    margin-bottom: 10px;
     color: #333;
+    flex-grow: 1;
 }
 
-.titulo:hover {
-    color: #007BFF;
-    text-decoration: underline;
+.precio {
+    padding: 10px;
+    font-size: 1em;
+    font-weight: bold;
+    color: #007aff;
+    border-top: 1px solid #ddd;
+}
+
+.estado {
+    padding: 5px;
+    font-size: 0.9em;
+    color: #666;
 }
