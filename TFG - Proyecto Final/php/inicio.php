@@ -1,5 +1,5 @@
 <?php
-include_once 'logueado.php';
+include_once 'logueado.php';  // Asegúrate de incluir el archivo que verifica si el usuario está logueado
 ?>
 
 <html lang="es">
@@ -19,20 +19,27 @@ include_once 'logueado.php';
 
         <!-- Contenedor para los iconos a la derecha -->
         <div class="header-icons">
-            <!-- Icono de mensajes -->
             <a href="chats.php">
-                <img src="../img/icono-mensajes.png" alt="Mensajes">
+                <img src="../img/imagenMensajes.png" alt="Mensajes">
             </a>
-            <!-- Icono de configuración -->
             <a href="cuenta.php">
                 <img src="../img/icono-configuracion.png" alt="Configuración">
             </a>
-            <!-- Icono para crear anuncio -->
             <a href="crear_anuncio.php">
                 <img src="../img/icono-anuncio.png" alt="Crear Anuncio">
             </a>
         </div>
     </header>
+
+    <!-- Sección del buscador -->
+    <section class="buscador">
+        <form action="buscar_anuncios.php" method="get">
+            <input type="text" name="query" placeholder="Buscar anuncios..." class="input-buscar" required>
+            <input type="number" name="min_price" placeholder="Precio mínimo" class="input-buscar">
+            <input type="number" name="max_price" placeholder="Precio máximo" class="input-buscar">
+            <button type="submit" class="btn-buscar">Buscar</button>
+        </form>
+    </section>
 
     <section class="categorias">
         <h2>Categorías</h2>
