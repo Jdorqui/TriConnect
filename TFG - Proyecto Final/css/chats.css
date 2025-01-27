@@ -57,6 +57,7 @@ div {
     border-radius: 5px;
     align-self: flex-end;
     max-width: 70%;
+    overflow-wrap: break-word;
 }
 
 .mensaje-otro {
@@ -66,6 +67,7 @@ div {
     border-radius: 5px;
     align-self: flex-start;
     max-width: 70%;
+    overflow-wrap: break-word;
 }
 
 .mensaje-propio small,
