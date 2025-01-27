@@ -1,5 +1,6 @@
 <?php
 session_start(); //se accede a la sesion actual iniciandola 
+
 session_unset(); //libera todas las variables guardadas
 session_destroy(); //destruye la sesion
 
