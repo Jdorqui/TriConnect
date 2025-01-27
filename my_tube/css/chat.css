@@ -26,7 +26,6 @@
 /* Todos los divs excepto el primero */
 #friend_navbar>:not(:first-child) {
     display: flex;
-    margin-bottom: 1vw;
     padding: 0.5vw;
 
     cursor: pointer;
