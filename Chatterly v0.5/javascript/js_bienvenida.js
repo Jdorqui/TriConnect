@@ -128,65 +128,44 @@ function selectFriend(nombre, foto, destinatario)
     openchat(destinatario);
 }
 
-
 //chat
-function openchat(destinatarioID) //abrir chat
-{
-    destinatario = destinatarioID;  //seteamos el destinatario
+function openchat(destinatarioID) {
+    destinatario = destinatarioID;  // Seteamos el destinatario
     chat.style.display = "block";
     pendingMenu.hidden = true;
     document.getElementById("addfriendmenu").style.display = "none";
     initialpanel.style.display = "none";
-    cargarMensajes();  //carga los mensajes
+    cargarMensajes();  // Carga los mensajes
 }
 
-
-function formatDate(dateString) {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', options); // Cambia 'es-ES' por el idioma de tu preferencia
-}
-        
 function cargarMensajes() {
     if (destinatario === null) return; // Verifica que el destinatario esté definido
-    
-    // Obtener la imagen de perfil del usuario actual
+
     const imgProfileUrl = document.getElementById("profileImg2").src;  // Imagen del usuario actual
-    // Obtener la imagen de perfil del amigo (receptor)
     const fotoFriendUrl = document.getElementById("fotoFriend").src;  // Imagen del amigo
 
     $.post('chat.php', { destinatario: destinatario }, function(data) {
         try {
-            let imgUrl = null;
-            const mensajes = JSON.parse(data); // Parsear la respuesta del servidor
+            let mensajes = JSON.parse(data); // Parsear la respuesta del servidor
             $('#chat-messages').empty(); // Limpiar los mensajes previos
             
             mensajes.forEach(function(mensaje) {
-                // Formatear la fecha
                 let fechaEnvio = mensaje.fecha_envio ? new Date(mensaje.fecha_envio).toLocaleString() : "Fecha no disponible"; 
-
-                let mensajeHtml = '<div style="padding-left: 10px; display: flex; align-items: center;">';
-                let imgUrl = null;
+                let imgUrl = (mensaje.id_emisor == id_usuario_actual) ? imgProfileUrl : fotoFriendUrl;
             
-                // Verificar el emisor y asignar la imagen adecuada
-                if (mensaje.id_emisor == id_usuario_actual) {
-                    imgUrl = imgProfileUrl; // Usar imagen del usuario actual
-                } else if (mensaje.id_emisor != id_usuario_actual) {
-                    imgUrl = fotoFriendUrl; // Usar imagen del amigo
-                }
-            
-                // Agregar la imagen de perfil al lado del nombre
+                let mensajeHtml = `<div style="padding-left: 10px; display: flex; align-items: center;">`;
                 mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">`;
-                mensajeHtml += `<strong>${mensaje.alias}:</strong> ${mensaje.contenido}`;
-
-                // Mostrar la fecha dentro del mensaje
-                mensajeHtml += `<div style="font-size: 0.8em; color: #888; min-width: 110px; padding: 5px; align-items: left; margin-left: auto;">${fechaEnvio}</div>`;
+                
             
-                // Verificar si el tipo es 'imagen' y mostrarla
-                if (mensaje.tipo === 'imagen') {
-                    mensajeHtml += `<br><img src="${mensaje.contenido}" alt="Archivo adjunto" style="max-width: 100px; max-height: 100px;">`;
+                if (mensaje.tipo === 'imagen' || mensaje.tipo === 'archivo') {
+                    mensajeHtml += `<br><img src="${mensaje.contenido}" alt="Archivo adjunto" style="max-width: 100px; max-height: 100px;">`;  // Para imágenes
                 }
-
+                else
+                {
+                    mensajeHtml += `<strong>${mensaje.alias}:</strong> ${mensaje.contenido}`;
+                }
+                
+                mensajeHtml += `<div style="font-size: 0.8em; color: #888; min-width: 110px; padding: 5px; align-items: left; margin-left: auto;">${fechaEnvio}</div>`;
                 mensajeHtml += '</div>';
                 $('#chat-messages').prepend(mensajeHtml); // Añadir el mensaje al principio del chat
             });
@@ -198,14 +177,11 @@ function cargarMensajes() {
     });
 }
 
-$('#enviarMensaje').click(function()
-{
+$('#enviarMensaje').click(function() {
     const mensaje = $('#mensaje').val();
-    if (mensaje.trim() !== '') 
-    {
-        $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() 
-        {
-            $('#mensaje').val(''); //limpiar el input
+    if (mensaje.trim() !== '') {
+        $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() {
+            $('#mensaje').val(''); // Limpiar el input
             cargarMensajes();
         });
     }
@@ -385,7 +361,6 @@ fileProfile.addEventListener('change', () => {
             if (data.success) {
                 img.src = data.newImagePath; // Actualiza la imagen con la nueva ruta
                 img2.src = data.newImagePath;
-                img3
                 alert('Imagen subida correctamente.');
             } else {
                 console.error('Error al subir la imagen:', data.error);
@@ -393,9 +368,4 @@ fileProfile.addEventListener('change', () => {
             }
         })
         .catch(error => console.error('Error en la subida de la imagen:', error));
-});
-
-window.addEventListener("beforeunload", function ()
-{
-    $.post('logout.php');
 });
