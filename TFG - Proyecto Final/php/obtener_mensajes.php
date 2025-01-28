@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo json_encode($mensajes);
         exit;
     }
+    
 }
 
 http_response_code(400);
