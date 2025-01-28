@@ -16,7 +16,6 @@ CREATE OR REPLACE TABLE usuarios (
     password VARCHAR(255) NOT NULL,
     fecha_nacimiento DATE NOT NULL, -- Nuevo campo para fecha de nacimiento
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    lastconection TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 ALTER TABLE usuarios ADD COLUMN profile_picture VARCHAR(255) DEFAULT NULL;
