@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['archivo']) && !empty(
     }
 
     // Tipos de archivo permitidos
-    $allowedFileTypes = ['png', 'jpg', 'jpeg', 'pdf', 'mp4', 'mp3', 'zip', 'txt'];
+    $allowedFileTypes = ['png', 'jpg', 'jpeg', 'pdf', 'mp4', 'mp3', 'zip', 'txt', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'gif', 'webp'];
     
     // Validar tipo de archivo
     if (in_array($fileType, $allowedFileTypes)) {

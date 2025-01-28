@@ -156,11 +156,63 @@ function cargarMensajes() {
                 let mensajeHtml = `<div style="padding-left: 10px; display: flex; align-items: center;">`;
                 mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">`;
                 
-                if (mensaje.tipo === 'imagen' || mensaje.tipo === 'archivo') {
-                    mensajeHtml += `<br><img src="${mensaje.contenido}" alt="Archivo adjunto" style="max-width: 100px; max-height: 100px;">`;  // Para imágenes
+                if (mensaje.tipo === 'archivo') {
+                    // Verificar la extensión del archivo
+                    const fileExtension = mensaje.contenido.split('.').pop().toLowerCase();
+                    let downloadLink = `<a style="text-align: center;" href="${mensaje.contenido}" download>Descargar archivo</a>`;
+                    
+                    // Categorías de archivos
+                    if (['png', 'jpg', 'jpeg', 'webp'].includes(fileExtension)) {
+                        // Mostrar la imagen y agregar el enlace de descarga debajo
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="${mensaje.contenido}" alt="Imagen adjunta" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
+                    else if (['pdf'].includes(fileExtension)) {
+                        // Archivos de texto (PDF)
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo PDF adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
+                    else if (['mp4'].includes(fileExtension)) {
+                        // Archivos de video
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/video.png" alt="Archivo de video adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
+                    else if (['mp3'].includes(fileExtension)) {
+                        // Archivos de audio
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/audio.png" alt="Archivo de audio adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
+                    else if (['zip'].includes(fileExtension)) {
+                        // Archivos comprimidos
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/comprimido.png" alt="Archivo comprimido adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
+                    else if (['exe', 'msi'].includes(fileExtension)) {
+                        // Archivos ejecutables (programas)
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo ejecutable adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
+                    else {
+                        // Otros tipos de archivo
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
                 }
-                else
-                {
+                else {
                     mensajeHtml += `<strong>${mensaje.alias}:</strong> ${mensaje.contenido}`;
                 }
                 
@@ -175,6 +227,8 @@ function cargarMensajes() {
         }
     });
 }
+
+
 
 $('#enviarMensaje').click(function() {
     const mensaje = $('#mensaje').val();
@@ -194,7 +248,7 @@ $('#uploadfile').click(function() {
 document.getElementById('fileInput').addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file && destinatario !== null) {
-        const allowedExtensions = ['png', 'jpg', 'jpeg', 'mp4', 'mp3', 'pdf', 'zip', 'txt'];
+        const allowedExtensions = ['png', 'jpg', 'jpeg', 'pdf', 'mp4', 'mp3', 'zip', 'txt', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'gif', 'webp'];
         const fileExtension = file.name.split('.').pop().toLowerCase();
 
         if (allowedExtensions.includes(fileExtension)) {
@@ -209,7 +263,6 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Archivo enviado correctamente.');
                     cargarMensajes(); // Recargar mensajes para incluir el nuevo archivo
                 } else {
                     alert(data.error || 'Error al subir el archivo.');
