@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     if ($chat_id) {
         $stmt = $conn->prepare("
-            SELECT mensajes.*, usuarios.alias AS sender_alias
+            SELECT mensajes.*, usuarios.nombre AS sender_nombre
             FROM mensajes
             JOIN usuarios ON mensajes.sender_id = usuarios.id
             WHERE mensajes.chatId = :chat_id

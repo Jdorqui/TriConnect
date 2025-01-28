@@ -81,7 +81,7 @@ if (isset($_GET['chat_id'])) {
 
         // Obtener los mensajes del chat
         $stmt = $conn->prepare("
-            SELECT mensajes.*, usuarios.alias AS sender_alias
+            SELECT mensajes.*, usuarios.nombre AS sender_nombre
             FROM mensajes
             JOIN usuarios ON mensajes.sender_id = usuarios.id
             WHERE mensajes.chatId = :chat_id
@@ -123,7 +123,7 @@ if (isset($_GET['chat_id'])) {
         <div id="lista-mensajes">
             <?php foreach ($mensajes as $mensaje): ?>
                 <div class="<?= $mensaje['sender_id'] == $user_id ? 'mensaje-propio' : 'mensaje-otro' ?>">
-                    <strong><?= htmlspecialchars($mensaje['sender_alias']) ?>:</strong>
+                    <strong><?= htmlspecialchars($mensaje['sender_nombre']) ?>:</strong>
                     <?= htmlspecialchars($mensaje['mensaje']) ?>
                     <small><?= $mensaje['fecha_envio'] ?></small>
                 </div>
@@ -141,18 +141,25 @@ if (isset($_GET['chat_id'])) {
         const chatId = <?= json_encode($_GET['chat_id']) ?>;
         const userId = <?= json_encode($_SESSION['user_id']) ?>;
 
-        function cargarMensajes() {
-            $.get('obtener_mensajes.php', { chat_id: chatId }, function (mensajes) {
-                const listaMensajes = $('#lista-mensajes');
-                listaMensajes.empty();
+       
+        // Realizar un "ping" cada 5 segundos para actualizar la última conexión del usuario
+        setInterval(function() {
+            $.post('actualizar_actividad.php');  // Llamar a un archivo PHP que actualiza la última actividad
+        }, 5000); // Actualizar cada 5 segundos
+   
 
-                mensajes.forEach(mensaje => {
+        function cargarMensajes() {
+            $.get('obtener_mensajes.php', { chat_id: chatId }, function (mensajes) { // Crear obtener_mensajes.php con el código de abajo
+                const listaMensajes = $('#lista-mensajes'); // Obtener el contenedor de mensajes con jQuery
+                listaMensajes.empty(); // Limpiar los mensajes actuales
+
+                mensajes.forEach(mensaje => { // Iterar sobre los mensajes recibidos con forEach para
                     const esPropio = mensaje.sender_id === userId;
                     const clase = esPropio ? 'mensaje-propio' : 'mensaje-otro';
 
                     listaMensajes.append(`
                         <div class="${clase}">
-                            <strong>${mensaje.sender_alias}:</strong>
+                            <strong>${mensaje.sender_nombre}:</strong>
                             ${mensaje.mensaje}
                             <small>${mensaje.fecha_envio}</small>
                         </div>
