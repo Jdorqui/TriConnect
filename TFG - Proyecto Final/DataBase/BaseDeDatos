@@ -1,4 +1,4 @@
-USE chat_app;
+corrigelo: USE chat_app;
 
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -21,7 +21,7 @@ CREATE TABLE anuncios (
     precio DECIMAL(10,2) NOT NULL,
     estado VARCHAR(255) NOT NULL,
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    imagen VARCHAR(255), -- Nueva columna para almacenar la imagen del anuncio
+    imagen LONGBLOB, -- Nueva columna para almacenar la imagen del anuncio
     FOREIGN KEY (user_id) REFERENCES usuarios(id)
 );
 

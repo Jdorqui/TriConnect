@@ -54,7 +54,18 @@ $anuncios = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="listado-categorias">
                 <?php foreach ($anuncios as $anuncio): ?>
                     <div class="categoria-articulo">
-                        <img src="../img/<?php echo $anuncio['imagen']; ?>" alt="Anuncio">
+                    <?php if ($anuncio['imagen']): ?>
+                        <?php 
+                            // Convertir la imagen binaria a base64 para incrustarla en el HTML
+                            $imagen_base64 = base64_encode($anuncio['imagen']);
+                            // Obtener el tipo MIME de la imagen (esto debería estar guardado en la base de datos o asumirse)
+                            $mime_type = 'image/jpeg'; // Cambiar según sea necesario (ej.: image/png)
+                        ?>
+                        <img src="data:<?php echo $mime_type; ?>;base64,<?php echo $imagen_base64; ?>" alt="Imagen del anuncio" class="imagen-anuncio">
+                    <?php else: ?>
+                        <!-- Si no hay imagen, mostrar un placeholder -->
+                        <img src="placeholder.jpg" alt="Imagen no disponible" class="imagen-anuncio">
+                    <?php endif; ?>
                         <p><?php echo htmlspecialchars($anuncio['titulo']); ?></p>
                         <p>Precio: <?php echo $anuncio['precio']; ?>€</p>
                         <p>Descripción: <?php echo htmlspecialchars($anuncio['descripcion']); ?></p>
