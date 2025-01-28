@@ -156,7 +156,6 @@ function cargarMensajes() {
                 let mensajeHtml = `<div style="padding-left: 10px; display: flex; align-items: center;">`;
                 mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">`;
                 
-            
                 if (mensaje.tipo === 'imagen' || mensaje.tipo === 'archivo') {
                     mensajeHtml += `<br><img src="${mensaje.contenido}" alt="Archivo adjunto" style="max-width: 100px; max-height: 100px;">`;  // Para imágenes
                 }
