@@ -60,4 +60,20 @@ if (isset($_POST['mensaje'])) {
         echo json_encode(['success' => true]);
     }
 }
+
+// Enviar un mensaje con archivo adjunto
+if (isset($_POST['archivo'])) {
+    $archivo = $_POST['archivo'];  // Ruta o nombre del archivo
+    $destinatario = $_POST['destinatario'];
+
+    if ($archivo) {
+        $stmt = $pdo->prepare("INSERT INTO mensajes (id_emisor, id_receptor, contenido, tipo) VALUES (:id_emisor, :id_receptor, :contenido, 'archivo')");
+        $stmt->execute([
+            'id_emisor' => $id_usuario_actual,
+            'id_receptor' => $destinatario,
+            'contenido' => $archivo
+        ]);
+        echo json_encode(['success' => true]);
+    }
+}
 ?>

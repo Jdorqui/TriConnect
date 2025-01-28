@@ -2,14 +2,18 @@ USE chat_app;
 
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    alias VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     nombre VARCHAR(255) NOT NULL,
     apellidos VARCHAR(255) NOT NULL,
     fecha_nacimiento DATE NOT NULL,
+    direccion VARCHAR(255),                      -- Dirección del usuario
+    ciudad VARCHAR(100),                         -- Ciudad
+    codigo_postal VARCHAR(10),                  -- Código postal
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    imagen_perfil VARCHAR(255) -- Imagen del perfil de usuario
+    última_conexión TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    valoración DECIMAL(3,2) DEFAULT 0.00,
+    imagen_perfil LONGBLOB -- Imagen del perfil de usuario
 );
 
 CREATE TABLE anuncios (
@@ -21,7 +25,7 @@ CREATE TABLE anuncios (
     precio DECIMAL(10,2) NOT NULL,
     estado VARCHAR(255) NOT NULL,
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    imagen VARCHAR(255), -- Nueva columna para almacenar la imagen del anuncio
+    imagen LONGBLOB, -- Nueva columna para almacenar la imagen del anuncio
     FOREIGN KEY (user_id) REFERENCES usuarios(id)
 );
 
@@ -33,14 +37,59 @@ CREATE TABLE chats (
     FOREIGN KEY (anuncio_id) REFERENCES anuncios(id)
 );
 
+
 CREATE TABLE mensajes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     chatId INT NOT NULL,
     sender_id INT NOT NULL,
     receiver_id INT NOT NULL,
     mensaje TEXT NOT NULL,
+    archivo LONGBLOB, -- Nuevo campo para almacenar archivos adjuntos
+    enviado BOOLEAN DEFAULT FALSE, -- Nuevo campo para indicar si el mensaje ha sido enviado
+    entregado BOOLEAN DEFAULT FALSE, -- Nuevo campo para indicar si el mensaje ha sido entregado
+    leido BOOLEAN DEFAULT FALSE, -- Nuevo campo para indicar si el mensaje ha sido leído
     fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES usuarios(id),
     FOREIGN KEY (receiver_id) REFERENCES usuarios(id),
     FOREIGN KEY (chatId) REFERENCES chats(id)
+);
+DELIMITER //
+
+CREATE TRIGGER antes_de_insertar_mensaje
+BEFORE INSERT ON mensajes
+FOR EACH ROW
+BEGIN
+    -- Verificar que al menos uno de los dos campos tenga valor
+    IF (NEW.mensaje IS NULL OR TRIM(NEW.mensaje) = '') AND (NEW.archivo IS NULL OR TRIM(NEW.archivo) = '') THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Debe haber texto o una imagen en el mensaje';
+    END IF;
+END //
+
+DELIMITER ;
+
+
+CREATE TABLE valoraciones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    comprador_id INT NOT NULL,
+    vendedor_id INT NOT NULL,
+    anuncio_id INT NOT NULL,
+    comentario TEXT NOT NULL,
+    valoracion DECIMAL(3,2) NOT NULL,
+    fecha_valoracion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (comprador_id) REFERENCES usuarios(id),
+    FOREIGN KEY (vendedor_id) REFERENCES usuarios(id),
+    FOREIGN KEY (anuncio_id) REFERENCES anuncios(id)
+);
+
+CREATE TABLE valoraciones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    comprador_id INT NOT NULL,
+    vendedor_id INT NOT NULL,
+    anuncio_id INT NOT NULL,
+    comentario TEXT NOT NULL,
+    valoracion DECIMAL(3,2) NOT NULL,
+    fecha_valoracion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (comprador_id) REFERENCES usuarios(id),
+    FOREIGN KEY (vendedor_id) REFERENCES usuarios(id),
+    FOREIGN KEY (anuncio_id) REFERENCES anuncios(id)
 );

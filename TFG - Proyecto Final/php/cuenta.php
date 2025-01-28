@@ -46,8 +46,18 @@ $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php foreach ($productos as $producto): ?>
             <div class="producto">
                 <!-- Mostrar imagen del producto -->
-                <img src="<?php echo $producto['imagen'] ? $producto['imagen'] : '../img/placeholder.jpg'; ?>" 
-                     alt="Imagen del producto" class="producto-imagen">
+                <?php if ($producto['imagen']): ?>
+                        <?php 
+                            // Convertir la imagen binaria a base64 para incrustarla en el HTML
+                            $imagen_base64 = base64_encode($producto['imagen']);
+                            // Obtener el tipo MIME de la imagen (esto debería estar guardado en la base de datos o asumirse)
+                            $mime_type = 'image/jpeg'; // Cambiar según sea necesario (ej.: image/png)
+                        ?>
+                        <img src="data:<?php echo $mime_type; ?>;base64,<?php echo $imagen_base64; ?>" alt="Imagen del anuncio" class="imagen-anuncio">
+                    <?php else: ?>
+                        <!-- Si no hay imagen, mostrar un placeholder -->
+                        <img src="placeholder.jpg" alt="Imagen no disponible" class="imagen-anuncio">
+                    <?php endif; ?>
 
                 <!-- Información del producto -->
                 <div class="producto-info">

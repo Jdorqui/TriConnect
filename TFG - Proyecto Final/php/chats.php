@@ -81,7 +81,7 @@ if (isset($_GET['chat_id'])) {
 
         // Obtener los mensajes del chat
         $stmt = $conn->prepare("
-            SELECT mensajes.*, usuarios.alias AS sender_alias
+            SELECT mensajes.*, usuarios.nombre AS sender_nombre
             FROM mensajes
             JOIN usuarios ON mensajes.sender_id = usuarios.id
             WHERE mensajes.chatId = :chat_id
@@ -103,12 +103,9 @@ if (isset($_GET['chat_id'])) {
     <link rel="stylesheet" href="../css/chats.css">
 </head>
 <body>
-    <h1>Mis Conversaciones</h1>
-    
-    <!-- Lista de chats disponibles -->
-    <div>
+    <div id="lista-chats">
         <h2>Chats Disponibles</h2>
-        <ul id="lista-chats">
+        <ul>
             <?php foreach ($chats as $chat): ?>
                 <li>
                     <a href="chats.php?chat_id=<?= $chat['id'] ?>">
@@ -121,56 +118,51 @@ if (isset($_GET['chat_id'])) {
     </div>
 
     <?php if (isset($_GET['chat_id'])): ?>
-    <!-- Chat seleccionado -->
-    <div>
+    <div id="chat-container">
         <h2>Mensajes</h2>
-        <div id="lista-mensajes" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto;">
-            <!-- Los mensajes se cargarán aquí -->
+        <div id="lista-mensajes">
             <?php foreach ($mensajes as $mensaje): ?>
                 <div class="<?= $mensaje['sender_id'] == $user_id ? 'mensaje-propio' : 'mensaje-otro' ?>">
-                    <strong><?= htmlspecialchars($mensaje['sender_alias']) ?>:</strong>
+                    <strong><?= htmlspecialchars($mensaje['sender_nombre']) ?>:</strong>
                     <?= htmlspecialchars($mensaje['mensaje']) ?>
                     <small><?= $mensaje['fecha_envio'] ?></small>
                 </div>
             <?php endforeach; ?>
         </div>
 
-        <!-- Formulario para enviar mensaje -->
         <form id="form-mensaje">
             <textarea id="mensaje" placeholder="Escribe tu mensaje..." required></textarea>
             <button type="submit">Enviar</button>
         </form>
     </div>
+    <?php endif; ?>
 
     <script>
         const chatId = <?= json_encode($_GET['chat_id']) ?>;
         const userId = <?= json_encode($_SESSION['user_id']) ?>;
 
-        // Cargar mensajes en tiempo real
         function cargarMensajes() {
-            $.get('obtener_mensajes.php', { chat_id: chatId }, function (mensajes) {
-                const listaMensajes = $('#lista-mensajes');
-                listaMensajes.empty();
+            $.get('obtener_mensajes.php', { chat_id: chatId }, function (mensajes) { // Crear obtener_mensajes.php con el código de abajo
+                const listaMensajes = $('#lista-mensajes'); // Obtener el contenedor de mensajes con jQuery
+                listaMensajes.empty(); // Limpiar los mensajes actuales
 
-                mensajes.forEach(mensaje => {
+                mensajes.forEach(mensaje => { // Iterar sobre los mensajes recibidos con forEach para
                     const esPropio = mensaje.sender_id === userId;
                     const clase = esPropio ? 'mensaje-propio' : 'mensaje-otro';
 
                     listaMensajes.append(`
                         <div class="${clase}">
-                            <strong>${mensaje.sender_alias}:</strong>
+                            <strong>${mensaje.sender_nombre}:</strong>
                             ${mensaje.mensaje}
                             <small>${mensaje.fecha_envio}</small>
                         </div>
                     `);
                 });
 
-                // Desplazar hacia el final
                 listaMensajes.scrollTop(listaMensajes[0].scrollHeight);
             });
         }
 
-        // Enviar mensaje
         $('#form-mensaje').submit(function (e) {
             e.preventDefault();
 
@@ -186,12 +178,8 @@ if (isset($_GET['chat_id'])) {
             }, 'json');
         });
 
-        // Actualizar mensajes cada 2 segundos
         setInterval(cargarMensajes, 2000);
-
-        // Cargar mensajes al inicio
         cargarMensajes();
     </script>
-    <?php endif; ?>
 </body>
 </html>

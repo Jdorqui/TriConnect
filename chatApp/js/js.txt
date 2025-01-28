@@ -1,0 +1,15 @@
+// Verificar si la ventana está siendo cerrada (no recargada)
+window.addEventListener('beforeunload', function (event) {
+    // Solo enviamos la solicitud para cerrar sesión si no se ha marcado previamente
+    if (!sessionStorage.getItem('windowClosed')) {
+        sessionStorage.setItem('windowClosed', 'true'); // Marcamos que la ventana está siendo cerrada
+
+        // Enviar solicitud para cerrar sesión
+        $.get('logout.php'); // Llamada al archivo PHP para destruir la sesión
+    }
+});
+
+// Si la página se recarga, podemos limpiar el marcador de 'windowClosed' para que no se cierre sesión en ese caso
+window.addEventListener('load', function() {
+    sessionStorage.removeItem('windowClosed');
+});

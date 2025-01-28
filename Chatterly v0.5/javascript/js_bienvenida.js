@@ -114,101 +114,109 @@ function actualizarResultado(mensaje)
     document.getElementById('resultado').innerText = mensaje;
 }
 
-//chat
-function openchat(destinatarioID) //abrir chat
+function selectFriend(nombre, foto, destinatario) 
 {
-    destinatario = destinatarioID;  //seteamos el destinatario
+    // Almacena los datos del amigo seleccionado
+    const nombreAmigo = document.getElementById('nombre-amigo'); // Div donde mostrar el nombre
+    const fotoAmigo = document.getElementById('foto-amigo'); // Imagen del amigo
+
+    // Actualiza el DOM con los datos del amigo
+    nombreAmigo.textContent = nombre; // Muestra el nombre del amigo
+    fotoAmigo.src = foto; // Muestra la imagen del amigo
+
+    //console.log("Amigo seleccionado: ", nombre, foto, destinatario);
+    openchat(destinatario);
+}
+
+//chat
+function openchat(destinatarioID) {
+    destinatario = destinatarioID;  // Seteamos el destinatario
     chat.style.display = "block";
     pendingMenu.hidden = true;
     document.getElementById("addfriendmenu").style.display = "none";
     initialpanel.style.display = "none";
-    cargarMensajes();  //carga los mensajes
+    cargarMensajes();  // Carga los mensajes
 }
 
-function cambiarAmigo(destinatario) {
-    // Realizamos la solicitud AJAX al servidor
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "obtener_amigo.php?destinatario=" + destinatario, true);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            var amigo = JSON.parse(xhr.responseText); // Supongo que el servidor responderá con un JSON
-            if (amigo) {
-                document.getElementById("fotoAmigo").src = amigo.foto_amigo;
-                document.getElementById("nombreAmigo").innerText = amigo.nombre_amigo;
-            } else {
-                document.getElementById("fotoAmigo").src = "../assets/imgs/default_profile.png";
-                document.getElementById("nombreAmigo").innerText = "Amigo no encontrado";
-            }
-        }
-    };
-    xhr.send();
-}
-
-
-function actualizarChatInfo(destinatario) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'chatterly.php', true);  // El mismo archivo PHP
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-    xhr.send('action=actualizarChatInfo&destinatario=' + destinatario);  // Enviar la acción y el ID del destinatario
-
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            var datos = JSON.parse(xhr.responseText);  // Convertir la respuesta a JSON
-            // Actualizar la foto y nombre en el chat
-            document.getElementById('fotoAmigo').src = datos.foto;
-            document.getElementById('nombreAmigo').innerText = datos.nombre;
-        }
-    };
-}
-
-
-function formatDate(dateString) {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', options); // Cambia 'es-ES' por el idioma de tu preferencia
-}
-        
 function cargarMensajes() {
     if (destinatario === null) return; // Verifica que el destinatario esté definido
-    
-    // Obtener la imagen de perfil del usuario actual
+
     const imgProfileUrl = document.getElementById("profileImg2").src;  // Imagen del usuario actual
-    // Obtener la imagen de perfil del amigo (receptor)
     const fotoFriendUrl = document.getElementById("fotoFriend").src;  // Imagen del amigo
 
     $.post('chat.php', { destinatario: destinatario }, function(data) {
         try {
-            let imgUrl = null;
-            const mensajes = JSON.parse(data); // Parsear la respuesta del servidor
+            let mensajes = JSON.parse(data); // Parsear la respuesta del servidor
             $('#chat-messages').empty(); // Limpiar los mensajes previos
             
             mensajes.forEach(function(mensaje) {
-                // Formatear la fecha
                 let fechaEnvio = mensaje.fecha_envio ? new Date(mensaje.fecha_envio).toLocaleString() : "Fecha no disponible"; 
-
-                let mensajeHtml = '<div style="padding-left: 10px; display: flex; align-items: center;">';
-                let imgUrl = null;
+                let imgUrl = (mensaje.id_emisor == id_usuario_actual) ? imgProfileUrl : fotoFriendUrl;
             
-                // Verificar el emisor y asignar la imagen adecuada
-                if (mensaje.id_emisor == id_usuario_actual) {
-                    imgUrl = imgProfileUrl; // Usar imagen del usuario actual
-                } else if (mensaje.id_emisor != id_usuario_actual) {
-                    imgUrl = fotoFriendUrl; // Usar imagen del amigo
-                }
-            
-                // Agregar la imagen de perfil al lado del nombre
+                let mensajeHtml = `<div style="padding-left: 10px; display: flex; align-items: center;">`;
                 mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">`;
-                mensajeHtml += `<strong>${mensaje.alias}:</strong> ${mensaje.contenido}`;
-
-                // Mostrar la fecha dentro del mensaje
-                mensajeHtml += `<div style="font-size: 0.8em; color: #888; min-width: 110px; padding: 5px; align-items: left; margin-left: auto;">${fechaEnvio}</div>`;
-            
-                // Verificar si el tipo es 'imagen' y mostrarla
-                if (mensaje.tipo === 'imagen') {
-                    mensajeHtml += `<br><img src="${mensaje.contenido}" alt="Archivo adjunto" style="max-width: 100px; max-height: 100px;">`;
+                
+                if (mensaje.tipo === 'archivo') {
+                    // Verificar la extensión del archivo
+                    const fileExtension = mensaje.contenido.split('.').pop().toLowerCase();
+                    let downloadLink = `<a style="text-align: center;" href="${mensaje.contenido}" download>Descargar archivo</a>`;
+                    
+                    // Categorías de archivos
+                    if (['png', 'jpg', 'jpeg', 'webp'].includes(fileExtension)) {
+                        // Mostrar la imagen y agregar el enlace de descarga debajo
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="${mensaje.contenido}" alt="Imagen adjunta" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
+                    else if (['pdf'].includes(fileExtension)) {
+                        // Archivos de texto (PDF)
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo PDF adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
+                    else if (['mp4'].includes(fileExtension)) {
+                        // Archivos de video
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/video.png" alt="Archivo de video adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
+                    else if (['mp3'].includes(fileExtension)) {
+                        // Archivos de audio
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/audio.png" alt="Archivo de audio adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
+                    else if (['zip'].includes(fileExtension)) {
+                        // Archivos comprimidos
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/comprimido.png" alt="Archivo comprimido adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
+                    else if (['exe', 'msi'].includes(fileExtension)) {
+                        // Archivos ejecutables (programas)
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo ejecutable adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
+                    else {
+                        // Otros tipos de archivo
+                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += downloadLink;
+                        mensajeHtml += `</div>`;
+                    }
                 }
-
+                else {
+                    mensajeHtml += `<strong>${mensaje.alias}:</strong> ${mensaje.contenido}`;
+                }
+                
+                mensajeHtml += `<div style="font-size: 0.8em; color: #888; min-width: 110px; padding: 5px; align-items: left; margin-left: auto;">${fechaEnvio}</div>`;
                 mensajeHtml += '</div>';
                 $('#chat-messages').prepend(mensajeHtml); // Añadir el mensaje al principio del chat
             });
@@ -220,14 +228,13 @@ function cargarMensajes() {
     });
 }
 
-$('#enviarMensaje').click(function()
-{
+
+
+$('#enviarMensaje').click(function() {
     const mensaje = $('#mensaje').val();
-    if (mensaje.trim() !== '') 
-    {
-        $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() 
-        {
-            $('#mensaje').val(''); //limpiar el input
+    if (mensaje.trim() !== '') {
+        $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() {
+            $('#mensaje').val(''); // Limpiar el input
             cargarMensajes();
         });
     }
@@ -241,7 +248,7 @@ $('#uploadfile').click(function() {
 document.getElementById('fileInput').addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file && destinatario !== null) {
-        const allowedExtensions = ['png', 'jpg', 'jpeg', 'mp4', 'mp3', 'pdf', 'zip', 'txt'];
+        const allowedExtensions = ['png', 'jpg', 'jpeg', 'pdf', 'mp4', 'mp3', 'zip', 'txt', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'gif', 'webp'];
         const fileExtension = file.name.split('.').pop().toLowerCase();
 
         if (allowedExtensions.includes(fileExtension)) {
@@ -256,7 +263,6 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Archivo enviado correctamente.');
                     cargarMensajes(); // Recargar mensajes para incluir el nuevo archivo
                 } else {
                     alert(data.error || 'Error al subir el archivo.');
@@ -407,7 +413,6 @@ fileProfile.addEventListener('change', () => {
             if (data.success) {
                 img.src = data.newImagePath; // Actualiza la imagen con la nueva ruta
                 img2.src = data.newImagePath;
-                img3
                 alert('Imagen subida correctamente.');
             } else {
                 console.error('Error al subir la imagen:', data.error);
