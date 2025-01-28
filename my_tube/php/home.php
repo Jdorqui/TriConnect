@@ -3,25 +3,30 @@ include "db_connection.php";
 
 session_start();
 
-$USERNAME = $_SESSION['USERNAME'];
-$GET_ALL_FRIENDS_QUERY = $CONN->
-    query(
-        "SELECT
-                    s1.SUBSCRIBED_TO
-                FROM
-                    SUBS s1
-                WHERE
-                    s1.USERNAME = '$USERNAME' AND EXISTS(
-                    SELECT
-                        s2.USERNAME
+$USERNAME = "";
+$FRIENDS_ARRAY = "";
+if (isset($_SESSION['USERNAME'])) {
+    $USERNAME = $_SESSION['USERNAME'];
+    $GET_ALL_FRIENDS_QUERY = $CONN->
+        query(
+            "SELECT
+                        s1.SUBSCRIBED_TO
                     FROM
-                        SUBS s2
+                        SUBS s1
                     WHERE
-                        s2.USERNAME = s1.SUBSCRIBED_TO AND s2.SUBSCRIBED_TO = s1.USERNAME
-                )"
-    );
+                        s1.USERNAME = '$USERNAME' AND EXISTS(
+                        SELECT
+                            s2.USERNAME
+                        FROM
+                            SUBS s2
+                        WHERE
+                            s2.USERNAME = s1.SUBSCRIBED_TO AND s2.SUBSCRIBED_TO = s1.USERNAME
+                    )"
+        );
 
-$FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
+    $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -35,8 +40,15 @@ $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
     <link rel="stylesheet" href="../css/login_api.css" />
     <link rel="stylesheet" href="../css/chat.css" />
     <script>
-        let username = '<?php echo $USERNAME ?>';
-        let friendsArray = JSON.parse('<?php echo $FRIENDS_ARRAY ?>');
+        let username = "";
+        let friendsArray = "";
+        if ('<?php echo $USERNAME ?>' != "") {
+            username = '<?php echo $USERNAME ?>';
+        }
+
+        if ('<?php echo $FRIENDS_ARRAY ?>' != "") {
+            friendsArray = JSON.parse('<?php echo $FRIENDS_ARRAY ?>');
+        }
     </script>
 </head>
 

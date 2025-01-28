@@ -141,13 +141,6 @@ if (isset($_GET['chat_id'])) {
         const chatId = <?= json_encode($_GET['chat_id']) ?>;
         const userId = <?= json_encode($_SESSION['user_id']) ?>;
 
-       
-        // Realizar un "ping" cada 5 segundos para actualizar la última conexión del usuario
-        setInterval(function() {
-            $.post('actualizar_actividad.php');  // Llamar a un archivo PHP que actualiza la última actividad
-        }, 5000); // Actualizar cada 5 segundos
-   
-
         function cargarMensajes() {
             $.get('obtener_mensajes.php', { chat_id: chatId }, function (mensajes) { // Crear obtener_mensajes.php con el código de abajo
                 const listaMensajes = $('#lista-mensajes'); // Obtener el contenedor de mensajes con jQuery
