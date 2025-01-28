@@ -352,6 +352,7 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="form-container">
                             <p style="text-align: right;">AJUSTES DE USUARIO</p>
                             <button id="options-button" style="text-align: right;" onclick="showprofileinfo()">Mi cuenta</button>
+                            <button id="options-button" style="text-align: right;" onclick="mytubeconexion()">Conectar con MyTube</button>
                          <!--   <button id="options-button" style="text-align: right;">Dispositivos</button>
                             <button id="options-button" style="text-align: right;">Conexiones</button>
                         </div>
@@ -409,6 +410,7 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script defer src="../javascript/js_bienvenida.js"></script>
+        <script defer src="../javascript/api.js"></script>
         <script>var id_usuario_actual = <?php echo $id_usuario_actual; ?>;</script>
     </body>
 </html>
