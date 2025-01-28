@@ -28,7 +28,11 @@ if ($result->num_rows > 0)
     {
         $_SESSION['usuario'] = $usuario;
         $_SESSION['password'] = $password;
-        
+
+        // Marcar al usuario como en línea
+        $update_sql = "UPDATE usuarios SET en_linea = 1 WHERE username = '$usuario'";
+        $conn->query($update_sql);
+
         echo json_encode(["status" => "success", "message" => "Inicio de sesión exitoso."]);
     } 
     else 

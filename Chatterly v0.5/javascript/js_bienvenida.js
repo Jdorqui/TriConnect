@@ -34,6 +34,7 @@ function openaddfriendmenu()
     pendingMenu.hidden = true;
     document.getElementById("addfriendmenu").style.display = "block";
     document.getElementById("openonlinemenu").style.display = "none";
+    document.getElementById("allfriends").style.display = "none";
     closechat();
 }
 
@@ -42,6 +43,7 @@ function openpendingmenu()
     pendingMenu.hidden = false;
     document.getElementById("addfriendmenu").style.display = "none";
     document.getElementById("openonlinemenu").style.display = "none";
+    document.getElementById("allfriends").style.display = "none";
     closechat();
 }
 
@@ -51,7 +53,17 @@ function openonlinemenu()
     document.getElementById("openonlinemenu").style.display = "block";
     document.getElementById("addfriendmenu").style.display = "none";
     document.getElementById("profileinfo").style.display = "none";
+    document.getElementById("allfriends").style.display = "none";
     closechat();
+}
+
+function openallfriends()
+{
+    pendingMenu.hidden = true;
+    document.getElementById("openonlinemenu").style.display = "none";
+    document.getElementById("addfriendmenu").style.display = "none";
+    document.getElementById("profileinfo").style.display = "none";
+    document.getElementById("allfriends").style.display = "block";
 }
 
 //amigos
@@ -113,6 +125,44 @@ function openchat(destinatarioID) //abrir chat
     cargarMensajes();  //carga los mensajes
 }
 
+function cambiarAmigo(destinatario) {
+    // Realizamos la solicitud AJAX al servidor
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "obtener_amigo.php?destinatario=" + destinatario, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            var amigo = JSON.parse(xhr.responseText); // Supongo que el servidor responderá con un JSON
+            if (amigo) {
+                document.getElementById("fotoAmigo").src = amigo.foto_amigo;
+                document.getElementById("nombreAmigo").innerText = amigo.nombre_amigo;
+            } else {
+                document.getElementById("fotoAmigo").src = "../assets/imgs/default_profile.png";
+                document.getElementById("nombreAmigo").innerText = "Amigo no encontrado";
+            }
+        }
+    };
+    xhr.send();
+}
+
+
+function actualizarChatInfo(destinatario) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'chatterly.php', true);  // El mismo archivo PHP
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    xhr.send('action=actualizarChatInfo&destinatario=' + destinatario);  // Enviar la acción y el ID del destinatario
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var datos = JSON.parse(xhr.responseText);  // Convertir la respuesta a JSON
+            // Actualizar la foto y nombre en el chat
+            document.getElementById('fotoAmigo').src = datos.foto;
+            document.getElementById('nombreAmigo').innerText = datos.nombre;
+        }
+    };
+}
+
+
 function formatDate(dateString) {
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
     const date = new Date(dateString);
@@ -169,7 +219,6 @@ function cargarMensajes() {
         }
     });
 }
-
 
 $('#enviarMensaje').click(function()
 {

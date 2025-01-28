@@ -71,8 +71,8 @@ $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
                 <img src="../img/like_icon.png" onclick="display('like')">
                 <div style="position: relative" onclick="display('chat')">
                     <img src="../img/chat_icon.png">
-                    <div id="new_messages_chat_tab" style="">
-                        2
+                    <div id="new_messages_chat_tab" style="display: none">
+                        0
                     </div>
                 </div>
             </div>

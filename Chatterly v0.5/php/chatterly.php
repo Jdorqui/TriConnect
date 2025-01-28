@@ -62,10 +62,10 @@ $stmt = $pdo->prepare("
     JOIN usuarios u ON (a.id_user1 = u.id_user OR a.id_user2 = u.id_user)
     WHERE (a.id_user1 = :id_usuario_actual OR a.id_user2 = :id_usuario_actual)
     AND u.en_linea = 1
+    AND u.id_user != :id_usuario_actual
 ");
 $stmt->execute(['id_usuario_actual' => $id_usuario_actual]);
 $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
 
 <!DOCTYPE html>
@@ -181,20 +181,20 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <span style="font-size: 16px;">Amigos</span>
                             <div id="divisor" style="width: 2px; background-color: #393e42; height: 100%;"></div>
                             <button class="friend-tab-button" style="width: 60px;" onclick="openonlinemenu()">En linea</button>
-                            <button class="friend-tab-button" style="width: 50px;">Todos</button>
+                            <button class="friend-tab-button" style="width: 50px;" onclick="openallfriends()">Todos</button>
                             <button class="friend-tab-button" onclick="openpendingmenu()">Pendiente</button>
                             <button class="friend-tab-button">Bloqueado</button>
                             <button class="add-friend-button" onclick="openaddfriendmenu()">Añadir amigo</button>
                         </div>
 
-                        <div id="openonlinemenu" style="display: column; padding: 30px;" hidden>
+                        <div id="openonlinemenu" style="display: column; padding: 30px; padding-top: 0;" hidden>
                                 <span>AMIGOS EN LINEA</span>
-                                <p>Estos son tus amigos que están en línea.</p>
-                                <div id="friend-list-container" style="display: flex; overflow-x: auto; background-color: #313338; padding: 10px;">
+                                <p>Estos son tus amigos que están en linea:</p>
+                                <div id="friend-list-container" style="display: background-color: #313338; padding: 10px;">
                                     <?php
-                                    if (count($amigos) > 0) 
+                                    if (count($amigos_en_linea) > 0) 
                                     {
-                                        foreach ($amigos as $amigo) 
+                                        foreach ($amigos_en_linea as $amigo) 
                                         {
                                             $amigoDir = "../assets/users/{$amigo['username']}/img_profile/";
                                             $defaultImage = '../assets/imgs/default_profile.png';
@@ -214,13 +214,13 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             {
                                                 $foto = $defaultImage;
                                             }
-
-                                            $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1'];
+                                            
                                             echo "
-                                                <button onclick='openchat($destinatario)' id='options-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; margin-bottom: 5px; cursor: pointer; width: 100%; text-align: left;'>
+                                                <button onclick='openchat({$amigo['id_user']})' class='friend-tab-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; width: 100%; cursor: pointer; text-align: left;'>
                                                     <img src='$foto' id='fotoFriend' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
                                                     <span id='nombreboton'>{$amigo['username']}</span>
                                                 </button>
+                                                <div style='height: 2px; background-color: #393e42'></div>
                                             ";
                                         }
                                     } 
@@ -230,23 +230,24 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     }
                                     ?>
                                 </div>
+
                             <p id="resultado"></p>
                         </div>
 
-                        <div id="addfriendmenu" style="display: column; padding: 30px;" hidden>
+                        <div id="addfriendmenu" style="display: column; padding: 30px; padding-top: 0;" hidden>
                                 <span>AÑADIR AMIGO</span>
                                 <p>Puedes añadir amigos con su nombre de usuario de Chatterly.</p>
                             <div style="display: flex; overflow: hidden; background-color: #313338;">
                                 <form action="../php/enviar_solicitud.php" method="post" style="width: 100%; position: relative;">
                                     <input id="alias_amigo" name="alias_amigo" required type="text" style="border-color: #1e1f22; background-color: #1e1f22; width: 100%; box-sizing: border-box; height: 50px; padding-left: 10px; position: relative;" placeholder="Puedes añadir amigos con su nombre de usuario de Chatterly.">
-                                    <button id="enviar_solicitud" type="submit" style="width: 200px;position: absolute; right: 5px; top: 5px; height: 40px; font-size: 14px; background-color: #5865F2; cursor: pointer; padding: 0 15px; border: none;">Enviar solicitud de amistad</button>
+                                    <button id="enviar_solicitud" type="submit" style="width: 200px; position: absolute; right: 5px; top: 5px; height: 40px; font-size: 14px; background-color: #5865F2; cursor: pointer; padding: 0 15px; border: none;">Enviar solicitud de amistad</button>
                                 </form>
                             </div>
                             <p id="resultado"></p>
                         </div>
 
                         <div id="pendingmenu" style="padding: 30px; padding-top: 0;" hidden>
-                            <p style="font-size: 20px;">Solicitudes Pendientes</p>
+                        <span>SOLICITUDES PENDIENTES</span>
                             <?php
                             if (isset($solicitudes_pendientes) && count($solicitudes_pendientes) > 0) 
                             {
@@ -261,25 +262,108 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </form>
                                     </div>
                                 <?php endforeach;
-                            } 
+                            }
                             else 
                             {
                                 echo "<p>No hay solicitudes pendientes.</p>"; //si no hay solicitudes pendientes
                             }
                             ?>
                         </div>
+
+                        <div id="allfriends" style="padding: 30px; padding-top: 0;" hidden>
+                        <span>TODOS TUS AMIGOS</span>
+                        <?php
+                                if (count($amigos) > 0) 
+                                {
+                                    foreach ($amigos as $amigo) 
+                                    {
+                                        $amigoDir = "../assets/users/{$amigo['username']}/img_profile/";
+                                        $defaultImage = '../assets/imgs/default_profile.png';
+
+                                        $amigoImages = glob($amigoDir . '*.{jpg,jpeg,png}', GLOB_BRACE); //glob — busca coincidencias de nombres de ruta de acuerdo a un patrón por tanto busca las imagenes en la carpeta del amigo y las guarda en un array para luego ordenarlas por fecha de modificacion y mostrar la mas reciente
+
+                                        if (!empty($amigoImages)) //si hay imagenes en la carpeta del amigo
+                                        {
+                                            usort($amigoImages, function($a, $b) //usort — ordena un array según sus valores usando una función de comparación definida por el usuario  y se ordenan las imagenes por fecha de modificacion 
+                                            {
+                                                return filemtime($b) - filemtime($a); //filemtime — obtiene la fecha de modificación de un archivo y se ordenan las imagenes por fecha de modificacion 
+                                            });
+
+                                            $foto = $amigoImages[0]; //se guarda la imagen mas reciente
+                                        } 
+                                        else 
+                                        {
+                                            $foto = $defaultImage; //si no hay imagenes se muestra la imagen por defecto
+                                        }
+
+                                        $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1']; //se obtiene el id del amigo
+                                        echo "
+                                            <div style='display: flex; align-items: center; gap: 10px; padding: 10px;'>
+                                                <img src='$foto' id='fotoFriend' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
+                                                <span id='nombreboton'>{$amigo['username']}</span>
+                                            </div>
+                                        ";
+                                    }
+                                } 
+                                else 
+                                {
+                                    echo "<p style='text-align: center;'>No tienes amigos en la lista</p>";
+                                }
+                                ?>
+                        </div>
                     </div>
                     
-                    <div id="chatcontainer" style="display: none; flex: 1; flex-direction: column; min-width: 200px; background-color: #313338;">
-                        
-                        <div id="chat-messages" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px; height: 100%; max-height: calc(100vh - 100px);"></div>
+                    <div id="chatcontainer" style="display: none; flex: 1; flex-direction: column; min-width: 200px; background-color: #313338; position: relative;">
+    
+                    <div style="background-color: #313338; position: absolute; top: 0; width: 100%; height: 60px; z-index: 10;">
+                        <?php
+                            // Verifica que el ID del destinatario se haya enviado correctamente
+                            if (isset($destinatario)) 
+                            {
+                                $id_amigo_seleccionado = $destinatario; // Este valor viene cuando el amigo es seleccionado en el chat.
+                                
+                                // Consulta para obtener la foto y el nombre del amigo seleccionado
+                                $stmt = $pdo->prepare("SELECT username, profile_picture FROM usuarios WHERE id_user = ?");
+                                $stmt->execute([$id_amigo_seleccionado]);
+                                $amigo = $stmt->fetch(PDO::FETCH_ASSOC);
 
+                                // Verifica si el amigo existe
+                                if ($amigo) 
+                                {
+                                    // Ruta por defecto para la foto de perfil
+                                    $foto_amigo = $amigo['profile_picture'] ? "../assets/users/{$amigo['username']}/img_profile/{$amigo['profile_picture']}" : '../assets/imgs/default_profile.png';
+                                    $nombre_amigo = htmlspecialchars($amigo['username']); // Asegúrate de escapar el nombre para evitar problemas de seguridad
+
+                                    // Ahora, en el div del chat, mostrar la foto y el nombre del amigo
+                                    echo "
+                                    <div style='background-color: #313338; position: absolute; top: 0; width: 100%; height: 60px; z-index: 10; display: flex; align-items: center; gap: 10px; '>
+                                        <img src='$foto_amigo' alt='Foto del amigo' style='width: 40px; height: 40px; border-radius: 50%;'>
+                                        <span style='color: white; font-size: 18px;'>$nombre_amigo</span>
+                                    </div>
+                                    ";
+                                } 
+                                else 
+                                {
+                                    // Si no se encuentra el amigo, mostramos un mensaje
+                                    echo "<span style='color: white;'>Amigo no encontrado</span>";
+                                }
+                            } 
+                            else 
+                            {
+                                // Si no hay destinatario seleccionado, mostramos un mensaje por defecto
+                                echo "<span style='color: white;'>Selecciona un amigo para chatear</span>";
+                            }
+                        ?>
+                    </div>
+                        <div style="position: absolute; top: 60px; width: 100%; height: 2px; background-color: #393e42; z-index: 10;"></div>
+                        
+                        <div id="chat-messages" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px; height: calc(100vh - 160px); margin-top: 62px;"></div>
+                        
                         <div style="padding: 10px; display: flex; position: relative; overflow: hidden;"> 
                             <input type="text" id="mensaje" style="border-color:#383a40; background-color: #383a40; width: 100%; box-sizing: border-box; height: 45px; padding-left: 10px; position: relative;" placeholder="Escribe un mensaje..." />
                             <img src="../assets/imgs/upload.png" style="width: 35px; position: absolute; right: 5px; top: 15px; height: 35px; cursor: pointer; padding: 0 15px; border: none;" id="uploadfile" alt="Upload">
                             <input type="file" id="fileInput" style="display: none;">
                             <img src="../assets/imgs/emojis.png" onclick="showEmojis()" style="width: 40px; position: absolute; right: 43px; top: 12px; height: 40px; cursor: pointer; padding: 0 15px; border: none;">
-                            <img src="../assets/imgs/gif.png" style="width: 37px; position: absolute; right: 85px; top: 17px; height: 32px; cursor: pointer; padding: 0 15px; border: none;">
                             <button id="enviarMensaje" style="width: 100px; position: absolute; right: 800%; top: 15px; height: 20px; background-color: #5865F2; cursor: pointer; padding: 0 15px; border: none;">Enviar</button>
                         </div>
 
@@ -289,6 +373,7 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -303,8 +388,7 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="form-container">
                             <p style="text-align: right;">AJUSTES DE USUARIO</p>
                             <button id="options-button" style="text-align: right;" onclick="showprofileinfo()">Mi cuenta</button>
-                            <button id="options-button" style="text-align: right;">Perfiles</button>
-                            <button id="options-button" style="text-align: right;">Dispositivos</button>
+                         <!--   <button id="options-button" style="text-align: right;">Dispositivos</button>
                             <button id="options-button" style="text-align: right;">Conexiones</button>
                         </div>
                         <div style="height: 2px; background-color:rgb(57, 62, 66)"></div>
@@ -315,7 +399,7 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <button id="options-button" style="text-align: right;">Voz y Video</button>
                             <button id="options-button" style="text-align: right;">Chat</button>
                             <button id="options-button" style="text-align: right;">Notificaciones</button>
-                            <button id="options-button" style="text-align: right;">Atajos de teclado</button>
+                            <button id="options-button" style="text-align: right;">Atajos de teclado</button> -->
                         </div>
                         <div style="height: 2px; background-color:rgb(57, 62, 66)"></div>
                             <div class="form-container" style="align-items: right;">
