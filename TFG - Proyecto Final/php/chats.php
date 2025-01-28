@@ -103,12 +103,9 @@ if (isset($_GET['chat_id'])) {
     <link rel="stylesheet" href="../css/chats.css">
 </head>
 <body>
-    <h1>Mis Conversaciones</h1>
-    
-    <!-- Lista de chats disponibles -->
-    <div>
+    <div id="lista-chats">
         <h2>Chats Disponibles</h2>
-        <ul id="lista-chats">
+        <ul>
             <?php foreach ($chats as $chat): ?>
                 <li>
                     <a href="chats.php?chat_id=<?= $chat['id'] ?>">
@@ -121,11 +118,9 @@ if (isset($_GET['chat_id'])) {
     </div>
 
     <?php if (isset($_GET['chat_id'])): ?>
-    <!-- Chat seleccionado -->
-    <div>
+    <div id="chat-container">
         <h2>Mensajes</h2>
-        <div id="lista-mensajes" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto;">
-            <!-- Los mensajes se cargarán aquí -->
+        <div id="lista-mensajes">
             <?php foreach ($mensajes as $mensaje): ?>
                 <div class="<?= $mensaje['sender_id'] == $user_id ? 'mensaje-propio' : 'mensaje-otro' ?>">
                     <strong><?= htmlspecialchars($mensaje['sender_alias']) ?>:</strong>
@@ -135,18 +130,17 @@ if (isset($_GET['chat_id'])) {
             <?php endforeach; ?>
         </div>
 
-        <!-- Formulario para enviar mensaje -->
         <form id="form-mensaje">
             <textarea id="mensaje" placeholder="Escribe tu mensaje..." required></textarea>
             <button type="submit">Enviar</button>
         </form>
     </div>
+    <?php endif; ?>
 
     <script>
         const chatId = <?= json_encode($_GET['chat_id']) ?>;
         const userId = <?= json_encode($_SESSION['user_id']) ?>;
 
-        // Cargar mensajes en tiempo real
         function cargarMensajes() {
             $.get('obtener_mensajes.php', { chat_id: chatId }, function (mensajes) {
                 const listaMensajes = $('#lista-mensajes');
@@ -165,12 +159,10 @@ if (isset($_GET['chat_id'])) {
                     `);
                 });
 
-                // Desplazar hacia el final
                 listaMensajes.scrollTop(listaMensajes[0].scrollHeight);
             });
         }
 
-        // Enviar mensaje
         $('#form-mensaje').submit(function (e) {
             e.preventDefault();
 
@@ -186,12 +178,8 @@ if (isset($_GET['chat_id'])) {
             }, 'json');
         });
 
-        // Actualizar mensajes cada 2 segundos
         setInterval(cargarMensajes, 2000);
-
-        // Cargar mensajes al inicio
         cargarMensajes();
     </script>
-    <?php endif; ?>
 </body>
 </html>
