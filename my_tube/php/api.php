@@ -1,10 +1,5 @@
 <?php 
-headers("Access-Control-Allow-Origin: *");
-headers("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-headers("Access-Control-Allow-Headers: Content-Type, Authorization");
-headers("Access-Control-Allow-Credentials: true");
-
-echo `
+echo '
 
 <link rel="stylesheet" href="../css/login_api.css" />
 <script type="text/javascript" src="../js/login_api.js"></script>
@@ -55,6 +50,6 @@ echo `
             <button type="submit" id="login_button">Crear cuenta</button>
         </div>
     </form>
-</div>`;
+</div>';
 
 echo 'asdasdasd';
