@@ -75,6 +75,8 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Chatterly</title>
         <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="../css/style_options.css">
+        <link rel="stylesheet" href="../css/style_chat.css">
         <link rel="icon" href="../assets/imgs/logo_bg.ico">
     </head>
     <body>
@@ -310,104 +312,104 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </div>
                     </div>
                     
-                    <div id="chatcontainer" style="display: none; flex: 1; flex-direction: column; min-width: 200px; background-color: #313338; position: relative;">
-    
-                    <div style="background-color: #313338; position: absolute; top: 0; width: 100%; height: 60px; z-index: 10;">
-                        <div style="background-color: #313338; width: 100%; height: 60px; z-index: 10; display: flex; align-items: center; gap: 10px;">
-                        <img id="foto-amigo" src="../assets/imgs/default_profile.png" alt="Foto del amigo" style=" margin-left: 10px; width: 40px; height: 40px; border-radius: 50%;">
-                        <span id="nombre-amigo" style=" margin-left: 10px; color: white; font-size: 18px;"></span>
-                    </div>
-
-                    </div>
-                        <div style="position: absolute; top: 60px; width: 100%; height: 2px; background-color: #393e42; z-index: 10;"></div>
-                        
-                        <div id="chat-messages" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px; height: calc(100vh - 160px); margin-top: 62px;"></div>
-                        
-                        <div style="padding: 10px; display: flex; position: relative; overflow: hidden;"> 
-                            <input type="text" id="mensaje" style="border-color:#383a40; background-color: #383a40; width: 100%; box-sizing: border-box; height: 45px; padding-left: 10px; position: relative;" placeholder="Escribe un mensaje..." />
-                            <img src="../assets/imgs/upload.png" style="width: 35px; position: absolute; right: 5px; top: 15px; height: 35px; cursor: pointer; padding: 0 15px; border: none;" id="uploadfile" alt="Upload">
-                            <input type="file" id="fileInput" style="display: none;">
-                            <img src="../assets/imgs/emojis.png" onclick="showEmojis()" style="width: 40px; position: absolute; right: 43px; top: 12px; height: 40px; cursor: pointer; padding: 0 15px; border: none;">
-                            <button id="enviarMensaje" style="width: 100px; position: absolute; right: 800%; top: 15px; height: 20px; background-color: #5865F2; cursor: pointer; padding: 0 15px; border: none;">Enviar</button>
+                    <div id="chatcontainer" style="display: none;">
+                        <div class="chat-header">
+                            <div class="chat-header-content">
+                                <img id="foto-amigo" src="../assets/imgs/default_profile.png" alt="Foto del amigo" class="friend-photo">
+                                <span id="nombre-amigo" class="friend-name"></span>
+                            </div>
                         </div>
 
-                        <div style="position: relative;">
-                            <div id="emojisDiv" style="display: none; position: absolute; right: 10px; bottom: 60px; width: 350px; max-height: 400px; overflow-y: auto; background: #2b2d31; border-color: #383a3f; border-style: solid; border-radius: 10px; padding: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 1000;">
-                                <div id="emojiList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                        <div style="position: absolute; top: 60px; width: 100%; height: 2px; background-color: #393e42; z-index: 10;"></div>
+
+                        <div id="chat-messages" class="chat-messages"></div>
+
+                        <div class="chat-input">
+                            <input type="text" id="mensaje" class="message-input" placeholder="Escribe un mensaje..." />
+                            <img src="../assets/imgs/upload.png" id="uploadfile" alt="Upload" class="upload-icon">
+                            <input type="file" id="fileInput" class="hidden-file-input">
+                            <img src="../assets/imgs/emojis.png" onclick="showEmojis()" class="emoji-icon">
+                            <button id="enviarMensaje" class="send-button">Enviar</button>
+                        </div>
+
+                        <div class="emoji-container">
+                            <div id="emojisDiv" class="emoji-div">
+                                <div id="emojiList" class="emoji-list"></div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
 
         <div id="options" hidden>
-            <div style="display: flex; flex-direction: column;  width: 100vw; height: 100vh;">
-                <div style="background-color: #1e1f22; color: white; padding: 5px; text-align: left; height: 20px;"> <!-- superior -->
-                    <span style="font-weight: bold; color: #949ba4;">Chatterly</span>
+            <div class="options-container">
+                <div class="header-bar">
+                    <span class="header-title">Chatterly</span>
                 </div>
-                <div style="display: flex; flex: 1;">
-                    <div style="background-color: #2b2d31; width: 30%; padding: 10px; color: white; display: flex; flex-direction: column; gap: 10px;"> <!-- barra1 -->
+                <div class="content-wrapper">
+                    <div class="sidebar">
                         <div class="form-container">
-                            <p style="text-align: right;">AJUSTES DE USUARIO</p>
-                            <button id="options-button" style="text-align: right;" onclick="showprofileinfo()">Mi cuenta</button>
-                            <button id="options-button" style="text-align: right;" onclick="mytubeconexion()">Conectar con MyTube</button>
-                         <!--   <button id="options-button" style="text-align: right;">Dispositivos</button>
-                            <button id="options-button" style="text-align: right;">Conexiones</button>
+                            <p class="section-title">AJUSTES DE USUARIO</p>
+                            <button id="options-button" onclick="showprofileinfo()">Mi cuenta</button>
+                            <button id="options-button" onclick="mytubeconexion()">Conectar con MyTube</button>
                         </div>
-                        <div style="height: 2px; background-color:rgb(57, 62, 66)"></div>
+                        <div class="divider"></div>
                         <div class="form-container">
-                            <p id="options-title" style="text-align: right;">AJUSTES DE LA APLICACION</p>
-                            <button id="options-button" style="text-align: right;">Apariencia</button>
-                            <button id="options-button" style="text-align: right;">Accesibilidad</button>
-                            <button id="options-button" style="text-align: right;">Voz y Video</button>
-                            <button id="options-button" style="text-align: right;">Chat</button>
-                            <button id="options-button" style="text-align: right;">Notificaciones</button>
-                            <button id="options-button" style="text-align: right;">Atajos de teclado</button> -->
-                        </div>
-                        <div style="height: 2px; background-color:rgb(57, 62, 66)"></div>
-                            <div class="form-container" style="align-items: right;">
-                            <button id="options-button" style="text-align: right;" onclick="window.location.href='../php/logout.php'">Cerrar sesión</button>
-                            <button id="options-button" style="text-align: right;" onclick="closeoptionspanel()">Volver</button>
+                            <button id="options-button" onclick="window.location.href='../php/logout.php'">Cerrar sesión</button>
+                            <button id="options-button" onclick="closeoptionspanel()">Volver</button>
                         </div>
                     </div>
-                    <div style="background-color: #313338; width: 100%; padding: 10px; color: white;"> <!-- barra3 -->
-                        <div id="profileinfo" style="background-color: #8a4545;" hidden>
-                        <?php
-                            $baseDir = "../assets/users/$usuario/img_profile/"; //se guarda la direccion de la carpeta del usuario
-                            $defaultImage = '../assets/imgs/default_profile.png'; //se guarda la imagen por defecto
-                            
+                    <div class="main-content">
+                        <div id="profileinfo" class="profile-info" hidden>
+                            <?php
+                            $baseDir = "../assets/users/$usuario/img_profile/";
+                            $defaultImage = '../assets/imgs/default_profile.png';
                             $profileImages = glob($baseDir . '*.{jpg,jpeg,png}', GLOB_BRACE); 
-                            
-                            if (!empty($profileImages))  //si hay imagenes en la carpeta del usuario
+
+                            if (!empty($profileImages)) 
                             {
-                                usort($profileImages, function($a, $b)  //se ordenan las imagenes por fecha de modificacion
+                                usort($profileImages, function($a, $b) 
                                 {
-                                    return filemtime($b) - filemtime($a);  //filemtime — obtiene la fecha de modificación de un archivo
+                                    return filemtime($b) - filemtime($a);
                                 });
-                               
-                                $foto = $profileImages[0]; //se guarda la imagen mas reciente
+                                $foto = $profileImages[0];
                             } 
                             else 
-                            {   
-                                $foto = $defaultImage; //si no hay imagenes se muestra la imagen por defecto
+                            {
+                                $foto = $defaultImage;
                             }
-                            
+
                             echo "
-                            <div style='display: flex; align-items: center; gap: 10px; padding: 40px;'> 
-                                <form id='uploadForm' method='POST' enctype='multipart/form-data' style='display: flex; align-items: center; gap: 10px;'>
-                                    <input type='file' id='fotoProfile' name='profile_picture' accept='.png, .jpg, .jpeg' style='display: none;'>
-                                    <img id='profileImg' src='$foto' alt='profile' style='border-radius: 50%; width: 100px; height: 100px; cursor: pointer;'> 
-                                    <span style='color: white; font-size: 40px;'>$usuario</span>
+                            <div class='profile-header'>
+                                <form id='uploadForm' method='POST' enctype='multipart/form-data' class='upload-form'>
+                                    <input type='file' id='fotoProfile' name='profile_picture' accept='.png, .jpg, .jpeg' class='file-input'>
+                                    <img id='profileImg' src='$foto' alt='profile' class='profile-img'>
+                                    <span class='profile-username'>$usuario</span>
                                 </form>
                             </div>";
                             ?>
+                            <div class="profile-details">
+                                <p>Mostrar Nombre</p>
+                                <p><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></p>
+                                <p>Nombre de usuario</p>
+                                <p><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></p>
+                                <p>Correo electronico</p>
+                                <p>
+                                    <?php
+                                    $stmt = $pdo->prepare("SELECT email FROM usuarios WHERE id_user = ?");
+                                    $stmt->execute([$id_usuario_actual]);
+                                    $emailData = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    echo htmlspecialchars($emailData['email'], ENT_QUOTES, 'UTF-8');
+                                    ?>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script defer src="../javascript/js_bienvenida.js"></script>
         <script defer src="../javascript/api.js"></script>

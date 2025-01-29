@@ -159,7 +159,7 @@ function cargarMensajes() {
                 if (mensaje.tipo === 'archivo') {
                     // Verificar la extensión del archivo
                     const fileExtension = mensaje.contenido.split('.').pop().toLowerCase();
-                    let downloadLink = `<a style="text-align: center;" href="${mensaje.contenido}" download>Descargar archivo</a>`;
+                    let downloadLink = `<a id='link' style="text-align: center;" href="${mensaje.contenido}" download>Descargar archivo</a>`;
                     
                     // Categorías de archivos
                     if (['png', 'jpg', 'jpeg', 'webp'].includes(fileExtension)) {
