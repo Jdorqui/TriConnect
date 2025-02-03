@@ -7,7 +7,10 @@ for (let i = 1; i < contentDivChildren.length; i++) {
 }
 
 // Mostrar div dependiendo de la imagen clicada.
+let divDisplaying = '';
 function display(id) {
+    divDisplaying = id;
+
     if (id != 'home' && username == '') {
         displayLoginAPIWrapper();
     } else {
@@ -24,4 +27,4 @@ function display(id) {
 }
 
 // display('chat');
-search('', '');
+search('', 'test');
