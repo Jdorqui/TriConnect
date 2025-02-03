@@ -117,89 +117,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 <div style="background-color:blue; flex-grow: 1;">
 
                 </div>
-
-
-                <!-- <button onclick="location.href='logout.php'">CERRAR SESIÓN</button> -->
-
-
             </div>
         </div>
-    </div>
-
-    <div id="mytube_login_API_wrapper" style="display: none">
-        <img class="close_img" src="../img/x_button.png" onclick="closeLoginAPIWrapper()" />
-
-        <div id="login_div">
-            <div class="section_1">
-                <img src="../img/mytube_logo.png" id="logo">
-                <div>Iniciar sesión</div>
-            </div>
-
-            <div class="section_2">
-                <form id="login_form" onsubmit="validateLoginForm(event)">
-                    <div id="user_div">
-                        <label for="USERNAME">Usuario</label>
-                        <div>
-                            <input type="text" id="USERNAME" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{1,15}"
-                                placeholder="..." required />
-                        </div>
-                    </div>
-
-                    <div id="password_div">
-                        <label for="PASSWORD">Contraseña</label>
-                        <div>
-                            <input type="password" id="PASSWORD" name="PASSWORD" required />
-                        </div>
-                    </div>
-
-                    <div class="buttons_div">
-                        <a onclick="showRegisterDiv()" id="create_account_button">Crear cuenta</a>
-                        <button type="submit" id="login_button">Iniciar sesión</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div id="register_div" style="display: none">
-            <div class="section_1">
-                <img src="../img/mytube_logo.png" id="logo">
-                <div>Crear cuenta</div>
-            </div>
-
-            <div class="section_2">
-                <form id="register_form" onsubmit="validateRegisterForm(event)">
-                    <div>
-                        <label for="USERNAME">Usuario</label>
-                        <div>
-                            <input type="text" id="USERNAME" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{1,15}"
-                                placeholder="..." required />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="EMAIL">Email</label>
-                        <div>
-                            <input type="email" id="EMAIL" name="EMAIL" required />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="PASSWORD">Contraseña</label>
-                        <div>
-                            <input type="password" id="PASSWORD" name="PASSWORD" required />
-                        </div>
-                    </div>
-
-                    <div class="buttons_div">
-                        <a onclick="showLoginDiv()" id="create_account_button">Iniciar sesión</a>
-                        <button type="submit" id="login_button">Crear cuenta</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="notifications">
     </div>
 
     <script src="../js/main_js.js"></script>

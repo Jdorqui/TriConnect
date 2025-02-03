@@ -39,6 +39,7 @@ if (isset($_SESSION['USERNAME'])) {
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="stylesheet" href="../css/login_api.css" />
     <link rel="stylesheet" href="../css/chat.css" />
+    <link rel="stylesheet" href="../css/search.css" />
     <script>
         let username = "";
         let friendsArray = "";
@@ -116,6 +117,23 @@ if (isset($_SESSION['USERNAME'])) {
                             onkeypress="sendMessage(this, event)">
                     </div>
                 </div>
+                <div id="search_div">
+                    <div>
+                        <div>Canales</div>
+                        <div id="channels_main_div">
+                            a
+                        </div>
+                    </div>
+                    <div>
+                        <div>Vídeos</div>
+                        <div>
+                            <div>V 1</div>
+                            <div>V 2</div>
+                            <div>V 3</div>
+                            <div>V 4</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -174,6 +192,7 @@ if (isset($_SESSION['USERNAME'])) {
     </div>
 
     <script type="text/javascript" src="../js/login_api.js"></script>
+    <script type="text/javascript" src="../js/search.js"></script>
     <script type="text/javascript" src="../js/main.js"></script>
     <script type="text/javascript" src="../js/chat.js"></script>
 </body>
