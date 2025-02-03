@@ -157,9 +157,10 @@ function cargarMensajes() {
                 mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">`;
                 
                 if (mensaje.tipo === 'archivo') {
-                    // Verificar la extensión del archivo
-                    const fileExtension = mensaje.contenido.split('.').pop().toLowerCase();
-                    let downloadLink = `<a id='link' style="text-align: center;" href="${mensaje.contenido}" download>Descargar archivo</a>`;
+                    // Obtener el nombre del archivo
+                    const fileName = mensaje.contenido.split('/').pop();
+                    const fileExtension = fileName.split('.').pop().toLowerCase();
+                    let downloadLink = `<a id='link' style="text-align: center;" href="${mensaje.contenido}" download>Descargar [${fileName}]</a>`;
                     
                     // Categorías de archivos
                     if (['png', 'jpg', 'jpeg', 'webp'].includes(fileExtension)) {
@@ -170,42 +171,36 @@ function cargarMensajes() {
                         mensajeHtml += `</div>`;
                     }
                     else if (['pdf'].includes(fileExtension)) {
-                        // Archivos de texto (PDF)
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
                         mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo PDF adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
                         mensajeHtml += `</div>`;
                     }
                     else if (['mp4'].includes(fileExtension)) {
-                        // Archivos de video
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
                         mensajeHtml += `<img src="../assets/placeholders/video.png" alt="Archivo de video adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
                         mensajeHtml += `</div>`;
                     }
                     else if (['mp3'].includes(fileExtension)) {
-                        // Archivos de audio
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
                         mensajeHtml += `<img src="../assets/placeholders/audio.png" alt="Archivo de audio adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
                         mensajeHtml += `</div>`;
                     }
                     else if (['zip'].includes(fileExtension)) {
-                        // Archivos comprimidos
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                        mensajeHtml += `<img src="../assets/placeholders/comprimido.png" alt="Archivo comprimido adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/comprimido2.png" alt="Archivo comprimido adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
                         mensajeHtml += `</div>`;
                     }
                     else if (['exe', 'msi'].includes(fileExtension)) {
-                        // Archivos ejecutables (programas)
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
                         mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo ejecutable adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
                         mensajeHtml += `</div>`;
                     }
                     else {
-                        // Otros tipos de archivo
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
                         mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
@@ -227,6 +222,7 @@ function cargarMensajes() {
         }
     });
 }
+
 
 
 

@@ -317,10 +317,12 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <div class="chat-header-content">
                                 <img id="foto-amigo" src="../assets/imgs/default_profile.png" alt="Foto del amigo" class="friend-photo">
                                 <span id="nombre-amigo" class="friend-name"></span>
+                                
+                                <img src="../assets/imgs/call_button.png" style="width: 30px; height: 30px; cursor: pointer;" onclick="callfriend()">
                             </div>
                         </div>
 
-                        <div style="position: absolute; top: 60px; width: 100%; height: 2px; background-color: #393e42; z-index: 10;"></div>
+                        <div id="chat-separator" style="position: absolute; top: 60px; width: 100%; height: 2px; background-color: #393e42; z-index: 10;"></div>
 
                         <div id="chat-messages" class="chat-messages"></div>
 
@@ -335,6 +337,20 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="emoji-container">
                             <div id="emojisDiv" class="emoji-div">
                                 <div id="emojiList" class="emoji-list"></div>
+                            </div>
+                        </div>
+
+                        <div id="call-container" style="display: none;">
+                            <div class="call-header">
+                            <button onclick="hangUp()">Colgar</button>
+                            <span id="call-timer">00:00</span>
+                            </div>
+                            <video id="localVideo" autoplay muted></video>
+                            <video id="remoteVideo" autoplay></video>
+                            <!-- Área de botones para aceptar o rechazar la llamada (visible solo para el receptor) -->
+                            <div id="incoming-call-ui">
+                            <button id="accept-call-btn" onclick="acceptCall()" style="display: none;">Aceptar</button>
+                            <button id="reject-call-btn" onclick="rejectCall()" style="display: none;">Rechazar</button>
                             </div>
                         </div>
                     </div>
@@ -406,12 +422,14 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                         </div>
                     </div>
+                    <div id="mytubeconexion" class="mytube-conexion" style="display: none;"></div>
                 </div>
             </div>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script defer src="../javascript/js_bienvenida.js"></script>
+        <script defer src="../javascript/client.js"></script>
         <script defer src="../javascript/api.js"></script>
         <script>var id_usuario_actual = <?php echo $id_usuario_actual; ?>;</script>
     </body>
