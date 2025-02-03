@@ -1,7 +1,7 @@
 <?php
 $SERVER_NAME = "localhost";
 $SERVER_USERNAME = "root";
-$SERVER_PASSWORD = "";
+$SERVER_PASSWORD = "root";
 $DATABASE_NAME = "MYTUBE";
 
 try {

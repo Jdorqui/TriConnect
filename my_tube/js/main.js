@@ -23,4 +23,5 @@ function display(id) {
 
 }
 
-display('chat');
+// display('chat');
+search('', '');
