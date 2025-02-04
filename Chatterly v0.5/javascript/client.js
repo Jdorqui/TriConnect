@@ -56,11 +56,22 @@ function acceptCall() {
 }
 
 function hangUp() {
-    if (peerConnection) {
-        peerConnection.close();
-    }
-    callContainer.style.display = "none";
-    sendSignal('hangup', {}, emitterId, receiverId);
+  if (peerConnection) {
+      peerConnection.close();
+  }
+  
+  // Ocultar el contenedor de la llamada
+  callContainer.style.display = "none";
+
+  // Mostrar el chat nuevamente
+  document.getElementById("chat-messages").style.display = "block"; // Mostrar los mensajes del chat
+  document.querySelector(".chat-input").style.display = "block"; // Mostrar la entrada de texto y los botones
+  document.querySelector(".emoji-container").style.display = "block";
+  document.querySelector(".chat-header").style.display = "block";
+  document.getElementById("chat-separator").style.display = "block";
+
+  // Enviar la señal de colgar
+  sendSignal('hangup', {}, emitterId, receiverId);
 }
 
 function sendSignal(type, data, emitterId, receiverId) {
