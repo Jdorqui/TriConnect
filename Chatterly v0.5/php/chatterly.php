@@ -77,6 +77,7 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <link rel="stylesheet" href="../css/style.css">
         <link rel="stylesheet" href="../css/style_options.css">
         <link rel="stylesheet" href="../css/style_chat.css">
+        <link rel="stylesheet" href="../css/style_calls.css">
         <link rel="icon" href="../assets/imgs/logo_bg.ico">
     </head>
     <body>
@@ -318,7 +319,7 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <img id="foto-amigo" src="../assets/imgs/default_profile.png" alt="Foto del amigo" class="friend-photo">
                                 <span id="nombre-amigo" class="friend-name"></span>
                                 
-                                <img src="../assets/imgs/call_button.png" style="width: 30px; height: 30px; cursor: pointer;" onclick="callfriend()">
+                                <img src="../assets/imgs/call_button.png" style="width: 30px; height: 30px; cursor: pointer;" onclick="startCall()">
                             </div>
                         </div>
 
@@ -340,17 +341,19 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                         </div>
 
-                        <div id="call-container" style="display: none;">
-                            <div class="call-header">
-                            <button onclick="hangUp()">Colgar</button>
-                            <span id="call-timer">00:00</span>
+                        <div id="call-container" class="call-container">
+                            <div class="video-container">
+                                <video id="localVideo" autoplay muted class="local-video"></video>
+                                <video id="remoteVideo" autoplay class="remote-video"></video>
                             </div>
-                            <video id="localVideo" autoplay muted></video>
-                            <video id="remoteVideo" autoplay></video>
+                            <div class="call-header">
+                                <button onclick="hangUp()" class="call-btn hang-up-btn">Colgar</button>
+                                <span id="call-timer" class="call-timer">00:00</span>
+                            </div>
                             <!-- Área de botones para aceptar o rechazar la llamada (visible solo para el receptor) -->
-                            <div id="incoming-call-ui">
-                            <button id="accept-call-btn" onclick="acceptCall()" style="display: none;">Aceptar</button>
-                            <button id="reject-call-btn" onclick="rejectCall()" style="display: none;">Rechazar</button>
+                            <div id="incoming-call-ui" class="incoming-call-ui">
+                                <button id="accept-call-btn" onclick="acceptCall()" class="call-btn accept-btn" style="display: none;">Aceptar</button>
+                                <button id="reject-call-btn" onclick="rejectCall()" class="call-btn reject-btn" style="display: none;">Rechazar</button>
                             </div>
                         </div>
                     </div>

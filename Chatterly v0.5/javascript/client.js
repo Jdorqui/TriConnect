@@ -1,271 +1,142 @@
-// CONFIGURACIÓN DE LA SALA Y USUARIO
-const ROOM = generateRandomRoom();  // Genera una sala aleatoria
-const USER = getCurrentUser();  // Obtiene el usuario actual desde el sistema de PHP
-const DESTINATARIO_ID = getDestinatarioID();  // Obtiene el destinatario desde la variable destinatarioID
+const userType = sessionStorage.getItem('userType') || 'guest'; 
+let roomId = new URLSearchParams(window.location.search).get('room');
 
-// URL del script PHP de señalización
-const SIGNAL_URL = '../php/signal.php';
+if (!roomId) {
+    // Generar un roomId aleatorio si no existe
+    roomId = 'room_' + Math.random().toString(36).substr(2, 9);
+    console.log("Room generado automáticamente:", roomId);
+}
 
-// Variables globales de la llamada
-let localStream;
 let peerConnection;
-let callTimerInterval;
-let callStartTime;
+const localVideo = document.getElementById("localVideo");
+const remoteVideo = document.getElementById("remoteVideo");
+const callContainer = document.getElementById("call-container");
 
-const rtcConfig = {
-  iceServers: [
-    { urls: "stun:stun.l.google.com:19302" }
-  ]
-};
+// Establecemos los ID de emisor y receptor
+const emitterId = 1;
+const receiverId = 2;
 
-function formatTime(seconds) {
-  const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
-  const secs = (seconds % 60).toString().padStart(2, '0');
-  return `${mins}:${secs}`;
+function startCall() {
+  // Ocultar los elementos innecesarios del chat
+  document.getElementById("chat-messages").style.display = "none"; // Ocultar los mensajes del chat
+  document.querySelector(".chat-input").style.display = "none"; // Ocultar la entrada de texto y los botones
+  document.querySelector(".emoji-container").style.display = "none";
+  document.querySelector(".chat-header").style.display = "none";
+  document.getElementById("chat-separator").style.display = "none";
+  
+  callContainer.style.display = "block"; 
+
+  peerConnection = new RTCPeerConnection();
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(stream => {
+          localVideo.srcObject = stream;
+          stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+          return peerConnection.createOffer();
+      })
+      .then(offer => {
+          peerConnection.setLocalDescription(offer);
+          sendSignal('offer', offer, emitterId, receiverId);
+      })
+      .catch(error => console.error("Error al iniciar la llamada:", error));
 }
 
-function startCallTimer() {
-  callStartTime = Date.now();
-  document.getElementById("call-timer").textContent = "00:00";
-  callTimerInterval = setInterval(() => {
-    const elapsedSeconds = Math.floor((Date.now() - callStartTime) / 1000);
-    document.getElementById("call-timer").textContent = formatTime(elapsedSeconds);
-  }, 1000);
-}
 
-function stopCallTimer() {
-  clearInterval(callTimerInterval);
-  document.getElementById("call-timer").textContent = "00:00";
-}
-
-function createFakeStream() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 640;
-  canvas.height = 480;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = 'black';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const videoStream = canvas.captureStream(15);
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  const oscillator = audioContext.createOscillator();
-  const dst = oscillator.connect(audioContext.createMediaStreamDestination());
-  oscillator.start();
-  const audioTrack = dst.stream.getAudioTracks()[0];
-  audioTrack.enabled = false;
-  const fakeStream = new MediaStream();
-  videoStream.getVideoTracks().forEach(track => fakeStream.addTrack(track));
-  fakeStream.addTrack(audioTrack);
-  return fakeStream;
-}
-
-function sendSignal(message) {
-  console.log("Enviando señal:", message); // Debug de la señal que se va a enviar
-  fetch(SIGNAL_URL + '?room=' + ROOM + '&user=' + USER + '&destinatarioID=' + DESTINATARIO_ID, {
-    method: 'POST',
-    body: JSON.stringify(message),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log("Señal enviada:", data); // Debug de la respuesta de la señal
-  })
-  .catch(error => console.error("Error al enviar señal:", error));
-}
-
-function pollSignals() {
-  fetch(SIGNAL_URL + '?room=' + ROOM + '&user=' + USER + '&destinatarioID=' + DESTINATARIO_ID)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Error en la respuesta del servidor: ' + response.statusText);
-      }
-      return response.text();  // Cambiar a text() para ver el contenido completo
-    })
-    .then(responseText => {
-      try {
-        const messages = JSON.parse(responseText);  // Intentamos parsear el texto como JSON
-        messages.forEach(message => {
-          handleSignalMessage(message);
-        });
-      } catch (e) {
-        console.error("Error al procesar la respuesta JSON:", e, responseText);
-      }
-      setTimeout(pollSignals, 1000);
-    })
-    .catch(error => {
-      console.error("Error al obtener señales:", error);
-      setTimeout(pollSignals, 3000);
-    });
-}
-
-async function handleSignalMessage(message) {
-  console.log("Señal recibida:", message); // Debug de la señal recibida
-  switch (message.event_type) {
-    case 'offer':
-      console.log("Procesando oferta..."); // Debug de la oferta recibida
-      if (!peerConnection) {
-        // En el receptor (callee): muestra la interfaz de llamada y los botones de aceptar/rechazar
-        console.log("Iniciando llamada en el lado del receptor...");
-        document.querySelector('.chat-header').style.display = 'none';
-        document.querySelector('.chat-messages').style.display = 'none';
-        document.querySelector('.chat-input').style.display = 'none';
-        document.querySelector('.emoji-container').style.display = 'none';
-        document.getElementById('chat-separator').style.display = 'none';
-        document.getElementById("call-container").style.display = 'block';
-        startCallTimer();
-
-        try {
-          localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        } catch (error) {
-          console.warn("No se pudo acceder a cámara/micrófono. Se usará stream falso.", error);
-          localStream = createFakeStream();
-        }
-        document.getElementById("localVideo").srcObject = localStream;
-        peerConnection = new RTCPeerConnection(rtcConfig);
-        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-        peerConnection.ontrack = (event) => {
-          console.log("Stream remoto recibido:", event); // Debug del stream remoto
-          document.getElementById("remoteVideo").srcObject = event.streams[0];
-        };
-        peerConnection.onicecandidate = (event) => {
-          if (event.candidate) {
-            console.log("Enviando candidato ICE:", event.candidate); // Debug de candidato ICE
-            sendSignal({
-              type: 'candidate',
-              candidate: event.candidate
+function acceptCall() {
+    $.post('signal.php', { action: 'accept_call', room: roomId, emitterId: emitterId, receiverId: receiverId }, function(response) {
+        console.log("Llamada aceptada:", response);
+        peerConnection = new RTCPeerConnection();
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                localVideo.srcObject = stream;
+                stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
             });
-          }
-        };
-        // Establecer la oferta recibida como remote description
-        try {
-          const offerObj = JSON.parse(message.message).offer;
-          await peerConnection.setRemoteDescription(new RTCSessionDescription(offerObj));
-        } catch (e) {
-          console.error("Error al establecer la descripción remota:", e);
-        }
-      }
-      break;
-    case 'answer':
-      console.log("Procesando respuesta..."); // Debug de la respuesta recibida
-      try {
-        const answerObj = JSON.parse(message.message).answer;
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(answerObj));
-      } catch (error) {
-        console.error("Error al procesar la respuesta:", error);
-      }
-      break;
-    case 'candidate':
-      console.log("Procesando candidato ICE..."); // Debug del candidato ICE
-      try {
-        const candidateObj = JSON.parse(message.message).candidate;
-        await peerConnection.addIceCandidate(new RTCIceCandidate(candidateObj));
-      } catch (error) {
-        console.error("Error al agregar candidato:", error);
-      }
-      break;
-    case 'reject':
-      console.log("Llamada rechazada por el partner.");
-      alert("La llamada fue rechazada.");
-      hangUp();
-      break;
-    default:
-      console.log("Señal desconocida:", message); // Debug para señales desconocidas
-  }
-}
-
-async function callfriend() {
-  document.querySelector('.chat-header').style.display = 'none';
-  document.querySelector('.chat-messages').style.display = 'none';
-  document.querySelector('.chat-input').style.display = 'none';
-  document.querySelector('.emoji-container').style.display = 'none';
-  document.getElementById('chat-separator').style.display = 'none';
-  document.getElementById("call-container").style.display = 'block';
-  try {
-    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-  } catch (error) {
-    console.warn("No se pudo acceder a cámara/micrófono. Se usará stream falso.", error);
-    localStream = createFakeStream();
-  }
-  document.getElementById("localVideo").srcObject = localStream;
-  startCallTimer();
-  peerConnection = new RTCPeerConnection(rtcConfig);
-  localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-  peerConnection.ontrack = (event) => {
-    document.getElementById("remoteVideo").srcObject = event.streams[0];
-  };
-  peerConnection.onicecandidate = (event) => {
-    if (event.candidate) {
-      sendSignal({
-        type: 'candidate',
-        candidate: event.candidate
-      });
-    }
-  };
-  try {
-    const offer = await peerConnection.createOffer({
-      offerToReceiveAudio: 1,
-      offerToReceiveVideo: 1
     });
-    await peerConnection.setLocalDescription(offer);
-    sendSignal({
-      type: 'offer',
-      offer: offer
-    });
-  } catch (error) {
-    console.error("Error al crear la oferta:", error);
-  }
-}
-
-async function acceptCall() {
-  document.getElementById("accept-call-btn").style.display = 'none';
-  document.getElementById("reject-call-btn").style.display = 'none';
-  try {
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
-    sendSignal({
-      type: 'answer',
-      answer: answer
-    });
-  } catch (error) {
-    console.error("Error al crear la respuesta:", error);
-  }
-}
-
-function rejectCall() {
-  sendSignal({ type: 'reject' });
-  hangUp();
+    document.getElementById("accept-call-btn").style.display = "none";
+    document.getElementById("reject-call-btn").style.display = "none";
 }
 
 function hangUp() {
-  document.querySelector('.chat-header').style.display = 'block';
-  document.querySelector('.chat-messages').style.display = 'block';
-  document.querySelector('.chat-input').style.display = 'block';
-  document.querySelector('.emoji-container').style.display = 'block';
-  document.getElementById('chat-separator').style.display = 'block';
-  document.getElementById("call-container").style.display = 'none';
-  stopCallTimer();
-  if (peerConnection) {
-    peerConnection.close();
-    peerConnection = null;
-  }
-  if (localStream) {
-    localStream.getTracks().forEach(track => track.stop());
-    localStream = null;
-  }
+    if (peerConnection) {
+        peerConnection.close();
+    }
+    callContainer.style.display = "none";
+    sendSignal('hangup', {}, emitterId, receiverId);
 }
 
-function generateRandomRoom() {
-  return 'room_' + Math.random().toString(36).substring(7);  // Genera una sala aleatoria
+function sendSignal(type, data, emitterId, receiverId) {
+    $.ajax({
+        url: 'signal.php',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            type: type,
+            data: data,
+            room: roomId,
+            user: userType,
+            emitterId: emitterId,
+            receiverId: receiverId
+        }),
+        success: function(response) {
+            console.log("Señal enviada:", response);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al enviar la señal:", error);
+        }
+    });
 }
 
-function getCurrentUser() {
-  return "<?php echo $_SESSION['usuario']; ?>";  // Obtiene el nombre de usuario desde PHP
+function receiveSignals() {
+    if (!roomId) return; // Evitar errores si roomId no está definido
+
+    $.ajax({
+        url: 'signal.php',
+        method: 'GET',
+        data: { room: roomId, user: userType },
+        success: function(response) {
+            try {
+                let messages = JSON.parse(response);
+                if (Array.isArray(messages)) {
+                    messages.forEach(message => {
+                        processSignal(message);
+                    });
+                } else {
+                    console.error("Respuesta inesperada:", messages);
+                }
+            } catch (e) {
+                console.error("Error al procesar la respuesta JSON:", e);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al recibir señales:", error);
+        }
+    });
 }
 
-function getDestinatarioID() {
-  return "<?php echo $_GET['destinatarioID']; ?>";  // Obtiene el destinatario desde la URL o la variable de PHP
+function processSignal(message) {
+    switch (message.type) {
+        case 'offer':
+            if (message.emitterId === receiverId) {
+                peerConnection.setRemoteDescription(new RTCSessionDescription(message.data));
+                peerConnection.createAnswer().then(answer => {
+                    peerConnection.setLocalDescription(answer);
+                    sendSignal('answer', answer, emitterId, receiverId);
+                });
+            }
+            break;
+        case 'answer':
+            if (message.receiverId === emitterId) {
+                peerConnection.setRemoteDescription(new RTCSessionDescription(message.data));
+            }
+            break;
+        case 'candidate':
+            peerConnection.addIceCandidate(new RTCIceCandidate(message.data));
+            break;
+        case 'hangup':
+            hangUp();
+            break;
+        default:
+            console.warn("Tipo de señal desconocida:", message.type);
+    }
 }
 
-// Inicia el polling de señales cuando se carga el script
-pollSignals();
+setInterval(receiveSignals, 3000);
