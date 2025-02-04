@@ -10,8 +10,8 @@ html
     -webkit-user-select: none;
     -webkit-user-drag: none;
     -moz-user-select: none;
-    -ms-user-select:none;
-    user-select:none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 body 

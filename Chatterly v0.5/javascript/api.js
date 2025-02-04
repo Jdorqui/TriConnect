@@ -1,6 +1,6 @@
-function mytubeconexion()
+async function mytubeconexion()
 {
-    fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/php/api.php', {
+    await fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/php/api.php', {
         method: 'POST',
         mode: 'cors'
     })
@@ -12,23 +12,8 @@ function mytubeconexion()
     })
     .catch(error => console.error(error));
 
-    fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/js/login_api.js', {
-        method: 'POST',
-        mode: 'cors'
-    })
-    .then(response => response.text())
-    .then(data => {
-        // Crear un nuevo <script> y añadir el código JavaScript al contenido
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.innerHTML = data;  // Añadir el código JavaScript recibido
-    
-        document.head.appendChild(script);
-    })
-    .catch(error => console.error(error));
-    
     // Obtener las imágenes desde el servidor remoto
-    fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/img/mytube_logo.png', {
+    await fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/img/mytube_logo.png', {
         method: 'GET',
         mode: 'cors'
     })
@@ -40,7 +25,7 @@ function mytubeconexion()
     })
     .catch(error => console.error('Error al cargar la imagen mytube_logo:', error));
 
-    fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/img/x_button.png', {
+    await fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/img/x_button.png', {
         method: 'GET',
         mode: 'cors'
     })
@@ -51,4 +36,31 @@ function mytubeconexion()
         document.getElementById('x_button').src = imageUrl;
     })
     .catch(error => console.error('Error al cargar la imagen x_button:', error));
+
+    await fetch('https://10.3.5.111/DAM-B/TriConnect/my_tube/js/login_api.js', {
+        method: 'POST',
+        mode: 'cors'
+    })
+    .then(response => response.text())
+    .then(data => {
+        // Crear un nuevo <script> y añadir el código JavaScript al contenido
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.innerHTML = data;  // Añadir el código JavaScript recibido
+    
+        document.body.appendChild(script);
+    })
+    .catch(error => console.error(error));
+
+    document.getElementById("login_form").addEventListener('submit', function(event) 
+    {
+        console.log(validateLoginForm(event));
+
+    });
 }
+
+
+/*function mytubecheck(algo)
+{
+    
+}*/

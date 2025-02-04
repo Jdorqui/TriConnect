@@ -1,5 +1,6 @@
 #chatcontainer 
 {
+    user-select: text !important;
     display: none;
     flex: 1;
     flex-direction: column;
