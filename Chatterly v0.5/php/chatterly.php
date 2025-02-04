@@ -77,6 +77,7 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <link rel="stylesheet" href="../css/style.css">
         <link rel="stylesheet" href="../css/style_options.css">
         <link rel="stylesheet" href="../css/style_chat.css">
+        <link rel="stylesheet" href="../css/style_calls.css">
         <link rel="icon" href="../assets/imgs/logo_bg.ico">
     </head>
     <body>
@@ -317,10 +318,12 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <div class="chat-header-content">
                                 <img id="foto-amigo" src="../assets/imgs/default_profile.png" alt="Foto del amigo" class="friend-photo">
                                 <span id="nombre-amigo" class="friend-name"></span>
+                                
+                                <img src="../assets/imgs/call_button.png" style="width: 30px; height: 30px; cursor: pointer;" onclick="startCall()">
                             </div>
                         </div>
 
-                        <div style="position: absolute; top: 60px; width: 100%; height: 2px; background-color: #393e42; z-index: 10;"></div>
+                        <div id="chat-separator" style="position: absolute; top: 60px; width: 100%; height: 2px; background-color: #393e42; z-index: 10;"></div>
 
                         <div id="chat-messages" class="chat-messages"></div>
 
@@ -335,6 +338,22 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="emoji-container">
                             <div id="emojisDiv" class="emoji-div">
                                 <div id="emojiList" class="emoji-list"></div>
+                            </div>
+                        </div>
+
+                        <div id="call-container" class="call-container">
+                            <div class="video-container">
+                                <video id="localVideo" autoplay muted class="local-video"></video>
+                                <video id="remoteVideo" autoplay class="remote-video"></video>
+                            </div>
+                            <div class="call-header">
+                                <button onclick="hangUp()" class="call-btn hang-up-btn">Colgar</button>
+                                <span id="call-timer" class="call-timer">00:00</span>
+                            </div>
+                            <!-- Área de botones para aceptar o rechazar la llamada (visible solo para el receptor) -->
+                            <div id="incoming-call-ui" class="incoming-call-ui">
+                                <button id="accept-call-btn" onclick="acceptCall()" class="call-btn accept-btn" style="display: none;">Aceptar</button>
+                                <button id="reject-call-btn" onclick="rejectCall()" class="call-btn reject-btn" style="display: none;">Rechazar</button>
                             </div>
                         </div>
                     </div>
@@ -406,12 +425,14 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                         </div>
                     </div>
+                    <div id="mytubeconexion" class="mytube-conexion" style="display: none;"></div>
                 </div>
             </div>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script defer src="../javascript/js_bienvenida.js"></script>
+        <script defer src="../javascript/client.js"></script>
         <script defer src="../javascript/api.js"></script>
         <script>var id_usuario_actual = <?php echo $id_usuario_actual; ?>;</script>
     </body>
