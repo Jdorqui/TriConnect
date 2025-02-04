@@ -8,7 +8,7 @@
 
     padding-top: 2%;
 
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 #search_div>div {
@@ -27,7 +27,7 @@
 
     /*background-color:rgb(94, 96, 95);*/
 
-    margin-bottom: 1vw;
+    margin-bottom: 2vw;
 }
 
 .search_user_image {
@@ -38,4 +38,57 @@
     border-radius: 50%;
 
     margin-right: 1vw;
+}
+
+#search_div>div>:not(:first-child)>div>:last-child {
+    display: flex;
+
+    margin: auto;
+    margin-right: 0;
+
+    width: 25%;
+}
+
+.subscription,
+.unsubscription,
+.chat_button {
+    border: 0.2vw white solid;
+    border-radius: 1vw;
+    padding: 1vw;
+
+    font-size: 1.3vw;
+
+    margin: auto;
+    margin-right: 0;
+
+    cursor: pointer;
+
+    z-index: 3;
+
+    transition: background-color 0.3s;
+
+    text-align: center;
+
+    height: 20%;
+}
+
+.subscription,
+.unsubscription {
+    margin-right: 0.1vw;
+}
+
+.subscription:hover {
+    background-color: red;
+}
+
+.unsubscription {
+    background-color: red;
+}
+
+.unsubscription:hover {
+    background-color: transparent;
+}
+
+.friend_button {
+    background-color: blue;
 }

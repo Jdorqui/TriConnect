@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $USERNAME = trim($_GET['username']);
-    $CHANNEL_ID = trim($_GET['channel_id']);
+    $CHANNEL_ID = trim($_GET['channel']);
 }
 
 $SUBSCRIBE_QUERY = $CONN->query("INSERT INTO SUBS VALUES ('$USERNAME', '$CHANNEL_ID')");

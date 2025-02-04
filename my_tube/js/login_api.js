@@ -120,7 +120,7 @@ function getChannel(input, event) {
 // TODO
 // Eliminar la última notificación cada segundo.
 setInterval(function () {
-    if (notifications.lastElementChild) {
+    if (notifications != null && notifications.lastElementChild) {
         notifications.lastElementChild.remove();
     }
 }, 1000);
