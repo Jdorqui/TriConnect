@@ -40,35 +40,31 @@ function hideRegisterForm() {
     registerForm.style.display = "none";
 }
 
-function test() {
-    return '1';
-}
-
 // Validar el form de inicio de sesión.
-async function validateLoginForm() {
+function validateLoginForm() {
     console.log("bro");
+
     event.preventDefault();
 
-    await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/login.php", {
+    fetch("../php/login.php", {
         method: "POST",
         body: new FormData(document.getElementById("login_form")),
     })
         .then((response) => response.text())
         .then((data) => {
-            return data;
+            console.log(data);
+            checkLoginErrors(data);
         })
         .catch((error) => {
             console.error("Error:", error);
         });
-
-    return "qué pasa";
 }
 
 // Validar el form de registro.
 function validateRegisterForm() {
     event.preventDefault();
 
-    fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/sign_up.php", {
+    fetch("../php/sign_up.php", {
         method: "POST",
         body: new FormData(document.getElementById("register_form")),
     })
@@ -84,15 +80,15 @@ function validateRegisterForm() {
 // Comprobar si existen errores en el inicio de sesión.
 function checkLoginErrors(data) {
     if (data.includes("ERROR-000")) {
-        return "Conexión fallida con la base datos. Inténtelo más tarde.";
+        createNotification("Conexión fallida con la base datos. Inténtelo más tarde.");
     } else if (data.includes("ERROR-001")) {
-        return "El usuario no existe.";
+        createNotification("El usuario no existe.");
     } else if (data.includes("ERROR-002")) {
-        return "La contraseña no es correcta.";
+        createNotification("La contraseña no es correcta.");
     } else if (data.includes("SUCCESS")) {
-        return data;
+        location.reload();
     } else {
-        return data;
+        alert(data)
     }
 }
 
@@ -103,7 +99,7 @@ function checkRegisterErrors(data) {
     } else if (data.includes("ERROR-001")) {
         createNotification("El usuario ya existe.");
     } else if (data.includes("SUCCESS")) {
-        console.log(data);
+        location.reload();
     }
 }
 

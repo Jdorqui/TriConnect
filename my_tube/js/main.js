@@ -26,5 +26,5 @@ function display(id) {
 
 }
 
-// display('chat');
-search('', 'test');
+display('settings');
+// search('', 'test');

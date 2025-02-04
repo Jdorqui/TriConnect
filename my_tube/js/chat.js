@@ -146,7 +146,7 @@ async function getAllMessages(friendObject) {
             // console.log(JSON.stringify(json_data, null, 2));
             let newMessages = JSON.parse(data).length - friendObject.messageNumber;
 
-            //console.log(`DEBUG: ${JSON.stringify(json_data, null, 2)}`);
+            // console.log(`DEBUG: ${JSON.stringify(json_data, null, 2)}`);
             // console.log(`DEBUG: ${newMessages}`);
 
             for (let i = 0; i < newMessages; i++) {

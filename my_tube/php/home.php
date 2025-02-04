@@ -40,6 +40,10 @@ if (isset($_SESSION['USERNAME'])) {
     <link rel="stylesheet" href="../css/login_api.css" />
     <link rel="stylesheet" href="../css/chat.css" />
     <link rel="stylesheet" href="../css/search.css" />
+    <link rel="stylesheet" href="../css/settings.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script>
         let username = "";
         let friendsArray = "";
@@ -65,7 +69,7 @@ if (isset($_SESSION['USERNAME'])) {
             <!-- TODO -->
 
             <?php if (isset($_SESSION["USERNAME"])): ?>
-                <div id="user_logged_in_tab" onclick="displayUserSettings()">
+                <div id="user_logged_in_tab" onclick="display('settings')">
                     <img class="every_user_image" src="../img/profile_pic_example.jpg">
                     <div><?php echo $_SESSION["USERNAME"] ?></div>
                 </div>
@@ -113,8 +117,10 @@ if (isset($_SESSION['USERNAME'])) {
                             <?php endif; ?>
                         </div>
                         <div id="chat"></div>
-                        <input id="input_text" type="text" placeholder="Enviar mensaje"
-                            onkeypress="sendMessage(this, event)">
+                        <div style="padding: 0.7vw;">
+                            <input id="input_text" type="text" placeholder="Enviar mensaje"
+                                onkeypress="sendMessage(this, event)">
+                        </div>
                     </div>
                 </div>
                 <div id="search_div">
@@ -127,6 +133,30 @@ if (isset($_SESSION['USERNAME'])) {
                         <div>
                         </div>
                     </div>
+                </div>
+                <div id="settings_div">
+                    <div>
+                        <div>
+                            General
+                        </div>
+                        <div>
+                            Seguridad
+                        </div>
+                        <div>
+                            <img src="../img/chatterly_logo.png">Conectar con <span style="color: #6458aa">Chatterly</span>©
+                        </div>
+                        <div>
+                            <img src="../img/deto_logo.png">Conectar con <span style="color: #229fa3">DeTo'</span> ©
+                        </div>
+                    </div>
+                    <div>
+                    </div>
+                </div>
+                <div>
+
+                </div>
+                <div id="channel_div">
+                    CHANNEL
                 </div>
             </div>
         </div>
@@ -185,7 +215,7 @@ if (isset($_SESSION['USERNAME'])) {
     <div id="notifications">
     </div>
 
-    <script type="text/javascript" src="../js/login_api.js"></script>
+    <script type="text/javascript" src="../js/internal_login_api.js"></script>
     <script type="text/javascript" src="../js/channel.js"></script>
     <script type="text/javascript" src="../js/search.js"></script>
     <script type="text/javascript" src="../js/main.js"></script>

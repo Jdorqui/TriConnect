@@ -143,14 +143,14 @@ echo '
 }
 </style>
 <div id="mytube_login_API_wrapper">
-    <img id="x_button" src="../img/x_button.png" onclick="closeLoginAPIWrapper()" />
+    <img id="x_button" onclick="closeLoginAPIWrapper()" />
 
     <div>
-        <img id="mytube_logo" src="../img/mytube_logo.png">
+        <img id="mytube_logo">
         <div>Iniciar sesión</div>
     </div>
 
-    <form id="login_form" onsubmit="validateLoginForm(event)">
+    <form id="login_form">
         <div>
             <label for="USERNAME">Usuario</label>
             <input type="text" name="USERNAME" pattern="[A-Za-záéíóúÁÉÍÓÚ0-9]{1,15}" required />

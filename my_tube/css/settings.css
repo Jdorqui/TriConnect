@@ -1,0 +1,39 @@
+#settings_div {
+    display: flex;
+}
+
+#settings_div>:first-child {
+    width: 35%;
+}
+
+#settings_div>:first-child>div {
+    display: flex;
+    font-size: 1.9vw;
+    margin-bottom: 0vw;
+
+    padding: 1vw;
+
+    justify-items: center;
+    align-items: center;
+}
+
+#settings_div>:first-child>div>span {
+    margin-left: 0.5vw;
+    margin-right: 0.5vw;
+}
+
+#settings_div>:first-child>div:hover {
+    cursor: pointer;
+
+    background-color: rgb(33, 33, 33);
+}
+
+#settings_div>:first-child>div>img {
+    width: 3vw;
+    margin-right: 1vw;
+}
+
+#settings_div>:last-child {
+    background-color: brown;
+    flex-grow: 1;
+}
