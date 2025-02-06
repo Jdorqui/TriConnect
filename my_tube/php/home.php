@@ -143,13 +143,21 @@ if (isset($_SESSION['USERNAME'])) {
                             Seguridad
                         </div>
                         <div>
-                            <img src="../img/chatterly_logo.png">Conectar con <span style="color: #6458aa">Chatterly</span>©
+                            <img src="../img/chatterly_logo.png">Conectar con <span
+                                style="color: #6458aa">Chatterly</span>©
                         </div>
                         <div>
                             <img src="../img/deto_logo.png">Conectar con <span style="color: #229fa3">DeTo'</span> ©
                         </div>
                     </div>
                     <div>
+                        <div>
+                            <div style="position: relative; display: flex; align-items: center; justify-content: center">
+                                <div style="color: black; font-size: 2.5vw; position: absolute; background-color: white; width: 100%; height: 100%; align-items: center; justify-content: center; border-radius: 100%; opacity: 0.4;">Cambiar</div>
+                                <img class="" src="../img/profile_pic_example.jpg">
+                            </div>
+                            <div><?php echo $_SESSION["USERNAME"] ?></div>
+                        </div>
                     </div>
                 </div>
                 <div>
