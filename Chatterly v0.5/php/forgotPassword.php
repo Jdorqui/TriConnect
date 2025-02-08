@@ -5,7 +5,7 @@ $user = 'root';
 $pass = ''; 
 $charset = 'utf8mb4';
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset"; // Configurar la conexión a la base de datos
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset"; //configurar la conexion a la base de datos
 $options = [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -18,44 +18,46 @@ try
 }
 catch (\PDOException $e) 
 {
-    throw new \PDOException($e->getMessage(), (int)$e->getCode());
+    die("<div class='error'>Error de conexión a la base de datos</div>");
 }
+
+$mensaje = ""; //variable para almacenar el mensaje de error o exito
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) 
 {
-    $email = $_POST['email'];
+    $email = trim($_POST['email']);
     $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
-    if ($user)  // Si el correo está registrado
+    if ($user)  
     {
-        echo "<script>document.getElementById('new-password-fields').style.display = 'block';</script>";
-        
-        if (isset($_POST['new_password']) && isset($_POST['confirm_password']))  // Si se envió una nueva contraseña
+        if (isset($_POST['new_password']) && isset($_POST['confirm_password']))  
         {
             $new_password = $_POST['new_password'];
             $confirm_password = $_POST['confirm_password'];
 
-            
-            if ($new_password === $confirm_password) // Verificar si las contraseñas coinciden
+            //validar que la contraseña tenga al menos 5 caracteres, 1 mayúscula y 1 caracter especial
+            if (!preg_match('/^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{5,}$/', $new_password)) 
             {
-                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT); // Encriptar la nueva contraseña
-
-                $update_stmt = $pdo->prepare("UPDATE usuarios SET password = ? WHERE email = ?"); // Actualizar la contraseña en la base de datos
-                $update_stmt->execute([$hashed_password, $email]);
-
-                echo "<script>document.getElementById('mensaje').innerText = 'Contraseña restablecida exitosamente';</script>";
-            } 
+                $mensaje = "La contraseña debe tener al menos 5 caracteres, una mayúscula y un carácter especial.";
+            }
+            elseif ($new_password !== $confirm_password)  
+            {
+                $mensaje = "Las contraseñas no coinciden.";
+            }
             else 
             {
-                echo "<script>document.getElementById('mensaje').innerText = 'Las contraseñas no coinciden';</script>";
+                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                $update_stmt = $pdo->prepare("UPDATE usuarios SET password = ? WHERE email = ?");
+                $update_stmt->execute([$hashed_password, $email]);
+                $mensaje = "Contraseña restablecida exitosamente.";
             }
         }
     } 
     else 
     {
-        echo "<script>document.getElementById('mensaje').innerText = 'El correo no está registrado';</script>";
+        $mensaje = "El correo no está registrado.";
     }
 }
 ?>
@@ -67,6 +69,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email']))
         <title>Chatterly</title>
         <link rel="stylesheet" href="../css/style.css">
         <link rel="icon" href="../assets/imgs/logo_bg.ico">
+        <style>
+            .error { color: #f7767a; margin-top: 10px; }
+            .success { color: green;  margin-top: 10px; }
+        </style>
     </head>
     <body>
         <div id="login" class="active">
@@ -93,7 +99,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email']))
                     </div>
                 </div>
             </form>
-            <div id="mensaje"></div>
+            <div id="mensaje" class="<?php echo $mensaje ? (strpos($mensaje, 'exitosamente') !== false ? 'success' : 'error') : ''; ?>">
+                <?php echo $mensaje; ?>
+            </div>
         </div>
         <script defer src="../javascript/js.js"></script>
     </body>

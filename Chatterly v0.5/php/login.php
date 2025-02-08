@@ -21,7 +21,7 @@ $usuario = $conn->real_escape_string($usuario); //previene inyecciones de sql
 $sql = "SELECT * FROM usuarios WHERE username = '$usuario'"; //busca el usuario en la base de datos
 $result = $conn->query($sql);
 
-if ($result->num_rows > 0) 
+if ($result->num_rows > 0) //si el usuario existe en la base de datos se procede a verificar la contraseña con password_verify
 {
     $row = $result->fetch_assoc();
     if (password_verify($password, $row['password'])) 

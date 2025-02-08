@@ -8,25 +8,29 @@ if (!isset($_SESSION['usuario']) || !isset($_SESSION['password'])) {
 $usuario = $_SESSION['usuario'];
 $password = $_SESSION['password'];
 
-try {
+try 
+{
     $pdo = new PDO('mysql:host=localhost;dbname=chatterly', 'root', '');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) 
+{
     echo "Error de conexión: " . $e->getMessage();
     exit();
 }
 
-// Obtener el ID del usuario actual
+//Obtener el ID del usuario actual
 $stmt = $pdo->prepare("SELECT id_user FROM usuarios WHERE username = ?");
 $stmt->execute([$usuario]);
 $usuarioData = $stmt->fetch(PDO::FETCH_ASSOC);
-if (!$usuarioData) {
+if (!$usuarioData) 
+{
     echo "Usuario no encontrado.";
     exit();
 }
 $id_usuario_actual = $usuarioData['id_user'];
 
-// Obtener los mensajes entre el usuario actual y el destinatario
+//obtener los mensajes entre el usuario actual y el destinatario
 if (isset($_POST['destinatario'])) 
 {
     $destinatario = $_POST['destinatario'];
@@ -40,17 +44,18 @@ if (isset($_POST['destinatario']))
 ");
 $stmt->execute(['id_usuario' => $id_usuario_actual, 'destinatario' => $destinatario]);
 $mensajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-echo json_encode($mensajes); // Devuelve los mensajes en formato JSON
+echo json_encode($mensajes); //devuelve los mensajes en formato JSON
 
 }
 
-// Enviar un mensaje de texto
+//enviar un mensaje de texto
 if (isset($_POST['mensaje'])) {
     $mensaje = $_POST['mensaje'];
     $destinatario = $_POST['destinatario'];
 
-    // Si es un mensaje de texto
-    if (isset($mensaje) && !empty($mensaje)) {
+    //si es un mensaje de texto
+    if (isset($mensaje) && !empty($mensaje)) 
+    {
         $stmt = $pdo->prepare("INSERT INTO mensajes (id_emisor, id_receptor, contenido, tipo) VALUES (:id_emisor, :id_receptor, :contenido, 'texto')");
         $stmt->execute([
             'id_emisor' => $id_usuario_actual,
@@ -61,12 +66,14 @@ if (isset($_POST['mensaje'])) {
     }
 }
 
-// Enviar un mensaje con archivo adjunto
-if (isset($_POST['archivo'])) {
-    $archivo = $_POST['archivo'];  // Ruta o nombre del archivo
+//enviar un mensaje con archivo adjunto
+if (isset($_POST['archivo'])) 
+{
+    $archivo = $_POST['archivo'];  //ruta o nombre del archivo
     $destinatario = $_POST['destinatario'];
 
-    if ($archivo) {
+    if ($archivo) 
+    {
         $stmt = $pdo->prepare("INSERT INTO mensajes (id_emisor, id_receptor, contenido, tipo) VALUES (:id_emisor, :id_receptor, :contenido, 'archivo')");
         $stmt->execute([
             'id_emisor' => $id_usuario_actual,

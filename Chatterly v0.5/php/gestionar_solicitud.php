@@ -1,17 +1,14 @@
 <?php
-session_start(); // Asegúrate de iniciar la sesión
+session_start();
 
-// Verifica si el usuario está autenticado
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['password'])) 
 {
     echo json_encode(["status" => "error", "message" => "Usuario o contraseña no válidos."]);
     exit();
 }
 
-// Conexión a la base de datos
 $mysqli = new mysqli("localhost", "root", "", "chatterly");
 
-// Verifica la conexión
 if ($mysqli->connect_error) 
 {
     die("Error de conexión: " . $mysqli->connect_error);
@@ -19,7 +16,7 @@ if ($mysqli->connect_error)
 
 // Obtener el ID del usuario logueado
 $usuario = $_SESSION['usuario'];
-$password = $_SESSION['password']; // Esto debe ser la contraseña original en texto plano
+$password = $_SESSION['password']; 
 
 // Obtener el ID y la contraseña cifrada del usuario desde la base de datos
 $sql = "SELECT id_user, password FROM usuarios WHERE username = '$usuario'";
@@ -52,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
     // Lógica para aceptar o rechazar la solicitud
     if ($accion == 'aceptar') 
     {
-        // Actualiza el estado de la solicitud a 'aceptado'
+        //actualiza el estado de la solicitud a 'aceptado'
         $sql_update = "UPDATE amigos SET estado = 'aceptado' WHERE (id_user1 = '$solicitante_id' AND id_user2 = '$usuario_id') OR (id_user1 = '$usuario_id' AND id_user2 = '$solicitante_id') AND estado = 'pendiente'";
         if ($mysqli->query($sql_update)) 
         {
@@ -65,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
     } 
     elseif ($accion == 'rechazar') 
     {
-        // Elimina la solicitud de la tabla amigos
+        //elimina la solicitud de la tabla amigos
         $sql_delete = "DELETE FROM amigos WHERE (id_user1 = '$solicitante_id' AND id_user2 = '$usuario_id') OR (id_user1 = '$usuario_id' AND id_user2 = '$solicitante_id') AND estado = 'pendiente'";
         if ($mysqli->query($sql_delete)) 
         {
@@ -77,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
         }
     }
 
-    // Redirige después de procesar la acción
+    //redirige después de procesar la acción
     header('Location: chatterly.php');
     exit();
 }
