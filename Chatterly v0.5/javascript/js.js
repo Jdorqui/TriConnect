@@ -36,27 +36,27 @@ function mostrarRegistro()
 
 function registrarUsuario() 
 {
-    const formData = new FormData(document.getElementById("form-registro"));  // obtiene los datos del formulario
+    const formData = new FormData(document.getElementById("form-registro"));  //obtiene los datos del formulario
 
     fetch("../php/registro.php", {
-        method: "POST",  // usa el método POST
+        method: "POST",  //usa el método POST
         body: formData,
     })
-    .then((response) => response.json())  // espera una respuesta JSON desde PHP
+    .then((response) => response.json())  //espera una respuesta JSON desde PHP
     .then((data) => {
         const errorMessage = document.getElementById("error-message-registro");
-        errorMessage.style.display = "none";  // Reseteamos el mensaje de error
+        errorMessage.style.display = "none";  //reseteamos el mensaje de error
 
         if (data.status === "success") 
         {
-            alert(data.message);  // muestra el mensaje de éxito
-            mostrarLogin();  // vuelve al login
+            alert(data.message);  //muestra el mensaje de éxito
+            mostrarLogin();  //vuelve al login
         } 
         else 
         {
-            // Muestra el mensaje de error si hubo un problema
+            //muestra el mensaje de error si hubo un problema
             errorMessage.style.display = "block";
-            errorMessage.style.color = "#f7767a";  // Mostramos el mensaje de error
+            errorMessage.style.color = "#f7767a";  //mostramos el mensaje de error
             errorMessage.textContent = data.message;
         }
     })
@@ -114,41 +114,6 @@ function cerrarSesion()
             mostrarLogin();
         })
         .catch((error) => console.error("Error:", error));
-}
-
-function enviarCorreo() {
-    const email = document.getElementById('email').value.trim();
-    const mensaje = document.getElementById('mensaje');
-
-    // Validación básica del correo
-    if (!email || !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/.test(email)) {
-        mensaje.textContent = 'Por favor, ingresa un correo válido.';
-        mensaje.style.color = 'red';
-        return;
-    }
-
-    // Enviar la solicitud al backend para enviar el correo
-    fetch('../php/forgotPassword.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `email=${encodeURIComponent(email)}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            mensaje.textContent = 'Te hemos enviado un correo para recuperar tu contraseña.';
-            mensaje.style.color = 'green';
-        } else {
-            mensaje.textContent = data.error;
-            mensaje.style.color = 'red';
-        }
-    })
-    .catch(error => {
-        mensaje.textContent = 'Hubo un problema al enviar el correo. Intenta de nuevo más tarde.';
-        mensaje.style.color = 'red';
-    });
 }
 
 document.addEventListener("DOMContentLoaded", mostrarLogin); //muestra el login inicialmente

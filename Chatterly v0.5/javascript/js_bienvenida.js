@@ -138,76 +138,89 @@ function openchat(destinatarioID) {
     cargarMensajes();  // Carga los mensajes
 }
 
-function cargarMensajes() {
+function cargarMensajes() 
+{
     if (destinatario === null) return; // Verifica que el destinatario esté definido
 
     const imgProfileUrl = document.getElementById("profileImg2").src;  // Imagen del usuario actual
     const fotoFriendUrl = document.getElementById("fotoFriend").src;  // Imagen del amigo
 
-    $.post('chat.php', { destinatario: destinatario }, function(data) {
-        try {
+    $.post('chat.php', { destinatario: destinatario }, function(data) 
+    {
+        try 
+        {
             let mensajes = JSON.parse(data); // Parsear la respuesta del servidor
             $('#chat-messages').empty(); // Limpiar los mensajes previos
             
-            mensajes.forEach(function(mensaje) {
+            mensajes.forEach(function(mensaje) 
+            {
                 let fechaEnvio = mensaje.fecha_envio ? new Date(mensaje.fecha_envio).toLocaleString() : "Fecha no disponible"; 
                 let imgUrl = (mensaje.id_emisor == id_usuario_actual) ? imgProfileUrl : fotoFriendUrl;
             
                 let mensajeHtml = `<div style="padding-left: 10px; display: flex; align-items: center;">`;
                 mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">`;
                 
-                if (mensaje.tipo === 'archivo') {
+                if (mensaje.tipo === 'archivo') 
+                {
                     // Obtener el nombre del archivo
                     const fileName = mensaje.contenido.split('/').pop();
                     const fileExtension = fileName.split('.').pop().toLowerCase();
                     let downloadLink = `<a id='link' style="text-align: center;" href="${mensaje.contenido}" download>Descargar [${fileName}]</a>`;
                     
                     // Categorías de archivos
-                    if (['png', 'jpg', 'jpeg', 'webp'].includes(fileExtension)) {
+                    if (['png', 'jpg', 'jpeg', 'webp'].includes(fileExtension)) 
+                    {
                         // Mostrar la imagen y agregar el enlace de descarga debajo
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
                         mensajeHtml += `<img src="${mensaje.contenido}" alt="Imagen adjunta" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
                         mensajeHtml += `</div>`;
                     }
-                    else if (['pdf'].includes(fileExtension)) {
+                    else if (['pdf'].includes(fileExtension)) 
+                    {
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
                         mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo PDF adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
                         mensajeHtml += `</div>`;
                     }
-                    else if (['mp4'].includes(fileExtension)) {
+                    else if (['mp4'].includes(fileExtension)) 
+                    {
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
                         mensajeHtml += `<img src="../assets/placeholders/video.png" alt="Archivo de video adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
                         mensajeHtml += `</div>`;
                     }
-                    else if (['mp3'].includes(fileExtension)) {
+                    else if (['mp3'].includes(fileExtension)) 
+                    {
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
                         mensajeHtml += `<img src="../assets/placeholders/audio.png" alt="Archivo de audio adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
                         mensajeHtml += `</div>`;
                     }
-                    else if (['zip'].includes(fileExtension)) {
+                    else if (['zip'].includes(fileExtension)) 
+                    {
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                        mensajeHtml += `<img src="../assets/placeholders/comprimido2.png" alt="Archivo comprimido adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                        mensajeHtml += `<img src="../assets/placeholders/comprimido.png" alt="Archivo comprimido adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
                         mensajeHtml += `</div>`;
                     }
-                    else if (['exe', 'msi'].includes(fileExtension)) {
+                    else if (['exe', 'msi'].includes(fileExtension)) 
+                    {
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
                         mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo ejecutable adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
                         mensajeHtml += `</div>`;
                     }
-                    else {
+                    else 
+                    {
                         mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
                         mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                         mensajeHtml += downloadLink;
                         mensajeHtml += `</div>`;
                     }
                 }
-                else {
+                else 
+                {
                     mensajeHtml += `<strong>${mensaje.alias}:</strong> ${mensaje.contenido}`;
                 }
                 
@@ -216,38 +229,53 @@ function cargarMensajes() {
                 $('#chat-messages').prepend(mensajeHtml); // Añadir el mensaje al principio del chat
             });
             
-        } catch (e) {
+        } 
+        catch (e) 
+        {
             console.error("Error al parsear JSON:", e);
             console.log("Respuesta del servidor:", data);
         }
     });
 }
 
-
-
-
-$('#enviarMensaje').click(function() {
+$('#enviarMensaje').click(function() 
+{
     const mensaje = $('#mensaje').val();
-    if (mensaje.trim() !== '') {
+    if (mensaje.trim() !== '') 
+    {
         $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() {
-            $('#mensaje').val(''); // Limpiar el input
+            $('#mensaje').val(''); //limpiar el input
             cargarMensajes();
         });
     }
 });
 
 // Enviar archivo
-$('#uploadfile').click(function() {
+$('#uploadfile').click(function() 
+{
     document.getElementById('fileInput').click();
 });
 
-document.getElementById('fileInput').addEventListener('change', function(event) {
+document.getElementById('fileInput').addEventListener('change', function(event) 
+{
     const file = event.target.files[0];
-    if (file && destinatario !== null) {
-        const allowedExtensions = ['png', 'jpg', 'jpeg', 'pdf', 'mp4', 'mp3', 'zip', 'txt', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'gif', 'webp'];
+        if (file && destinatario !== null) 
+        {
+            const allowedExtensions = [
+                'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'tiff', 'svg',
+                'mp4', 'mkv', 'mov', 'avi', 'wmv', 'flv', 'webm',
+                'mp3', 'wav', 'flac', 'aac', 'ogg', 'wma', 'm4a',
+                'pdf', 'txt', 'rtf', 'csv',
+                'doc', 'docx', 'odt', 'xls', 'xlsx', 'ods', 'ppt', 'pptx', 'odp',
+                'zip', 'rar', '7z', 'tar', 'gz', 'bz2',
+                'exe', 'msi', 'apk', 'dmg', 'iso',
+                'html', 'css', 'js', 'php', 'py', 'java', 'c', 'cpp', 'cs', 'sh', 'bat', 'sql', 'torrent'
+        ];
+        
         const fileExtension = file.name.split('.').pop().toLowerCase();
 
-        if (allowedExtensions.includes(fileExtension)) {
+        if (allowedExtensions.includes(fileExtension)) 
+        {
             const formData = new FormData();
             formData.append('archivo', file);
             formData.append('destinatario', destinatario);
@@ -258,20 +286,27 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
+                if (data.success) 
+                {
                     cargarMensajes(); // Recargar mensajes para incluir el nuevo archivo
-                } else {
+                } 
+                else 
+                {
                     alert(data.error || 'Error al subir el archivo.');
                 }
             })
             .catch(error => {
                 console.error('Error al enviar el archivo:', error);
             });
-        } else {
+        } 
+        else 
+        {
             alert('Formato de archivo no permitido. Selecciona un archivo válido.');
             event.target.value = ''; // Resetea el input si el archivo no es válido
         }
-    } else {
+    } 
+    else 
+    {
         alert('No se ha seleccionado ningún archivo o no hay destinatario.');
     }
 });
@@ -340,7 +375,6 @@ const emojis = {
 
 for (let category in emojis) // Recorrer categorías y emojis
 {
-    
     const categoryTitle = document.createElement('div'); // Crear un título de categoría
     categoryTitle.textContent = category;
     categoryTitle.style = "font-size: 14px; color: #fff; padding-bottom: 10px; padding-top: 10px; font-weight: bold;";
@@ -375,8 +409,6 @@ function showEmojis()
     emojisDiv.style.display = emojisDiv.style.display === 'none' ? 'block' : 'none';
 }
 
-//profile info
-
 function showprofileinfo()
 {
     showoptionspanel();
@@ -384,7 +416,6 @@ function showprofileinfo()
 }
 
 //imagen perfil
-
 const img = document.getElementById('profileImg');
 const img2 = document.getElementById('profileImg2');
 const fileProfile = document.getElementById('fotoProfile');
@@ -398,22 +429,22 @@ img.addEventListener('click', () => {
 // Subir la imagen seleccionada al servidor
 fileProfile.addEventListener('change', () => {
     const formData = new FormData(uploadForm);
-    formData.append('username', 'nombre_del_usuario'); // Cambia dinámicamente según tu usuario
 
     fetch('upload.php', {
         method: 'POST',
         body: formData
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                img.src = data.newImagePath; // Actualiza la imagen con la nueva ruta
-                img2.src = data.newImagePath;
-                alert('Imagen subida correctamente.');
-            } else {
-                console.error('Error al subir la imagen:', data.error);
-                alert(data.error);
-            }
-        })
-        .catch(error => console.error('Error en la subida de la imagen:', error));
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) 
+        {
+            img.src = data.newImagePath; // Ahora la imagen se actualizará correctamente
+            img2.src = data.newImagePath;
+        } 
+        else 
+        {
+            alert(data.error);
+        }
+    })
+    .catch(error => console.error('Error en la subida de la imagen:', error));
 });

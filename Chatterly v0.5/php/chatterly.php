@@ -1,71 +1,70 @@
 <?php
-session_start(); // Iniciamos la sesión
+    session_start();
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['password']))  // Si el usuario no ha iniciado sesión
-{ 
-    header("Location: index.html"); // Redirecciona al index
-    exit(); // Finaliza la ejecución del script
-}
+    if (!isset($_SESSION['usuario']) || !isset($_SESSION['password']))  //si el usuario no ha iniciado sesion
+    { 
+        header("Location: index.html"); //redirecciona al index
+        exit(); //finaliza la ejecucion del script
+    }
 
-// Recupera el usuario y contraseña de la sesión
-$usuario = $_SESSION['usuario'];
-$password = $_SESSION['password'];
+    //recupera el usuario y contraseña de la sesion
+    $usuario = $_SESSION['usuario'];
+    $password = $_SESSION['password'];
 
-try // Conectar a la base de datos
-{
-    $pdo = new PDO('mysql:host=localhost;dbname=chatterly', 'root', ''); // Ajusta los parámetros de conexión
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} 
-catch (PDOException $e) 
-{
-    echo "Error de conexión: " . $e->getMessage();
-    exit();
-}
+    try //conectar a la base de datos
+    {
+        $pdo = new PDO('mysql:host=localhost;dbname=chatterly', 'root', '');
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } 
+    catch (PDOException $e) 
+    {
+        echo "Error de conexión: " . $e->getMessage();
+        exit();
+    }
 
-// Obtener el ID del usuario
-$stmt = $pdo->prepare("SELECT id_user FROM usuarios WHERE username = ?");
-$stmt->execute([$usuario]);
-$usuarioData = $stmt->fetch(PDO::FETCH_ASSOC);
-if (!$usuarioData) 
-{
-    echo "Usuario no encontrado.";
-    exit();
-}
-$id_usuario_actual = $usuarioData['id_user'];
+    //obtiene el id del usuario
+    $stmt = $pdo->prepare("SELECT id_user FROM usuarios WHERE username = ?");
+    $stmt->execute([$usuario]);
+    $usuarioData = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$usuarioData) 
+    {
+        echo "Usuario no encontrado.";
+        exit();
+    }
+    $id_usuario_actual = $usuarioData['id_user'];
 
-// Obtener solicitudes pendientes
-$stmt = $pdo->prepare("SELECT usuarios.alias, amigos.id_user1 FROM amigos 
-                       JOIN usuarios ON amigos.id_user1 = usuarios.id_user 
-                       WHERE amigos.id_user2 = ? AND amigos.estado = 'pendiente'");
-$stmt->execute([$id_usuario_actual]);
-$solicitudes_pendientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //obtiene las solicitudes pendientes
+    $stmt = $pdo->prepare("SELECT usuarios.alias, amigos.id_user1 FROM amigos 
+                        JOIN usuarios ON amigos.id_user1 = usuarios.id_user 
+                        WHERE amigos.id_user2 = ? AND amigos.estado = 'pendiente'");
+    $stmt->execute([$id_usuario_actual]);
+    $solicitudes_pendientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener la lista de amigos del usuario
-$stmt = $pdo->prepare("
-    SELECT usuarios.username, 
-           usuarios.profile_picture, 
-           amigos.id_user1,
-           amigos.id_user2
-    FROM amigos 
-    JOIN usuarios ON amigos.id_user1 = usuarios.id_user OR amigos.id_user2 = usuarios.id_user 
-    WHERE (amigos.id_user1 = :id_usuario OR amigos.id_user2 = :id_usuario) 
-    AND amigos.estado = 'aceptado' 
-    AND usuarios.id_user != :id_usuario
-");
-$stmt->execute(['id_usuario' => $id_usuario_actual]);
-$amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //obtener la lista de amigos del usuario
+    $stmt = $pdo->prepare("
+        SELECT usuarios.username, 
+            amigos.id_user1,
+            amigos.id_user2
+        FROM amigos 
+        JOIN usuarios ON amigos.id_user1 = usuarios.id_user OR amigos.id_user2 = usuarios.id_user 
+        WHERE (amigos.id_user1 = :id_usuario OR amigos.id_user2 = :id_usuario) 
+        AND amigos.estado = 'aceptado' 
+        AND usuarios.id_user != :id_usuario
+    ");
+    $stmt->execute(['id_usuario' => $id_usuario_actual]);
+    $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener amigos en línea
-$stmt = $pdo->prepare("
-    SELECT u.username, u.id_user, u.en_linea
-    FROM amigos a
-    JOIN usuarios u ON (a.id_user1 = u.id_user OR a.id_user2 = u.id_user)
-    WHERE (a.id_user1 = :id_usuario_actual OR a.id_user2 = :id_usuario_actual)
-    AND u.en_linea = 1
-    AND u.id_user != :id_usuario_actual
-");
-$stmt->execute(['id_usuario_actual' => $id_usuario_actual]);
-$amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //obtener amigos en línea
+    $stmt = $pdo->prepare("
+        SELECT u.username, u.id_user, u.en_linea
+        FROM amigos a
+        JOIN usuarios u ON (a.id_user1 = u.id_user OR a.id_user2 = u.id_user)
+        WHERE (a.id_user1 = :id_usuario_actual OR a.id_user2 = :id_usuario_actual)
+        AND u.en_linea = 1
+        AND u.id_user != :id_usuario_actual
+    ");
+    $stmt->execute(['id_usuario_actual' => $id_usuario_actual]);
+    $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -76,8 +75,8 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <title>Chatterly</title>
         <link rel="stylesheet" href="../css/style.css">
         <link rel="stylesheet" href="../css/style_options.css">
+        <link rel="stylesheet" href="../css/style_chatterly.css">
         <link rel="stylesheet" href="../css/style_chat.css">
-        <link rel="stylesheet" href="../css/style_calls.css">
         <link rel="icon" href="../assets/imgs/logo_bg.ico">
     </head>
     <body>
@@ -103,40 +102,48 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </button>
                                 <div style="height: 2px; background-color: #393e42"></div>
                                 <p style="text-align: center;">MENSAJES DIRECTOS</p>
-                                <?php
-                                    if (count($amigos) > 0) {
-                                        foreach ($amigos as $amigo) {
-                                            $amigoDir = "../assets/users/{$amigo['username']}/img_profile/";
-                                            $defaultImage = '../assets/imgs/default_profile.png';
+                                    <?php
+                                        if (count($amigos) > 0) 
+                                        {
+                                            foreach ($amigos as $amigo) 
+                                            {
+                                                $amigoDir = "../assets/users/{$amigo['username']}/img_profile/";
+                                                $defaultImage = '../assets/imgs/default_profile.png';
 
-                                            $amigoImages = glob($amigoDir . '*.{jpg,jpeg,png}', GLOB_BRACE);
+                                                $amigoImages = glob($amigoDir . '*.{jpg,jpeg,png}', GLOB_BRACE);
 
-                                            if (!empty($amigoImages)) {
-                                                usort($amigoImages, function ($a, $b) {
-                                                    return filemtime($b) - filemtime($a);
-                                                });
+                                                if (!empty($amigoImages)) 
+                                                {
+                                                    usort($amigoImages, function ($a, $b) 
+                                                    {
+                                                        return filemtime($b) - filemtime($a);
+                                                    });
 
-                                                $foto = $amigoImages[0];
-                                            } else {
-                                                $foto = $defaultImage;
+                                                    $foto = $amigoImages[0];
+                                                }
+                                                else 
+                                                {
+                                                    $foto = $defaultImage;
+                                                }
+
+                                                $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1'];
+                                                $nombre = htmlspecialchars($amigo['username'], ENT_QUOTES, 'UTF-8'); // Escapa caracteres especiales
+                                                $foto = htmlspecialchars($foto, ENT_QUOTES, 'UTF-8'); // Escapa la URL
+
+                                                echo "
+                                                    <button 
+                                                        onclick=\"selectFriend('$nombre', '$foto', $destinatario)\" 
+                                                        id='options-button' 
+                                                        style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; margin-bottom: 5px; cursor: pointer; width: 100%; text-align: left;'>
+                                                        <img src='$foto' id='fotoFriend' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
+                                                        <span id='nombreboton'>$nombre</span>
+                                                    </button>";
                                             }
-
-                                            $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1'];
-                                            $nombre = htmlspecialchars($amigo['username'], ENT_QUOTES, 'UTF-8'); // Escapa caracteres especiales
-                                            $foto = htmlspecialchars($foto, ENT_QUOTES, 'UTF-8'); // Escapa la URL
-
-                                            echo "
-                                                <button 
-                                                    onclick=\"selectFriend('$nombre', '$foto', $destinatario)\" 
-                                                    id='options-button' 
-                                                    style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; margin-bottom: 5px; cursor: pointer; width: 100%; text-align: left;'>
-                                                    <img src='$foto' id='fotoFriend' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
-                                                    <span id='nombreboton'>$nombre</span>
-                                                </button>";
+                                        } 
+                                        else 
+                                        {
+                                            echo "<p style='text-align: center;'>No tienes amigos en la lista</p>";
                                         }
-                                    } else {
-                                        echo "<p style='text-align: center;'>No tienes amigos en la lista</p>";
-                                    }
                                     ?>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background-color: #232428; width: 100%;"> <!-- userpanel -->
@@ -167,9 +174,12 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     </button>";
                                 ?> 
                                 <div style="display: flex; gap: 10px; padding-left: 5%;"> <!-- iconos -->
-                                    <img src="../assets/imgs/microphone_icon.png" alt="microphone" style="width: 15px; height: 15px; cursor: pointer;">
-                                    <img src="../assets/imgs/headphone_icon.png" alt="headphones" style="width: 15px; height: 15px; cursor: pointer;">
-                                    <img src="../assets/imgs/options_icon.png" alt="options" style="width: 15px; height: 15px; cursor: pointer;" onclick="showoptionspanel()">
+                                    <!--<img src="../assets/imgs/microphone_icon.png" alt="microphone" style="width: 15px; height: 15px; cursor: pointer;">-->
+                                    <!--<img src="../assets/imgs/headphone_icon.png" alt="headphones" style="width: 15px; height: 15px; cursor: pointer;">-->
+                                    <div id="options_button">
+                                        <img src="../assets/imgs/options_icon.png" alt="options" id="options_icon" onclick="showoptionspanel()">
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -183,7 +193,6 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <button class="friend-tab-button" style="width: 60px;" onclick="openonlinemenu()">En linea</button>
                             <button class="friend-tab-button" style="width: 50px;" onclick="openallfriends()">Todos</button>
                             <button class="friend-tab-button" onclick="openpendingmenu()">Pendiente</button>
-                            <button class="friend-tab-button">Bloqueado</button>
                             <button class="add-friend-button" onclick="openaddfriendmenu()">Añadir amigo</button>
                         </div>
 
@@ -192,42 +201,42 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <p>Estos son tus amigos que están en linea:</p>
                                 <div id="friend-list-container" style="display: background-color: #313338; padding: 10px;">
                                     <?php
-                                    if (count($amigos_en_linea) > 0) 
-                                    {
-                                        foreach ($amigos_en_linea as $amigo) 
+                                        if (count($amigos_en_linea) > 0) 
                                         {
-                                            $amigoDir = "../assets/users/{$amigo['username']}/img_profile/";
-                                            $defaultImage = '../assets/imgs/default_profile.png';
-
-                                            $amigoImages = glob($amigoDir . '*.{jpg,jpeg,png}', GLOB_BRACE); 
-
-                                            if (!empty($amigoImages)) 
+                                            foreach ($amigos_en_linea as $amigo) 
                                             {
-                                                usort($amigoImages, function($a, $b) 
+                                                $amigoDir = "../assets/users/{$amigo['username']}/img_profile/";
+                                                $defaultImage = '../assets/imgs/default_profile.png';
+
+                                                $amigoImages = glob($amigoDir . '*.{jpg,jpeg,png}', GLOB_BRACE); 
+
+                                                if (!empty($amigoImages)) 
                                                 {
-                                                    return filemtime($b) - filemtime($a);
-                                                });
+                                                    usort($amigoImages, function($a, $b) 
+                                                    {
+                                                        return filemtime($b) - filemtime($a);
+                                                    });
 
-                                                $foto = $amigoImages[0];
-                                            } 
-                                            else 
-                                            {
-                                                $foto = $defaultImage;
+                                                    $foto = $amigoImages[0];
+                                                } 
+                                                else 
+                                                {
+                                                    $foto = $defaultImage;
+                                                }
+                                                
+                                                echo "
+                                                    <button onclick='openchat({$amigo['id_user']})' class='friend-tab-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; width: 100%; cursor: pointer; text-align: left;'>
+                                                        <img src='$foto' id='fotoFriend' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
+                                                        <span id='nombreboton'>{$amigo['username']}</span>
+                                                    </button>
+                                                    <div style='height: 2px; background-color: #393e42'></div>
+                                                ";
                                             }
-                                            
-                                            echo "
-                                                <button onclick='openchat({$amigo['id_user']})' class='friend-tab-button' style='display: flex; align-items: center; gap: 10px; border: none; padding: 10px; border-radius: 5px; width: 100%; cursor: pointer; text-align: left;'>
-                                                    <img src='$foto' id='fotoFriend' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
-                                                    <span id='nombreboton'>{$amigo['username']}</span>
-                                                </button>
-                                                <div style='height: 2px; background-color: #393e42'></div>
-                                            ";
+                                        } 
+                                        else 
+                                        {
+                                            echo "<p style='text-align: center;'>No tienes amigos en línea</p>";
                                         }
-                                    } 
-                                    else 
-                                    {
-                                        echo "<p style='text-align: center;'>No tienes amigos en línea</p>";
-                                    }
                                     ?>
                                 </div>
 
@@ -249,77 +258,76 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div id="pendingmenu" style="padding: 30px; padding-top: 0;" hidden>
                         <span>SOLICITUDES PENDIENTES</span>
                             <?php
-                            if (isset($solicitudes_pendientes) && count($solicitudes_pendientes) > 0) 
-                            {
-                                //comprueba si hay solicitudes penddientes
-                                foreach ($solicitudes_pendientes as $solicitud): ?> 
-                                    <div class="solicitud" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background-color: #2b2d31; margin-bottom: 10px; border-radius: 5px;">
-                                        <span><?php echo htmlspecialchars($solicitud['alias']) . " quiere ser tu amigo."; ?></span>
-                                        <form action="gestionar_solicitud.php" method="post" style="display: flex; gap: 10px;">
-                                            <input type="hidden" name="solicitante" value="<?php echo $solicitud['id_user1']; ?>">
-                                            <button type="submit" name="accion" value="aceptar" style="background-color: #5865F2; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Aceptar</button>
-                                            <button type="submit" name="accion" value="rechazar" style="background-color: #FF5C5C; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Rechazar</button>
-                                        </form>
-                                    </div>
-                                <?php endforeach;
-                            }
-                            else 
-                            {
-                                echo "<p>No hay solicitudes pendientes.</p>"; //si no hay solicitudes pendientes
-                            }
+                                if (isset($solicitudes_pendientes) && count($solicitudes_pendientes) > 0) 
+                                {
+                                    //comprueba si hay solicitudes penddientes
+                                    foreach ($solicitudes_pendientes as $solicitud): ?> 
+                                        <div class="solicitud" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background-color: #2b2d31; margin-bottom: 10px; border-radius: 5px;">
+                                            <span><?php echo htmlspecialchars($solicitud['alias']) . " quiere ser tu amigo."; ?></span>
+                                            <form action="gestionar_solicitud.php" method="post" style="display: flex; gap: 10px;">
+                                                <input type="hidden" name="solicitante" value="<?php echo $solicitud['id_user1']; ?>">
+                                                <button type="submit" name="accion" value="aceptar" style="background-color: #5865F2; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Aceptar</button>
+                                                <button type="submit" name="accion" value="rechazar" style="background-color: #FF5C5C; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Rechazar</button>
+                                            </form>
+                                        </div>
+                                    <?php endforeach;
+                                }
+                                else 
+                                {
+                                    echo "<p>No hay solicitudes pendientes.</p>"; //si no hay solicitudes pendientes
+                                }
                             ?>
                         </div>
 
                         <div id="allfriends" style="padding: 30px; padding-top: 0;" hidden>
-                        <span>TODOS TUS AMIGOS</span>
-                        <?php
-                                if (count($amigos) > 0) 
-                                {
-                                    foreach ($amigos as $amigo) 
+                            <span>TODOS TUS AMIGOS</span>
+                                <?php
+                                    if (count($amigos) > 0) 
                                     {
-                                        $amigoDir = "../assets/users/{$amigo['username']}/img_profile/";
-                                        $defaultImage = '../assets/imgs/default_profile.png';
-
-                                        $amigoImages = glob($amigoDir . '*.{jpg,jpeg,png}', GLOB_BRACE); //glob — busca coincidencias de nombres de ruta de acuerdo a un patrón por tanto busca las imagenes en la carpeta del amigo y las guarda en un array para luego ordenarlas por fecha de modificacion y mostrar la mas reciente
-
-                                        if (!empty($amigoImages)) //si hay imagenes en la carpeta del amigo
+                                        foreach ($amigos as $amigo) 
                                         {
-                                            usort($amigoImages, function($a, $b) //usort — ordena un array según sus valores usando una función de comparación definida por el usuario  y se ordenan las imagenes por fecha de modificacion 
+                                            $amigoDir = "../assets/users/{$amigo['username']}/img_profile/";
+                                            $defaultImage = '../assets/imgs/default_profile.png';
+
+                                            $amigoImages = glob($amigoDir . '*.{jpg,jpeg,png}', GLOB_BRACE); //glob — busca coincidencias de nombres de ruta de acuerdo a un patrón por tanto busca las imagenes en la carpeta del amigo y las guarda en un array para luego ordenarlas por fecha de modificacion y mostrar la mas reciente
+
+                                            if (!empty($amigoImages)) //si hay imagenes en la carpeta del amigo
                                             {
-                                                return filemtime($b) - filemtime($a); //filemtime — obtiene la fecha de modificación de un archivo y se ordenan las imagenes por fecha de modificacion 
-                                            });
+                                                usort($amigoImages, function($a, $b) //usort — ordena un array según sus valores usando una función de comparación definida por el usuario  y se ordenan las imagenes por fecha de modificacion 
+                                                {
+                                                    return filemtime($b) - filemtime($a); //filemtime — obtiene la fecha de modificación de un archivo y se ordenan las imagenes por fecha de modificacion 
+                                                });
 
-                                            $foto = $amigoImages[0]; //se guarda la imagen mas reciente
-                                        } 
-                                        else 
-                                        {
-                                            $foto = $defaultImage; //si no hay imagenes se muestra la imagen por defecto
+                                                $foto = $amigoImages[0]; //se guarda la imagen mas reciente
+                                            } 
+                                            else 
+                                            {
+                                                $foto = $defaultImage; //si no hay imagenes se muestra la imagen por defecto
+                                            }
+
+                                            $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1']; //se obtiene el id del amigo
+                                            echo "
+                                                <div style='display: flex; align-items: center; gap: 10px; padding: 10px;'>
+                                                    <img src='$foto' id='fotoFriend' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
+                                                    <span id='nombreboton'>{$amigo['username']}</span>
+                                                </div>
+                                            ";
                                         }
-
-                                        $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1']; //se obtiene el id del amigo
-                                        echo "
-                                            <div style='display: flex; align-items: center; gap: 10px; padding: 10px;'>
-                                                <img src='$foto' id='fotoFriend' alt='Foto de perfil' style='width: 30px; height: 30px; border-radius: 50%;'>
-                                                <span id='nombreboton'>{$amigo['username']}</span>
-                                            </div>
-                                        ";
+                                    } 
+                                    else 
+                                    {
+                                        echo "<p style='text-align: center;'>No tienes amigos en la lista</p>";
                                     }
-                                } 
-                                else 
-                                {
-                                    echo "<p style='text-align: center;'>No tienes amigos en la lista</p>";
-                                }
                                 ?>
                         </div>
                     </div>
-                    
+
                     <div id="chatcontainer" style="display: none;">
                         <div class="chat-header">
                             <div class="chat-header-content">
                                 <img id="foto-amigo" src="../assets/imgs/default_profile.png" alt="Foto del amigo" class="friend-photo">
                                 <span id="nombre-amigo" class="friend-name"></span>
-                                
-                                <img src="../assets/imgs/call_button.png" style="width: 30px; height: 30px; cursor: pointer;" onclick="startCall()">
+                                <!--<img src="../assets/imgs/call_button.png" style="width: 30px; height: 30px; cursor: pointer;" onclick="startCall()">-->
                             </div>
                         </div>
 
@@ -340,22 +348,6 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <div id="emojiList" class="emoji-list"></div>
                             </div>
                         </div>
-
-                        <div id="call-container" class="call-container">
-                            <div class="video-container">
-                                <video id="localVideo" autoplay muted class="local-video"></video>
-                                <video id="remoteVideo" autoplay class="remote-video"></video>
-                            </div>
-                            <div class="call-header">
-                                <button onclick="hangUp()" class="call-btn hang-up-btn">Colgar</button>
-                                <span id="call-timer" class="call-timer">00:00</span>
-                            </div>
-                            <!-- Área de botones para aceptar o rechazar la llamada (visible solo para el receptor) -->
-                            <div id="incoming-call-ui" class="incoming-call-ui">
-                                <button id="accept-call-btn" onclick="acceptCall()" class="call-btn accept-btn" style="display: none;">Aceptar</button>
-                                <button id="reject-call-btn" onclick="rejectCall()" class="call-btn reject-btn" style="display: none;">Rechazar</button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -371,7 +363,7 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="form-container">
                             <p class="section-title">AJUSTES DE USUARIO</p>
                             <button id="options-button" onclick="showprofileinfo()">Mi cuenta</button>
-                            <button id="options-button" onclick="mytubeconexion()">Conectar con MyTube</button>
+                            <!--<button id="options-button" onclick="mytubeconexion()">Conectar con MyTube</button>-->
                         </div>
                         <div class="divider"></div>
                         <div class="form-container">
@@ -382,58 +374,57 @@ $amigos_en_linea = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="main-content">
                         <div id="profileinfo" class="profile-info" hidden>
                             <?php
-                            $baseDir = "../assets/users/$usuario/img_profile/";
-                            $defaultImage = '../assets/imgs/default_profile.png';
-                            $profileImages = glob($baseDir . '*.{jpg,jpeg,png}', GLOB_BRACE); 
+                                $baseDir = "../assets/users/$usuario/img_profile/";
+                                $defaultImage = '../assets/imgs/default_profile.png';
+                                $profileImages = glob($baseDir . '*.{jpg,jpeg,png}', GLOB_BRACE); 
 
-                            if (!empty($profileImages)) 
-                            {
-                                usort($profileImages, function($a, $b) 
+                                if (!empty($profileImages)) 
                                 {
-                                    return filemtime($b) - filemtime($a);
-                                });
-                                $foto = $profileImages[0];
-                            } 
-                            else 
-                            {
-                                $foto = $defaultImage;
-                            }
+                                    usort($profileImages, function($a, $b) 
+                                    {
+                                        return filemtime($b) - filemtime($a);
+                                    });
+                                    $foto = $profileImages[0];
+                                } 
+                                else 
+                                {
+                                    $foto = $defaultImage;
+                                }
 
-                            echo "
-                            <div class='profile-header'>
-                                <form id='uploadForm' method='POST' enctype='multipart/form-data' class='upload-form'>
-                                    <input type='file' id='fotoProfile' name='profile_picture' accept='.png, .jpg, .jpeg' class='file-input'>
-                                    <img id='profileImg' src='$foto' alt='profile' class='profile-img'>
-                                    <span class='profile-username'>$usuario</span>
-                                </form>
-                            </div>";
+                                echo "
+                                <div class='profile-header'>
+                                    <form id='uploadForm' method='POST' enctype='multipart/form-data' class='upload-form'>
+                                        <input type='file' id='fotoProfile' name='profile_picture' accept='.png, .jpg, .jpeg' class='file-input'>
+                                        <img id='profileImg' src='$foto' alt='profile' class='profile-img'>
+                                        <span class='profile-username'>$usuario</span>
+                                    </form>
+                                </div>";
                             ?>
                             <div class="profile-details">
-                                <p>Mostrar Nombre</p>
-                                <p><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></p>
-                                <p>Nombre de usuario</p>
-                                <p><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></p>
-                                <p>Correo electronico</p>
+                                <p>Nombre:</p>
+                                <p><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></p><br>
+                                <p>Nombre de usuario:</p>
+                                <p><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></p><br>
+                                <p>Correo electronico:</p>
                                 <p>
                                     <?php
-                                    $stmt = $pdo->prepare("SELECT email FROM usuarios WHERE id_user = ?");
-                                    $stmt->execute([$id_usuario_actual]);
-                                    $emailData = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    echo htmlspecialchars($emailData['email'], ENT_QUOTES, 'UTF-8');
+                                        $stmt = $pdo->prepare("SELECT email FROM usuarios WHERE id_user = ?");
+                                        $stmt->execute([$id_usuario_actual]);
+                                        $emailData = $stmt->fetch(PDO::FETCH_ASSOC);
+                                        echo htmlspecialchars($emailData['email'], ENT_QUOTES, 'UTF-8');
                                     ?>
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div id="mytubeconexion" class="mytube-conexion" style="display: none;"></div>
+                    <!--<div id="mytubeconexion" class="mytube-conexion" style="display: none;"></div>-->
                 </div>
             </div>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script defer src="../javascript/js_bienvenida.js"></script>
-        <script defer src="../javascript/client.js"></script>
-        <script defer src="../javascript/api.js"></script>
+        <!--<script defer src="../javascript/api.js"></script>-->
         <script>var id_usuario_actual = <?php echo $id_usuario_actual; ?>;</script>
     </body>
 </html>
