@@ -32,7 +32,7 @@ $anuncios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultados de búsqueda</title>
-    <link rel="stylesheet" href="../css/inicio.css">
+    <link rel="stylesheet" href="../css/anunciosStyle.css">
 </head>
 <body>
 
@@ -51,13 +51,15 @@ $anuncios = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <h2>Resultados de la búsqueda</h2>
 
         <?php if (count($anuncios) > 0): ?>
-            <div class="listado-categorias">
-                <?php foreach ($anuncios as $anuncio): ?>
-                    <div class="categoria-articulo">
-                    <?php if ($anuncio['imagen']): ?>
+            <div id="anuncios-list" class="anuncios-list">
+            <?php foreach ($anuncios as $anun): ?>
+            <div class="anuncio">
+                <a href="anuncio_info.php?id=<?php echo $anun['id'] ?>">
+                    <!-- Mostrar imagen si está disponible en la base de datos -->
+                    <?php if ($anun['imagen']): ?>
                         <?php 
                             // Convertir la imagen binaria a base64 para incrustarla en el HTML
-                            $imagen_base64 = base64_encode($anuncio['imagen']);
+                            $imagen_base64 = base64_encode($anun['imagen']);
                             // Obtener el tipo MIME de la imagen (esto debería estar guardado en la base de datos o asumirse)
                             $mime_type = 'image/jpeg'; // Cambiar según sea necesario (ej.: image/png)
                         ?>
@@ -66,11 +68,12 @@ $anuncios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <!-- Si no hay imagen, mostrar un placeholder -->
                         <img src="placeholder.jpg" alt="Imagen no disponible" class="imagen-anuncio">
                     <?php endif; ?>
-                        <p><?php echo htmlspecialchars($anuncio['titulo']); ?></p>
-                        <p>Precio: <?php echo $anuncio['precio']; ?>€</p>
-                        <p>Descripción: <?php echo htmlspecialchars($anuncio['descripcion']); ?></p>
-                    </div>
-                <?php endforeach; ?>
+                    <div class="titulo"><?= $anun['titulo'] ?></div>
+                    <div class="precio"><?= $anun['precio'] ?> €</div>
+                    <div class="estado"><?= ucfirst($anun['estado']) ?></div>
+                </a>
+            </div>
+        <?php endforeach; ?>
             </div>
         <?php else: ?>
             <p>No se encontraron resultados.</p>

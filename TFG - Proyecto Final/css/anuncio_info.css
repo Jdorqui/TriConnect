@@ -80,3 +80,9 @@ a {
 a:hover {
     background-color: #0056b3;
 }
+
+.anuncio img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}

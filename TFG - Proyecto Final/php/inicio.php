@@ -35,8 +35,7 @@ include_once 'logueado.php';  // Asegúrate de incluir el archivo que verifica s
     <section class="buscador">
         <form action="buscar_anuncios.php" method="get">
             <input type="text" name="query" placeholder="Buscar anuncios..." class="input-buscar" required>
-            <input type="number" name="min_price" placeholder="Precio mínimo" class="input-buscar">
-            <input type="number" name="max_price" placeholder="Precio máximo" class="input-buscar">
+            
             <button type="submit" class="btn-buscar">Buscar</button>
         </form>
     </section>

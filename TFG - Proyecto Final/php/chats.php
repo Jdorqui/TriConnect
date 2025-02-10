@@ -1,4 +1,4 @@
-<?php 
+<?php
 include_once 'logueado.php';
 include_once 'config.php';
 
@@ -79,6 +79,8 @@ if (isset($_GET['chat_id'])) {
             $is_anuncio_owner = true;
         }
 
+
+
         // Obtener los mensajes del chat
         $stmt = $conn->prepare("
             SELECT mensajes.*, usuarios.nombre AS sender_nombre
@@ -95,6 +97,7 @@ if (isset($_GET['chat_id'])) {
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -102,6 +105,7 @@ if (isset($_GET['chat_id'])) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="../css/chats.css">
 </head>
+
 <body>
     <div id="lista-chats">
         <h2>Chats Disponibles</h2>
@@ -118,28 +122,43 @@ if (isset($_GET['chat_id'])) {
     </div>
 
     <?php if (isset($_GET['chat_id'])): ?>
-    <div id="chat-container">
-        <h2>Mensajes</h2>
-        <div id="lista-mensajes">
-            <?php foreach ($mensajes as $mensaje): ?>
-                <div class="<?= $mensaje['sender_id'] == $user_id ? 'mensaje-propio' : 'mensaje-otro' ?>">
-                    <strong><?= htmlspecialchars($mensaje['sender_nombre']) ?>:</strong>
-                    <?= htmlspecialchars($mensaje['mensaje']) ?>
-                    <small><?= $mensaje['fecha_envio'] ?></small>
-                </div>
-            <?php endforeach; ?>
-        </div>
+        <div id="chat-container">
+            <h2>Mensajes</h2>
+            <div id="lista-mensajes">
+                <?php foreach ($mensajes as $mensaje): ?>
+                    <div class="<?= $mensaje['sender_id'] == $user_id ? 'mensaje-propio' : 'mensaje-otro' ?>">
+                        <strong><?= htmlspecialchars($mensaje['sender_nombre']) ?>:</strong>
+                        <?= htmlspecialchars($mensaje['mensaje']) ?>
+                        <small><?= $mensaje['fecha_envio'] ?></small>
+                    </div>
+                <?php endforeach; ?>
+            </div>
 
-        <form id="form-mensaje">
-            <textarea id="mensaje" placeholder="Escribe tu mensaje..." required></textarea>
-            <button type="submit">Enviar</button>
-        </form>
-    </div>
+            <form id="form-mensaje">
+                <textarea id="mensaje" placeholder="Escribe tu mensaje..." required></textarea>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
     <?php endif; ?>
 
     <script>
         const chatId = <?= json_encode($_GET['chat_id']) ?>;
         const userId = <?= json_encode($_SESSION['user_id']) ?>;
+
+        let contador = 0;
+        //que solo se recargue ccuando se envie un mensaje
+        function revisarChat() {
+            $.get('revisar_chat.php', { chat_id: chatId }, function (response) {
+                console.log(response);
+                let mensajes = response["COUNT(*)"];
+                console.log(mensajes);
+
+                if (mensajes > contador) {
+                    cargarMensajes();
+                    contador = mensajes;
+                }
+            }, 'json');
+        }
 
         function cargarMensajes() {
             $.get('obtener_mensajes.php', { chat_id: chatId }, function (mensajes) { // Crear obtener_mensajes.php con el código de abajo
@@ -167,7 +186,7 @@ if (isset($_GET['chat_id'])) {
             e.preventDefault();
 
             const mensaje = $('#mensaje').val();
- 
+
             $.post('enviar_mensaje.php', { chat_id: chatId, mensaje }, function (response) {
                 if (response.success) {
                     $('#mensaje').val('');
@@ -178,8 +197,14 @@ if (isset($_GET['chat_id'])) {
             }, 'json');
         });
 
-        setInterval(cargarMensajes, 2000);
+
+
+
+
+
+        setInterval(revisarChat, 200);
         cargarMensajes();
     </script>
 </body>
+
 </html>

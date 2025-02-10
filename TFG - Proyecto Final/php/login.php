@@ -52,15 +52,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <h1>Login</h1>
+    <h1>Inicia sesión</h1>
 
     <form action="login.php" method="POST">
 
         <input type="email" name="email" placeholder="Correo electrónico" required> <br>
         <input type="password" name="password" placeholder="Contraseña" required> <br>
-        <button type="submit">Login</button>
+        <button type="submit">Iniciar sesión</button>
 
-        <p>¿No tienes una cuenta?<a href="registro.php">Registrarme</a></p>
+        <p>¿No tienes una cuenta?<a href="registro.php"> Registrarme</a></p>
     </form>
 </body>
 
