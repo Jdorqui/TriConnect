@@ -1,66 +1,28 @@
-async function mytubeconexion()
+function login_Api(usuario, password)
 {
-    await fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/php/api.php', {
-        method: 'POST',
-        mode: 'cors'
-    })
-    .then(response => response.text())
-    .then(data => {
-        console.log(data);
-        document.getElementById('mytubeconexion').innerHTML = data;
-        document.getElementById('mytubeconexion').style.display = 'block';
-    })
-    .catch(error => console.error(error));
+    var usuario;
+    var password;
 
-    // Obtener las imágenes desde el servidor remoto
-    await fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/img/mytube_logo.png', {
-        method: 'GET',
-        mode: 'cors'
-    })
-    .then(response => response.blob())  // Obtener la imagen como un blob
-    .then(blob => {
-        // Crear una URL para la imagen y asignarla al src del <img>
-        const imageUrl = URL.createObjectURL(blob);
-        document.getElementById('mytube_logo').src = imageUrl;
-    })
-    .catch(error => console.error('Error al cargar la imagen mytube_logo:', error));
-
-    await fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/img/x_button.png', {
-        method: 'GET',
-        mode: 'cors'
-    })
-    .then(response => response.blob())  // Obtener la imagen como un blob
-    .then(blob => {
-        // Crear una URL para la imagen y asignarla al src del <img>
-        const imageUrl = URL.createObjectURL(blob);
-        document.getElementById('x_button').src = imageUrl;
-    })
-    .catch(error => console.error('Error al cargar la imagen x_button:', error));
-
-    await fetch('https://10.3.5.111/DAM-B/TriConnect/my_tube/js/login_api.js', {
-        method: 'POST',
-        mode: 'cors'
-    })
-    .then(response => response.text())
-    .then(data => {
-        // Crear un nuevo <script> y añadir el código JavaScript al contenido
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.innerHTML = data;  // Añadir el código JavaScript recibido
-    
-        document.body.appendChild(script);
-    })
-    .catch(error => console.error(error));
-
-    document.getElementById("login_form").addEventListener('submit', function(event) 
+    fetch("https://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/login.php", 
     {
-        console.log(validateLoginForm(event));
-
-    });
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `usuario=${encodeURIComponent(usuario)}&password=${encodeURIComponent(password)}`
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") 
+            {
+                console.log("success");
+                return data;
+            } 
+            else 
+            {
+                errorMessage.textContent = data.message;
+                console.log("success'nt");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
 }
-
-
-/*function mytubecheck(algo)
-{
-    
-}*/

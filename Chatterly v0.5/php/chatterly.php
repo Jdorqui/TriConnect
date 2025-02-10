@@ -363,7 +363,7 @@
                         <div class="form-container">
                             <p class="section-title">AJUSTES DE USUARIO</p>
                             <button id="options-button" onclick="showprofileinfo()">Mi cuenta</button>
-                            <!--<button id="options-button" onclick="mytubeconexion()">Conectar con MyTube</button>-->
+                            <button id="options-button" onclick="login_mytube()">Conectar con MyTube</button>
                         </div>
                         <div class="divider"></div>
                         <div class="form-container">
@@ -417,14 +417,14 @@
                             </div>
                         </div>
                     </div>
-                    <!--<div id="mytubeconexion" class="mytube-conexion" style="display: none;"></div>-->
+                    <div id="mytubeconexion" class="mytube-conexion" style="display: none;"></div>
                 </div>
             </div>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script defer src="../javascript/js_bienvenida.js"></script>
-        <!--<script defer src="../javascript/api.js"></script>-->
+        <script defer src="../javascript/js_chatterly.js"></script>
+        <script defer src="../javascript/apiMytube.js"></script>
         <script>var id_usuario_actual = <?php echo $id_usuario_actual; ?>;</script>
     </body>
 </html>

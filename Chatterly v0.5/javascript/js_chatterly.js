@@ -145,8 +145,21 @@ function cargarMensajes()
     const imgProfileUrl = document.getElementById("profileImg2").src;  // Imagen del usuario actual
     const fotoFriendUrl = document.getElementById("fotoFriend").src;  // Imagen del amigo
 
-    $.post('chat.php', { destinatario: destinatario }, function(data) 
+    $.post('chat.php', { destinatario: destinatario }, function(data) // manda un dato llamado destinatario cuyo valor es la variable destinatario de JavaScript 
     {
+        /*con countchatmessages.php se obtiene el número de mensajes no leídos
+        $.post('countchatmessages.php', { destinatario: destinatario }, function(data)
+        {
+            if (data > 0)
+            {
+                document.getElementById('chatmessages').innerText = `Chat (${data} mensajes nuevos)`;
+            }
+            else
+            {
+                document.getElementById('chatmessages').innerText = `Chat`;
+            }
+        });*/
+
         try 
         {
             let mensajes = JSON.parse(data); // Parsear la respuesta del servidor
@@ -243,7 +256,7 @@ $('#enviarMensaje').click(function()
     const mensaje = $('#mensaje').val();
     if (mensaje.trim() !== '') 
     {
-        $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() {
+        $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() { // Enviar mensaje al servidor 
             $('#mensaje').val(''); //limpiar el input
             cargarMensajes();
         });
