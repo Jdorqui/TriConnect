@@ -126,7 +126,8 @@ if (isset($_GET['chat_id'])) {
             <h2>Mensajes</h2>
             <div id="lista-mensajes">
                 <?php foreach ($mensajes as $mensaje): ?>
-                    <div class="<?= $mensaje['sender_id'] == $user_id ? 'mensaje-propio' : 'mensaje-otro' ?>">
+                    <div style="text-align: right !important;"
+                        class="<?= $mensaje['sender_id'] == $user_id ? 'mensaje-propio' : 'mensaje-otro' ?>">
                         <strong><?= htmlspecialchars($mensaje['sender_nombre']) ?>:</strong>
                         <?= htmlspecialchars($mensaje['mensaje']) ?>
                         <small><?= $mensaje['fecha_envio'] ?></small>
