@@ -69,21 +69,23 @@ body {
 
 /* Mensajes propios */
 .mensaje-propio {
-    background-color: #d1f7c4;
-    color: #0d6e12;
+    background-color: #c3fbfb;
+    color: #0d5f6e;
     padding: 10px 15px;
     border-radius: 12px;
     margin: 8px 0;
     max-width: 70%;
     margin-left: auto;
-    text-align: right;
     position: relative;
+    overflow: hidden;
+    overflow-wrap: break-word;
 }
 
 .mensaje-propio strong {
     display: block;
     font-weight: bold;
     font-size: 0.9em;
+    text-align: right;
 }
 
 .mensaje-propio small {
@@ -91,6 +93,7 @@ body {
     font-size: 0.75em;
     color: #555;
     margin-top: 5px;
+    text-align: right;
 }
 
 /* Mensajes de otros */
@@ -103,6 +106,8 @@ body {
     max-width: 70%;
     text-align: left;
     position: relative;
+    overflow: hidden;
+    overflow-wrap: break-word;
 }
 
 .mensaje-otro strong {
