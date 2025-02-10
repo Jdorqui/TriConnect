@@ -9,4 +9,6 @@ $MSG = $_POST["msg"];
 
 $SEND_MESSAGE_QUERY = $CONN->query("INSERT INTO MSGS (SENDER, RECEIVER, MSG, SEND_DATE, SEEN) VALUES ('$SENDER', '$RECEIVER', '$MSG', NOW(5), 0)");
 
+echo "SUCCESS";
+
 $CONN->close();
