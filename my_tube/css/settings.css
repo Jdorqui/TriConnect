@@ -1,0 +1,73 @@
+#settings_div {
+    display: flex;
+}
+
+#settings_div>:first-child {
+    width: 35%;
+}
+
+#settings_div>:first-child>div {
+    display: flex;
+    font-size: 1.7vw;
+    margin-bottom: 0vw;
+
+    padding: 1vw;
+
+    justify-items: center;
+    align-items: center;
+}
+
+#settings_div>:first-child>div>span {
+    margin-left: 0.5vw;
+    margin-right: 0.5vw;
+}
+
+#settings_div>:first-child>div:hover {
+    cursor: pointer;
+
+    background-color: rgb(33, 33, 33);
+}
+
+#settings_div>:first-child>div>img {
+    width: 3vw;
+    margin-right: 1vw;
+}
+
+#settings_div>:last-child {
+    background-color: brown;
+    flex-grow: 1;
+}
+
+#settings_div>:last-child>div {
+    display: flex;
+
+    height: 30%;
+    width: 100%;
+
+    background-color: chocolate;
+
+    align-items: center;
+    padding: 2%;
+
+    font-size: 4vw;
+}
+
+#settings_div>:last-child>div>:first-child {
+    width: 20%;
+    height: 100%;
+
+    margin-right: 1vw;
+}
+
+#settings_div>:last-child>div>:first-child:hover {
+    background-color: white;
+    border-radius: 100%;
+}
+
+#settings_div>:last-child>div>:first-child>img {
+    display: block;
+
+    height: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+}

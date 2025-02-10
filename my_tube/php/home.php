@@ -3,25 +3,30 @@ include "db_connection.php";
 
 session_start();
 
-$USERNAME = $_SESSION['USERNAME'];
-$GET_ALL_FRIENDS_QUERY = $CONN->
-    query(
-        "SELECT
-                    s1.SUBSCRIBED_TO
-                FROM
-                    SUBS s1
-                WHERE
-                    s1.USERNAME = '$USERNAME' AND EXISTS(
-                    SELECT
-                        s2.USERNAME
+$USERNAME = "";
+$FRIENDS_ARRAY = "";
+if (isset($_SESSION['USERNAME'])) {
+    $USERNAME = $_SESSION['USERNAME'];
+    $GET_ALL_FRIENDS_QUERY = $CONN->
+        query(
+            "SELECT
+                        s1.SUBSCRIBED_TO
                     FROM
-                        SUBS s2
+                        SUBS s1
                     WHERE
-                        s2.USERNAME = s1.SUBSCRIBED_TO AND s2.SUBSCRIBED_TO = s1.USERNAME
-                )"
-    );
+                        s1.USERNAME = '$USERNAME' AND EXISTS(
+                        SELECT
+                            s2.USERNAME
+                        FROM
+                            SUBS s2
+                        WHERE
+                            s2.USERNAME = s1.SUBSCRIBED_TO AND s2.SUBSCRIBED_TO = s1.USERNAME
+                    )"
+        );
 
-$FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
+    $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -34,9 +39,21 @@ $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="stylesheet" href="../css/login_api.css" />
     <link rel="stylesheet" href="../css/chat.css" />
+    <link rel="stylesheet" href="../css/search.css" />
+    <link rel="stylesheet" href="../css/settings.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script>
-        let username = '<?php echo $USERNAME ?>';
-        let friendsArray = JSON.parse('<?php echo $FRIENDS_ARRAY ?>');
+        let username = "";
+        let friendsArray = "";
+        if ('<?php echo $USERNAME ?>' != "") {
+            username = '<?php echo $USERNAME ?>';
+        }
+
+        if ('<?php echo $FRIENDS_ARRAY ?>' != "") {
+            friendsArray = JSON.parse('<?php echo $FRIENDS_ARRAY ?>');
+        }
     </script>
 </head>
 
@@ -52,7 +69,7 @@ $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
             <!-- TODO -->
 
             <?php if (isset($_SESSION["USERNAME"])): ?>
-                <div id="user_logged_in_tab" onclick="displayUserSettings()">
+                <div id="user_logged_in_tab" onclick="display('settings')">
                     <img class="every_user_image" src="../img/profile_pic_example.jpg">
                     <div><?php echo $_SESSION["USERNAME"] ?></div>
                 </div>
@@ -100,9 +117,54 @@ $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
                             <?php endif; ?>
                         </div>
                         <div id="chat"></div>
-                        <input id="input_text" type="text" placeholder="Enviar mensaje"
-                            onkeypress="sendMessage(this, event)">
+                        <div style="padding: 0.7vw;">
+                            <input id="input_text" type="text" placeholder="Enviar mensaje"
+                                onkeypress="sendMessage(this, event)">
+                        </div>
                     </div>
+                </div>
+                <div id="search_div">
+                    <div>
+                        <div>Canales</div>
+                        <div id="channels_main_div"></div>
+                    </div>
+                    <div>
+                        <div>Vídeos</div>
+                        <div>
+                        </div>
+                    </div>
+                </div>
+                <div id="settings_div">
+                    <div>
+                        <div>
+                            General
+                        </div>
+                        <div>
+                            Seguridad
+                        </div>
+                        <div>
+                            <img src="../img/chatterly_logo.png">Conectar con <span
+                                style="color: #6458aa">Chatterly</span>©
+                        </div>
+                        <div>
+                            <img src="../img/deto_logo.png">Conectar con <span style="color: #229fa3">DeTo'</span> ©
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <div style="position: relative; display: flex; align-items: center; justify-content: center">
+                                <div style="color: black; font-size: 2.5vw; position: absolute; background-color: white; width: 100%; height: 100%; align-items: center; justify-content: center; border-radius: 100%; opacity: 0.4;">Cambiar</div>
+                                <img class="" src="../img/profile_pic_example.jpg">
+                            </div>
+                            <div><?php echo $_SESSION["USERNAME"] ?></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+
+                </div>
+                <div id="channel_div">
+                    CHANNEL
                 </div>
             </div>
         </div>
@@ -161,7 +223,9 @@ $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
     <div id="notifications">
     </div>
 
-    <script type="text/javascript" src="../js/login_api.js"></script>
+    <script type="text/javascript" src="../js/internal_login_api.js"></script>
+    <script type="text/javascript" src="../js/channel.js"></script>
+    <script type="text/javascript" src="../js/search.js"></script>
     <script type="text/javascript" src="../js/main.js"></script>
     <script type="text/javascript" src="../js/chat.js"></script>
 </body>

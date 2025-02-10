@@ -147,5 +147,11 @@
     box-sizing: border-box;
     padding: 0.5vw;
     margin: 0;
-    margin-top: auto
+    margin-top: auto;
+
+    background-color: rgb(33, 33, 33);
+    color: white;
+    font-size: 1vw;
+    border-radius: 2vw;
+    padding: 1vw;
 }

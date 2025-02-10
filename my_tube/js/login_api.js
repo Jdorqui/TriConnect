@@ -40,31 +40,35 @@ function hideRegisterForm() {
     registerForm.style.display = "none";
 }
 
-// Validar el form de inicio de sesión.
-function validateLoginForm() {
-    console.log("bro");
+function test() {
+    return '1';
+}
 
+// Validar el form de inicio de sesión.
+async function validateLoginForm() {
+    console.log("bro");
     event.preventDefault();
 
-    fetch("../php/login.php", {
+    await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/login.php", {
         method: "POST",
         body: new FormData(document.getElementById("login_form")),
     })
         .then((response) => response.text())
         .then((data) => {
-            console.log(data);
-            checkLoginErrors(data);
+            return data;
         })
         .catch((error) => {
             console.error("Error:", error);
         });
+
+    return "qué pasa";
 }
 
 // Validar el form de registro.
 function validateRegisterForm() {
     event.preventDefault();
 
-    fetch("../php/sign_up.php", {
+    fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/sign_up.php", {
         method: "POST",
         body: new FormData(document.getElementById("register_form")),
     })
@@ -80,15 +84,15 @@ function validateRegisterForm() {
 // Comprobar si existen errores en el inicio de sesión.
 function checkLoginErrors(data) {
     if (data.includes("ERROR-000")) {
-        createNotification("Conexión fallida con la base datos. Inténtelo más tarde.");
+        return "Conexión fallida con la base datos. Inténtelo más tarde.";
     } else if (data.includes("ERROR-001")) {
-        createNotification("El usuario no existe.");
+        return "El usuario no existe.";
     } else if (data.includes("ERROR-002")) {
-        createNotification("La contraseña no es correcta.");
+        return "La contraseña no es correcta.";
     } else if (data.includes("SUCCESS")) {
-        location.reload();
+        return data;
     } else {
-        alert(data)
+        return data;
     }
 }
 
@@ -99,7 +103,7 @@ function checkRegisterErrors(data) {
     } else if (data.includes("ERROR-001")) {
         createNotification("El usuario ya existe.");
     } else if (data.includes("SUCCESS")) {
-        location.reload();
+        console.log(data);
     }
 }
 
@@ -120,7 +124,7 @@ function getChannel(input, event) {
 // TODO
 // Eliminar la última notificación cada segundo.
 setInterval(function () {
-    if (notifications.lastElementChild) {
+    if (notifications != null && notifications.lastElementChild) {
         notifications.lastElementChild.remove();
     }
 }, 1000);
