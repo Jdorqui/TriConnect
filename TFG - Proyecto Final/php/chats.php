@@ -167,7 +167,7 @@ if (isset($_GET['chat_id'])) {
             e.preventDefault();
 
             const mensaje = $('#mensaje').val();
-
+ 
             $.post('enviar_mensaje.php', { chat_id: chatId, mensaje }, function (response) {
                 if (response.success) {
                     $('#mensaje').val('');
