@@ -72,10 +72,10 @@ $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <!-- Botones de acción -->
                 <div class="producto-acciones">
                     
-                    <a href="editar_anuncio.php?id=<?php echo $producto['id']; ?>" class="btn-editar">Editar</a>
+                    <a href="editar_anuncio.php?id=<?php echo $producto['id']; ?>" class="btn-editar">Editar ✏️</a>
                     <form action="eliminar_anuncio.php" method="get" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este anuncio?');">
                         <input type="hidden" name="id" value="<?php echo $producto['id']; ?>">
-                        <button type="submit" class="btn-eliminar">Eliminar</button>
+                        <button type="submit" class="btn-eliminar">🗑️</button>
                     </form>
                 </div>
             </div>

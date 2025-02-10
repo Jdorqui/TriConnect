@@ -19,14 +19,14 @@ include_once 'logueado.php';  // Asegúrate de incluir el archivo que verifica s
 
         <!-- Contenedor para los iconos a la derecha -->
         <div class="header-icons">
-            <a href="chats.php">
+            <a href="chats.php" style="text-decoration: none;">
                 <img src="../img/imagenMensajes.png" alt="Mensajes">
             </a>
             <a href="cuenta.php">
-                <img src="../img/icono-configuracion.png" alt="Configuración">
+                <img src="../img/perfil.png" alt="Perfil">
             </a>
             <a href="crear_anuncio.php">
-                <img src="../img/icono-anuncio.png" alt="Crear Anuncio">
+                <img src="../img/vender.png" alt="Crear Anuncio">
             </a>
         </div>
     </header>
@@ -35,8 +35,7 @@ include_once 'logueado.php';  // Asegúrate de incluir el archivo que verifica s
     <section class="buscador">
         <form action="buscar_anuncios.php" method="get">
             <input type="text" name="query" placeholder="Buscar anuncios..." class="input-buscar" required>
-            <input type="number" name="min_price" placeholder="Precio mínimo" class="input-buscar">
-            <input type="number" name="max_price" placeholder="Precio máximo" class="input-buscar">
+            
             <button type="submit" class="btn-buscar">Buscar</button>
         </form>
     </section>
