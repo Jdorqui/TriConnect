@@ -3,8 +3,8 @@ require 'db_connection.php';
 
 ini_set('display_errors', 1);
 
-$SENDER = $_POST["sender"];
-$RECEIVER = $_POST["receiver"];
+$SENDER = $_POST["SENDER"];
+$RECEIVER = $_POST["RECEIVER"];
 
 $GET_ALL_MSGS_QUERY = $CONN->
     query(
@@ -20,4 +20,11 @@ $GET_ALL_MSGS_QUERY = $CONN->
                 "
     );
 
-echo json_encode($GET_ALL_MSGS_QUERY->fetch_all());
+$DATA = array();
+while ($ROW = $GET_ALL_MSGS_QUERY->fetch_assoc()) {
+    $DATA[] = $ROW;
+}
+
+echo json_encode($DATA);
+
+$CONN->close();

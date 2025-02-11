@@ -1,5 +1,16 @@
 <?php if (true): ?>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Montserrat", serif;
+            font-optical-sizing: auto;
+            font-weight: 600;
+            font-style: normal;
+
+            user-select: none;
+        }
+
         /* div iniciar sesión. */
         #mytube_login_API_wrapper {
             position: absolute;

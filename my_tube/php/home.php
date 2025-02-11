@@ -5,6 +5,7 @@ session_start();
 
 $USERNAME = "";
 $FRIENDS_ARRAY = "";
+print_r($_SESSION);
 if (isset($_SESSION['USERNAME'])) {
     $USERNAME = $_SESSION['USERNAME'];
     $GET_ALL_FRIENDS_QUERY = $CONN->
@@ -152,8 +153,11 @@ if (isset($_SESSION['USERNAME'])) {
                     </div>
                     <div>
                         <div>
-                            <div style="position: relative; display: flex; align-items: center; justify-content: center">
-                                <div style="color: black; font-size: 2.5vw; position: absolute; background-color: white; width: 100%; height: 100%; align-items: center; justify-content: center; border-radius: 100%; opacity: 0.4;">Cambiar</div>
+                            <div
+                                style="position: relative; display: flex; align-items: center; justify-content: center">
+                                <div
+                                    style="color: black; font-size: 2.5vw; position: absolute; background-color: white; width: 100%; height: 100%; align-items: center; justify-content: center; border-radius: 100%; opacity: 0.4;">
+                                    Cambiar</div>
                                 <img class="" src="../img/profile_pic_example.jpg">
                             </div>
                             <div><?php echo $_SESSION["USERNAME"] ?></div>
@@ -223,7 +227,10 @@ if (isset($_SESSION['USERNAME'])) {
     <div id="notifications">
     </div>
 
-    <script type="text/javascript" src="../js/internal_login_api.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="http://10.3.5.106/PHP/TriConnect/Chatterly%20v0.5/javascript/api.js"></script>
+    <script type="text/javascript" src="../js/prueba.js"></script>
+    <script type="text/javascript" src="../js/api.js"></script>
     <script type="text/javascript" src="../js/channel.js"></script>
     <script type="text/javascript" src="../js/search.js"></script>
     <script type="text/javascript" src="../js/main.js"></script>
