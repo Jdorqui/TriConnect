@@ -116,63 +116,41 @@ function createMessage(sender, msg) {
     chat.innerHTML += before;
 }
 
-function sendMessage(input, event) {
+// Usar la función receiveMessages de la API para mandar un mensaje.
+async function sendMessage(input, event) {
     if (event.key == "Enter" && input.value != "") {
-        let formData = new FormData();
-        formData.append("sender", username);
-        formData.append("receiver", selectedFriend.name);
-        formData.append("msg", input.value);
-
+        await api.sendMessage(username, selectedFriend.name, input.value);
         input.value = "";
-
-        fetch('../php/send_message.php', { method: "POST", body: formData });
 
         chat.scrollTop = chat.scrollHeight
     }
 }
 
+// Usar la función receiveMessages de la API para recibir todos los mensajes y crearlos.
+// Esta función solo crea los nuevos mensajes.
 async function getAllMessages(friendObject) {
-    let formData = new FormData();
-    formData.append("sender", username);
-    formData.append("receiver", friendObject.name);
+    let jsonData = await api.receiveMessages(username, friendObject.name);
+    let newMessages = jsonData.length - friendObject.messageNumber;
 
-    fetch('../php/receive_message.php', {
-        method: "POST",
-        body: formData
-    })
-        .then((response) => response.text())
-        .then((data) => {
-            let json_data = JSON.parse(data);
-            // console.log(JSON.stringify(json_data, null, 2));
-            let newMessages = JSON.parse(data).length - friendObject.messageNumber;
+    for (let i = 0; i < newMessages; i++) {
+        let sender = jsonData[friendObject.messageNumber].SENDER;
+        let msg = jsonData[friendObject.messageNumber].MSG;
+        let seen = jsonData[friendObject.messageNumber].SEEN;
 
-            // console.log(`DEBUG: ${JSON.stringify(json_data, null, 2)}`);
-            // console.log(`DEBUG: ${newMessages}`);
+        // Comprobar si el mensaje nuevo recibido es del amigo seleccionado.
+        if (friendObject.name == selectedFriend.name) {
+            createMessage(sender, msg);
+        }
+        // Por otro lado, añade 1 a los mensajes no vistos por el usuario actual.
+        else if (seen == "0" && sender != username) {
+            friendObject.addUnreadMessage();
+        }
 
-            for (let i = 0; i < newMessages; i++) {
-                let sender = json_data[friendObject.messageNumber][1];
-                let msg = json_data[friendObject.messageNumber][3];
-
-                console.log(`DEBUG-sender: ${sender}`);
-                console.log(`DEBUG-username: ${username}`);
-                console.log(`DEBUG-msg: ${msg}`);
-                console.log(`DEBUG-json_data[friendObject.messageNumber][5]: ${json_data[friendObject.messageNumber][5]}`);
-
-                if (friendObject.name == selectedFriend.name) {
-                    createMessage(sender, msg);
-                } else if (json_data[friendObject.messageNumber][5] == "0" && sender != username) {
-                    console.log("inside");
-                    friendObject.addUnreadMessage();
-                }
-
-                friendObject.messageNumber += 1;
-            }
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
+        friendObject.messageNumber += 1;
+    }
 }
 
+// Comprobar cada 200 ms todos los mensajes de cada amigo.
 setInterval(function () {
     for (i = 0; i < friendObjects.length; i++) {
         getAllMessages(friendObjects[i]);
