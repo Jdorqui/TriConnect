@@ -1,25 +1,5 @@
 <?php
-$host = 'localhost'; 
-$db = 'chatterly';
-$user = 'root'; 
-$pass = ''; 
-$charset = 'utf8mb4';
-
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset"; //configurar la conexion a la base de datos
-$options = [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
-
-try 
-{
-    $pdo = new PDO($dsn, $user, $pass, $options);
-}
-catch (\PDOException $e) 
-{
-    die("<div class='error'>Error de conexión a la base de datos</div>");
-}
+require 'conexion.php';
 
 $mensaje = ""; //variable para almacenar el mensaje de error o exito
 

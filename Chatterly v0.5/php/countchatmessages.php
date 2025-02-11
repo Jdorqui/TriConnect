@@ -1,10 +1,8 @@
-
-
 <?php
     session_start();
-
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM mensajes WHERE id_mensaje = :id_mensaje" AND "id_emisor = :id_receptor" AND "id_receptor = :id_emisor");
-    $stmt->bindParam(':id_mensaje', $_POST['id_mensaje']);
+    require 'conexion.php';
+    
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM mensajes WHERE id_emisor = ':destinatario' OR id_receptor = ':id_emisor'");
     $stmt->bindParam(':id_receptor', $_POST['id_receptor']);
     $stmt->bindParam(':id_emisor', $_POST['id_emisor']);
     $stmt->execute();

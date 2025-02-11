@@ -90,4 +90,10 @@ async function login_mytube(usuario, password, email)
         console.log(await register(usuario, password, email));
     }
 }
-mytube_pruebas();
+
+(async () => {
+    await mytube_pruebas();
+    await sendMessage("a", "b", "hola");
+    console.log(await receiveMessages("a", "b"));
+})();
+

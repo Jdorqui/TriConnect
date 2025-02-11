@@ -49,7 +49,6 @@ function registrarUsuario()
 
         if (data.status === "success") 
         {
-            alert(data.message);  //muestra el mensaje de éxito
             mostrarLogin();  //vuelve al login
         } 
         else 
@@ -110,7 +109,6 @@ function cerrarSesion()
 {
     fetch("../php/logout.php", { method: "POST" })
         .then(() => {
-            alert("Sesión cerrada.");
             mostrarLogin();
         })
         .catch((error) => console.error("Error:", error));

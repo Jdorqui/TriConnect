@@ -1,5 +1,6 @@
 <?php
     session_start();
+    
     if (!isset($_SESSION['usuario']) || !isset($_SESSION['password'])) 
     {
         header("Location: index.html");
@@ -7,7 +8,7 @@
     }
 
     $usuario = $_SESSION['usuario'];
-    $password = $_SESSION['password'];
+    //$password = $_SESSION['password'];
 
     // Conexión a la base de datos
     try 

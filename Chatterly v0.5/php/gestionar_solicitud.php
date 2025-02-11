@@ -1,81 +1,49 @@
 <?php
 session_start();
+require 'conexion.php';
 
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['password'])) 
-{
+if (!isset($_SESSION['usuario']) || !isset($_SESSION['password'])) {
     echo json_encode(["status" => "error", "message" => "Usuario o contraseña no válidos."]);
     exit();
 }
 
-$mysqli = new mysqli("localhost", "root", "", "chatterly");
+try {
+    // Obtener usuario y verificar contraseña
+    $usuario = $_SESSION['usuario'];
+    $password = $_SESSION['password'];
 
-if ($mysqli->connect_error) 
-{
-    die("Error de conexión: " . $mysqli->connect_error);
-}
+    $stmt = $pdo->prepare("SELECT id_user, password FROM usuarios WHERE username = :usuario");
+    $stmt->bindParam(':usuario', $usuario, PDO::PARAM_STR);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Obtener el ID del usuario logueado
-$usuario = $_SESSION['usuario'];
-$password = $_SESSION['password']; 
-
-// Obtener el ID y la contraseña cifrada del usuario desde la base de datos
-$sql = "SELECT id_user, password FROM usuarios WHERE username = '$usuario'";
-$result = $mysqli->query($sql);
-if ($result->num_rows > 0) 
-{
-    $row = $result->fetch_assoc();
-    
-    // Verificar la contraseña con password_verify
-    if (password_verify($password, $row['password'])) 
-    {
+    if ($row && password_verify($password, $row['password'])) {
         $usuario_id = $row['id_user']; // El id_user se obtiene si la contraseña es correcta
-    } 
-    else 
-    {
-        die("Contraseña incorrecta.");
-    }
-} 
-else 
-{
-    die("Usuario no encontrado.");
-}
-
-// Aquí procesas la solicitud
-if ($_SERVER['REQUEST_METHOD'] == 'POST') 
-{
-    $accion = $_POST['accion'];
-    $solicitante_id = $_POST['solicitante'];
-
-    // Lógica para aceptar o rechazar la solicitud
-    if ($accion == 'aceptar') 
-    {
-        //actualiza el estado de la solicitud a 'aceptado'
-        $sql_update = "UPDATE amigos SET estado = 'aceptado' WHERE (id_user1 = '$solicitante_id' AND id_user2 = '$usuario_id') OR (id_user1 = '$usuario_id' AND id_user2 = '$solicitante_id') AND estado = 'pendiente'";
-        if ($mysqli->query($sql_update)) 
-        {
-            echo "Solicitud aceptada.";
-        } 
-        else 
-        {
-            echo "Error al aceptar la solicitud: " . $mysqli->error;
-        }
-    } 
-    elseif ($accion == 'rechazar') 
-    {
-        //elimina la solicitud de la tabla amigos
-        $sql_delete = "DELETE FROM amigos WHERE (id_user1 = '$solicitante_id' AND id_user2 = '$usuario_id') OR (id_user1 = '$usuario_id' AND id_user2 = '$solicitante_id') AND estado = 'pendiente'";
-        if ($mysqli->query($sql_delete)) 
-        {
-            echo "Solicitud rechazada.";
-        } 
-        else 
-        {
-            echo "Error al rechazar la solicitud: " . $mysqli->error;
-        }
+    } else {
+        echo json_encode(["status" => "error", "message" => "Usuario o contraseña incorrectos."]);
+        exit();
     }
 
-    //redirige después de procesar la acción
-    header('Location: chatterly.php');
-    exit();
+    // Procesar la solicitud
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $accion = $_POST['accion'];
+        $solicitante_id = $_POST['solicitante'];
+
+        $sql = ($accion === 'aceptar') ?
+            "UPDATE amigos SET estado = 'aceptado' WHERE ((id_user1 = :solicitante_id AND id_user2 = :usuario_id) OR (id_user1 = :usuario_id AND id_user2 = :solicitante_id)) AND estado = 'pendiente'" :
+            "DELETE FROM amigos WHERE ((id_user1 = :solicitante_id AND id_user2 = :usuario_id) OR (id_user1 = :usuario_id AND id_user2 = :solicitante_id)) AND estado = 'pendiente'";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':solicitante_id', $solicitante_id, PDO::PARAM_INT);
+        $stmt->bindParam(':usuario_id', $usuario_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            echo json_encode(["status" => "success", "message" => $accion === 'aceptar' ? "Solicitud aceptada." : "Solicitud rechazada."]);
+        } else {
+            echo json_encode(["status" => "error", "message" => "Error al procesar la solicitud."]);
+        }
+    }
+} catch (PDOException $e) {
+    echo json_encode(["status" => "error", "message" => "Error en la base de datos: " . $e->getMessage()]);
 }
 ?>

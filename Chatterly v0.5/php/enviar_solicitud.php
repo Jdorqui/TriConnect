@@ -1,24 +1,6 @@
 <?php
 session_start();
-
-//verifica que se haya iniciado sesion
-if (!isset($_SESSION['usuario'])) 
-{
-    echo "No has iniciado sesión.";
-    exit();
-}
-
-//se conecta a la base de datos
-try 
-{
-    $pdo = new PDO('mysql:host=localhost;dbname=chatterly', 'root', '');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} 
-catch (PDOException $e) 
-{
-    echo "Error de conexión: " . $e->getMessage();
-    exit();
-}
+require 'conexion.php';
 
 $usuario = $_SESSION['usuario']; //obtener el nombre de usuario desde la sesión
 

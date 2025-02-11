@@ -67,33 +67,7 @@ function openallfriends()
 }
 
 //amigos
-function fetchPendingRequests() 
-{
-    fetch('../php/get_pending_requests.php')
-        .then(response => response.json())
-        .then(data => {
-            const pendingMenu = document.getElementById('pendingmenu');
-            if (data.length > 0) 
-            {
-                pendingMenu.innerHTML = '';
-                data.forEach(request => {
-                    const div = document.createElement('div');
-                    div.innerHTML = `
-                        <p>${request.alias}</p>
-                        <button onclick="manageRequest(${request.id}, 'aceptar')">Aceptar</button>
-                        <button onclick="manageRequest(${request.id}, 'rechazar')">Rechazar</button>
-                    `;
-                    pendingMenu.appendChild(div);
-                });
-            } 
-            else 
-            {
-                pendingMenu.innerHTML = '<p>No tienes solicitudes pendientes.</p>';
-            }
-        })
-        .catch(error => console.error('Error al obtener solicitudes pendientes:', error));
-}
-
+// Función para gestionar la solicitud (aceptar o rechazar)
 function manageRequest(id, action) 
 {
     fetch('../php/gestionar_solicitud.php', {
@@ -101,12 +75,12 @@ function manageRequest(id, action)
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `solicitante=${id}&accion=${action}`
     })
-        .then(response => response.text())
-        .then(message => {
-            alert(message);
-            fetchPendingRequests();
-        })
-        .catch(error => console.error('Error al gestionar la solicitud:', error));
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);  // Mensaje de éxito o error
+        fetchPendingRequests();  // Refrescar las solicitudes
+    })
+    .catch(error => console.error('Error al gestionar la solicitud:', error));
 }
 
 function actualizarResultado(mensaje) 
@@ -129,7 +103,8 @@ function selectFriend(nombre, foto, destinatario)
 }
 
 //chat
-function openchat(destinatarioID) {
+function openchat(destinatarioID) 
+{
     destinatario = destinatarioID;  // Seteamos el destinatario
     chat.style.display = "block";
     pendingMenu.hidden = true;
@@ -138,31 +113,16 @@ function openchat(destinatarioID) {
     cargarMensajes();  // Carga los mensajes
 }
 
-function cargarMensajes() 
+async function cargarMensajes() 
 {
     if (destinatario === null) return; // Verifica que el destinatario esté definido
 
     const imgProfileUrl = document.getElementById("profileImg2").src;  // Imagen del usuario actual
     const fotoFriendUrl = document.getElementById("fotoFriend").src;  // Imagen del amigo
 
-    $.post('chat.php', { destinatario: destinatario }, function(data) // manda un dato llamado destinatario cuyo valor es la variable destinatario de JavaScript 
-    {
-        /*con countchatmessages.php se obtiene el número de mensajes no leídos
-        $.post('countchatmessages.php', { destinatario: destinatario }, function(data)
-        {
-            if (data > 0)
-            {
-                document.getElementById('chatmessages').innerText = `Chat (${data} mensajes nuevos)`;
-            }
-            else
-            {
-                document.getElementById('chatmessages').innerText = `Chat`;
-            }
-        });*/
-
         try 
         {
-            let mensajes = JSON.parse(data); // Parsear la respuesta del servidor
+            let mensajes = await cargarMensajes_Api(id_usuario_actual, destinatario); // Parsear la respuesta del servidor
             $('#chat-messages').empty(); // Limpiar los mensajes previos
             
             mensajes.forEach(function(mensaje) 
@@ -248,7 +208,7 @@ function cargarMensajes()
             console.error("Error al parsear JSON:", e);
             console.log("Respuesta del servidor:", data);
         }
-    });
+    
 }
 
 $('#enviarMensaje').click(function() 
@@ -256,10 +216,9 @@ $('#enviarMensaje').click(function()
     const mensaje = $('#mensaje').val();
     if (mensaje.trim() !== '') 
     {
-        $.post('chat.php', { mensaje: mensaje, destinatario: destinatario }, function() { // Enviar mensaje al servidor 
-            $('#mensaje').val(''); //limpiar el input
-            cargarMensajes();
-        });
+        chat_api(id_usuario_actual, destinatario, mensaje);
+        $('#mensaje').val(''); //limpiar el input
+        cargarMensajes();
     }
 });
 

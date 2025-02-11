@@ -1,25 +1,14 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "chatterly";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) 
-{
-    echo json_encode(["status" => "error", "message" => "Conexión fallida: " . $conn->connect_error]);
-    exit();
-}
+require 'conexion.php';
 
 $email = $_POST['email'];
 $alias = $_POST['alias'];
 $username = $_POST['username'];
 $password = $_POST['password'];
 $fecha_nacimiento = $_POST['fecha_nacimiento'];
-$terminos_aceptados = isset($_POST['terminos']) ? 1 : 0;
+$terminos_aceptados = isset($_POST['terminos']) ? 1 : 0; // 1 si se aceptaron los términos, 0 si no
 
-// Validar que los campos requeridos no estén vacíos
+//validacion para campos no vacios
 if (empty($email)) 
 {
     echo json_encode(["status" => "error", "message" => "El correo electrónico es obligatorio."]);
@@ -41,21 +30,21 @@ if (empty($fecha_nacimiento))
     exit();
 }
 
-// Validar el formato del correo electrónico
+//formato de correo electronico
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
 {
-    echo json_encode(["status" => "error", "message" => "El formato del correo electrónico no es válido."]);
+    echo json_encode(["status" => "error", "message" => "El formato del correo electronico no es valido."]);
     exit();
 }
 
-// Validar la contraseña (mínimo 5 caracteres, 1 mayúscula, 1 carácter especial)
+//contraseña (5 caracteres, 1 mayuscula, 1 caracter especial)
 if (!preg_match('/^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{5,}$/', $password)) 
 {
-    echo json_encode(["status" => "error", "message" => "La contraseña debe tener al menos 5 caracteres, una mayúscula y un carácter especial."]);
+    echo json_encode(["status" => "error", "message" => "La contraseña debe tener al menos 5 caracteres, una mayuscula y un caracter especial."]);
     exit();
 }
 
-// Validar la fecha de nacimiento (mínimo 18 años y no en el futuro)
+//fecha de nacimiento (mínimo 18 años y no puede ser futura)
 $fecha_actual = new DateTime();
 $fecha_minima = $fecha_actual->modify('-18 years');
 $fecha_nacimiento_dt = DateTime::createFromFormat('Y-m-d', $fecha_nacimiento);
@@ -66,42 +55,49 @@ if (!$fecha_nacimiento_dt || $fecha_nacimiento_dt > new DateTime() || $fecha_nac
     exit();
 }
 
-// Validar que los términos y condiciones hayan sido aceptados
+//terminos y condiciones aceptados
 if ($terminos_aceptados === 0) 
 {
     echo json_encode(["status" => "error", "message" => "Debe aceptar los términos y condiciones."]);
     exit();
 }
 
-// Verificar si el alias ya está registrado
-$sql = "SELECT * FROM usuarios WHERE alias = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $alias);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows > 0) 
+try 
 {
-    echo json_encode(["status" => "error", "message" => "El nombre de usuario ya está registrado."]);
-    exit();
-}
+    //verifica si el alias ya esta registrado
+    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE alias = :alias");
+    $stmt->bindParam(':alias', $alias, PDO::PARAM_STR);
+    $stmt->execute();
+    
+    if ($stmt->rowCount() > 0) 
+    {
+        echo json_encode(["status" => "error", "message" => "El nombre de usuario ya está registrado."]);
+        exit();
+    }
 
-// Hashear la contraseña antes de guardarla
-$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    //hashea la contraseña
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-$sql = "INSERT INTO usuarios (email, alias, password, username, fecha_nacimiento, terminos_aceptados) 
-        VALUES (?, ?, ?, ?, ?, ?)";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("sssssi", $email, $alias, $hashed_password, $username, $fecha_nacimiento, $terminos_aceptados);
+    //se inserta el usuario en la base de datos
+    $stmt = $pdo->prepare("INSERT INTO usuarios (email, alias, password, username, fecha_nacimiento, terminos_aceptados) VALUES (:email, :alias, :password, :username, :fecha_nacimiento, :terminos_aceptados)");
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->bindParam(':alias', $alias, PDO::PARAM_STR);
+    $stmt->bindParam(':password', $hashed_password, PDO::PARAM_STR);
+    $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+    $stmt->bindParam(':fecha_nacimiento', $fecha_nacimiento, PDO::PARAM_STR);
+    $stmt->bindParam(':terminos_aceptados', $terminos_aceptados, PDO::PARAM_INT);
 
-if ($stmt->execute()) 
-{
-    echo json_encode(["status" => "success", "message" => "Registro exitoso."]);
+    if ($stmt->execute())
+    {
+        echo json_encode(["status" => "success", "message" => "Registro exitoso."]);
+    } 
+    else 
+    {
+        echo json_encode(["status" => "error", "message" => "Error al registrar."]);
+    }
 } 
-else 
+catch (PDOException $e) 
 {
-    echo json_encode(["status" => "error", "message" => "Error al registrar: " . $conn->error]);
+    echo json_encode(["status" => "error", "message" => "Error en la base de datos: " . $e->getMessage()]);
 }
-
-$conn->close();
 ?>

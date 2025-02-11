@@ -1,34 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['password'])) {
-    header("Location: index.html");
-    exit();
-}
-
-$usuario = $_SESSION['usuario'];
-$password = $_SESSION['password'];
-
-try 
-{
-    $pdo = new PDO('mysql:host=localhost;dbname=chatterly', 'root', '');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} 
-catch (PDOException $e) 
-{
-    echo "Error de conexión: " . $e->getMessage();
-    exit();
-}
-
-//Obtener el ID del usuario actual
-$stmt = $pdo->prepare("SELECT id_user FROM usuarios WHERE username = ?");
-$stmt->execute([$usuario]);
-$usuarioData = $stmt->fetch(PDO::FETCH_ASSOC);
-if (!$usuarioData) 
-{
-    echo "Usuario no encontrado.";
-    exit();
-}
-$id_usuario_actual = $usuarioData['id_user'];
+require 'conexion.php';
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$id_usuario_actual = $_POST['usuario'];
 
 //obtener los mensajes entre el usuario actual y el destinatario
 if (isset($_POST['destinatario'])) 

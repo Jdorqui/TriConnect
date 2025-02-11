@@ -54,7 +54,7 @@
     $stmt->execute(['id_usuario' => $id_usuario_actual]);
     $amigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    //obtener amigos en línea
+    //obtener amigos en linea
     $stmt = $pdo->prepare("
         SELECT u.username, u.id_user, u.en_linea
         FROM amigos a
@@ -173,9 +173,7 @@
                                         <span style='color: white; font-size: 16px;'>$usuario</span>
                                     </button>";
                                 ?> 
-                                <div style="display: flex; gap: 10px; padding-left: 5%;"> <!-- iconos -->
-                                    <!--<img src="../assets/imgs/microphone_icon.png" alt="microphone" style="width: 15px; height: 15px; cursor: pointer;">-->
-                                    <!--<img src="../assets/imgs/headphone_icon.png" alt="headphones" style="width: 15px; height: 15px; cursor: pointer;">-->
+                                <div style="display: flex; gap: 10px; padding-left: 5%;"> <!-- icono -->
                                     <div id="options_button">
                                         <img src="../assets/imgs/options_icon.png" alt="options" id="options_icon" onclick="showoptionspanel()">
                                     </div>
@@ -421,7 +419,7 @@
                 </div>
             </div>
         </div>
-
+        <script defer src="../javascript/api.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script defer src="../javascript/js_chatterly.js"></script>
         <script defer src="../javascript/apiMytube.js"></script>
