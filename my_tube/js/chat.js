@@ -119,7 +119,19 @@ function createMessage(sender, msg) {
 // Usar la función receiveMessages de la API para mandar un mensaje.
 async function sendMessage(input, event) {
     if (event.key == "Enter" && input.value != "") {
-        await api.sendMessage(username, selectedFriend.name, input.value);
+        await sendMessageAPI(username, selectedFriend.name, input.value);
+
+        let chatterlyUsername = await getChatterlyUsername(username);
+        let chatterlyFriend = await getChatterlyUsername(selectedFriend.name);
+
+        console.log(chatterlyUsername, chatterlyFriend);
+        console.log(await esamigos_Api(chatterlyUsername, chatterlyFriend));
+        if (await esamigos_Api(chatterlyUsername, chatterlyFriend) == "aceptado") {
+            console.log("sí");
+            console.log(await usuarioNumero_Api(chatterlyUsername));
+            await chat_api(await usuarioNumero_Api(chatterlyUsername), await usuarioNumero_Api(chatterlyFriend), input.value);
+        }
+
         input.value = "";
 
         chat.scrollTop = chat.scrollHeight
@@ -129,7 +141,7 @@ async function sendMessage(input, event) {
 // Usar la función receiveMessages de la API para recibir todos los mensajes y crearlos.
 // Esta función solo crea los nuevos mensajes.
 async function getAllMessages(friendObject) {
-    let jsonData = await api.receiveMessages(username, friendObject.name);
+    let jsonData = await receiveMessages(username, friendObject.name);
     let newMessages = jsonData.length - friendObject.messageNumber;
 
     for (let i = 0; i < newMessages; i++) {

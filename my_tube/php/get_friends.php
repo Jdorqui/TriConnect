@@ -23,7 +23,7 @@ $DATA = array();
 while ($ROW = $GET_ALL_MSGS_QUERY->fetch_assoc()) {
     $DATA[] = $ROW;
 }
-    
+
 echo json_encode($DATA);
-    
+
 $CONN->close();

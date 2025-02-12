@@ -18,7 +18,7 @@ $ROW = $CHECK_PASSWORD_QUERY->fetch_assoc();
 if (password_verify($PASSWORD, $ROW['PASSWORD'])) {
     session_start();
 
-    $_SESSION["USERNAME"] = "a";
+    $_SESSION["USERNAME"] = $USERNAME;
     $_SESSION["PASSWORD"] = $PASSWORD;
 
     echo "SUCCESS";

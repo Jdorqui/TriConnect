@@ -30,7 +30,7 @@ async function register(username, password, email) {
 }
 
 // Enviar mensaje.
-async function sendMessage(sender, receiver, msg) {
+async function sendMessageAPI(sender, receiver, msg) {
     let formData = new FormData();
     formData.append('SENDER', sender);
     formData.append('RECEIVER', receiver);
@@ -60,12 +60,12 @@ async function receiveMessages(sender, receiver) {
     return data;
 }
 
-async function isFriend(username, friend) {
+async function getFriends(username, friend) {
     let formData = new FormData();
     formData.append('USERNAME', username);
     formData.append('FRIEND', friend);
 
-    let fetchData = await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/is_friend.php", {
+    let fetchData = await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/get_friends.php", {
         method: "POST",
         body: formData,
     });
@@ -119,8 +119,11 @@ function hideRegisterForm() {
 async function validateLoginForm() {
     event.preventDefault();
     let formData = new FormData(document.getElementById("login_form"))
-    console.log(formData);
     let data = await login(formData.get("USERNAME"), formData.get("PASSWORD"));
+    if (data == "SUCCESS") {
+        $.get(`../php/set_session.php?USERNAME=${formData.get("USERNAME")}&PASSWORD=${formData.get("PASSWORD")}`);
+    }
+
     checkErrors(data);
 }
 

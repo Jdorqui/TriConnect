@@ -5,7 +5,6 @@ session_start();
 
 $USERNAME = "";
 $FRIENDS_ARRAY = "";
-print_r($_SESSION);
 if (isset($_SESSION['USERNAME'])) {
     $USERNAME = $_SESSION['USERNAME'];
     $GET_ALL_FRIENDS_QUERY = $CONN->
@@ -229,8 +228,8 @@ if (isset($_SESSION['USERNAME'])) {
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" src="http://10.3.5.106/PHP/TriConnect/Chatterly%20v0.5/javascript/api.js"></script>
-    <script type="text/javascript" src="../js/prueba.js"></script>
     <script type="text/javascript" src="../js/api.js"></script>
+    <script type="text/javascript" src="../js/chatterly.js"></script>
     <script type="text/javascript" src="../js/channel.js"></script>
     <script type="text/javascript" src="../js/search.js"></script>
     <script type="text/javascript" src="../js/main.js"></script>
