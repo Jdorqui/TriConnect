@@ -19,10 +19,14 @@ async function login_Api(usuario, password)
     }
 }
 
-function chat_api(usuario, destinatario, mensaje) 
+async function chat_api(usuario, destinatario, mensaje) 
 {
-    $.post('http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/chat.php', { usuario: usuario, mensaje: mensaje, destinatario: destinatario }, function () { // Enviar mensaje al servidor 
-    });
+    let fetchData = await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/chat.php",
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `usuario=${encodeURIComponent(usuario)}&destinatario=${encodeURIComponent(destinatario)}&mensaje=${encodeURIComponent(mensaje)}`
+        });
 }
 
 async function cargarMensajes_Api(usuario, destinatario) 
@@ -37,14 +41,28 @@ async function cargarMensajes_Api(usuario, destinatario)
     return data;
 }
 
-async function esamigos_Api(usuario, destinatario) 
+async function esamigos_Api(usuario1, usuario2) 
 {
-    let fetchData = await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/gestionar_solicitud.php",
+    let fetchData = await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/verificarAmistad_Api.php",
         {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `usuario=${encodeURIComponent(usuario)}&destinatario=${encodeURIComponent(destinatario)}`
+            body: `usuario1=${encodeURIComponent(usuario1)}&usuario2=${encodeURIComponent(usuario2)}`
         });
     let data = await fetchData.json();
+    return data.estado;
+    
+}
+
+async function usuarioNumero_Api(usuario) 
+{
+    let fetchData = await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/usuarioNumero_Api.php",
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `usuario=${encodeURIComponent(usuario)}`
+        });
+    let data = await fetchData.json();
+    return data.id_user;
     
 }

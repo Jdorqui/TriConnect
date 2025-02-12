@@ -37,7 +37,7 @@ async function mytubeconexion()
     })
     .catch(error => console.error('Error al cargar la imagen x_button:', error));
 
-    await fetch('https://10.3.5.111/DAM-B/TriConnect/my_tube/js/login_api.js', {
+    await fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/js/login_api.js', {
         method: 'POST',
         mode: 'cors'
     })
@@ -61,7 +61,7 @@ async function mytubeconexion()
 
 async function mytube_pruebas()
 {
-    await fetch('https://10.3.5.111/DAM-B/TriConnect/my_tube/js/api.js', {
+    await fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/js/api.js', {
         method: 'POST',
         mode: 'cors'
     })
