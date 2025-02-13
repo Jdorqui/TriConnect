@@ -1,6 +1,6 @@
 async function login_Api(usuario, password) 
 {
-    let fetchData = await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/login.php",
+    let fetchData = await fetch("http://localhost/PHP/TriConnect/Chatterly v0.5/php/login.php",
         {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -21,7 +21,7 @@ async function login_Api(usuario, password)
 
 async function chat_api(usuario, destinatario, mensaje) 
 {
-    let fetchData = await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/chat.php",
+    let fetchData = await fetch("http://localhost/PHP/TriConnect/Chatterly v0.5/php/chat.php",
         {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -31,7 +31,7 @@ async function chat_api(usuario, destinatario, mensaje)
 
 async function cargarMensajes_Api(usuario, destinatario) 
 {
-    let fetchData = await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/chat.php",
+    let fetchData = await fetch("http://localhost/PHP/TriConnect/Chatterly v0.5/php/chat.php",
         {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -43,7 +43,7 @@ async function cargarMensajes_Api(usuario, destinatario)
 
 async function esamigos_Api(usuario1, usuario2) 
 {
-    let fetchData = await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/verificarAmistad_Api.php",
+    let fetchData = await fetch("http://localhost/PHP/TriConnect/Chatterly v0.5/php/verificarAmistad_Api.php",
         {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -56,7 +56,7 @@ async function esamigos_Api(usuario1, usuario2)
 
 async function usuarioNumero_Api(usuario) 
 {
-    let fetchData = await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/usuarioNumero_Api.php",
+    let fetchData = await fetch("http://localhost/PHP/TriConnect/Chatterly v0.5/php/usuarioNumero_Api.php",
         {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },

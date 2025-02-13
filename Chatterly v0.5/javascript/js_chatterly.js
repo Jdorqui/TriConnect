@@ -67,8 +67,7 @@ function openallfriends()
 }
 
 //amigos
-// Función para gestionar la solicitud (aceptar o rechazar)
-function manageRequest(id, action) 
+function manageRequest(id, action) //funcion para gestionar la solicitud
 {
     fetch('../php/gestionar_solicitud.php', {
         method: 'POST',
@@ -77,8 +76,8 @@ function manageRequest(id, action)
     })
     .then(response => response.json())
     .then(data => {
-        alert(data.message);  // Mensaje de éxito o error
-        fetchPendingRequests();  // Refrescar las solicitudes
+        alert(data.message);
+        fetchPendingRequests();
     })
     .catch(error => console.error('Error al gestionar la solicitud:', error));
 }
@@ -223,7 +222,7 @@ $('#enviarMensaje').click(function()
 });
 
 // Enviar archivo
-$('#uploadfile').click(function() 
+$('#uploadfile').click(function() //evento al hacer clic en el botón de subir archivo 
 {
     document.getElementById('fileInput').click();
 });
@@ -393,12 +392,12 @@ const img2 = document.getElementById('profileImg2');
 const fileProfile = document.getElementById('fotoProfile');
 const uploadForm = document.getElementById('uploadForm');
 
-// Abre el selector de archivos al hacer clic en la imagen
+//abre el selector de archivos al hacer clic en la imagen
 img.addEventListener('click', () => {
     fileProfile.click();
 });
 
-// Subir la imagen seleccionada al servidor
+//subir la imagen seleccionada al servidor
 fileProfile.addEventListener('change', () => {
     const formData = new FormData(uploadForm);
 
@@ -410,7 +409,7 @@ fileProfile.addEventListener('change', () => {
     .then(data => {
         if (data.success) 
         {
-            img.src = data.newImagePath; // Ahora la imagen se actualizará correctamente
+            img.src = data.newImagePath; //actualiza la imagen de perfil
             img2.src = data.newImagePath;
         } 
         else 
