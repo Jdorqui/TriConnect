@@ -121,6 +121,7 @@ async function validateLoginForm() {
     let formData = new FormData(document.getElementById("login_form"))
     let data = await login(formData.get("USERNAME"), formData.get("PASSWORD"));
     if (data == "SUCCESS") {
+        console.log("<zsdsa");
         $.get(`../php/set_session.php?USERNAME=${formData.get("USERNAME")}&PASSWORD=${formData.get("PASSWORD")}`);
     }
 
@@ -138,7 +139,7 @@ async function validateRegisterForm() {
 // Comprobar si existen errores en el inicio de sesión.
 function checkErrors(data) {
     if (data == "SUCCESS") {
-        location.reload();
+        // location.reload();
     } else {
         createNotification(data);
     }
