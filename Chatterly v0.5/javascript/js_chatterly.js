@@ -210,12 +210,15 @@ async function cargarMensajes()
     
 }
 
-$('#enviarMensaje').click(function() 
+$('#enviarMensaje').click(async function() 
 {
     const mensaje = $('#mensaje').val();
     if (mensaje.trim() !== '') 
     {
+        let mensaje = $('<div>').text($('#mensaje').val()).html().trim();
+
         chat_api(id_usuario_actual, destinatario, mensaje);
+        await sendMessageAPI(await numeroUsuario_Api(id_usuario_actual), await numeroUsuario_Api(destinatario), mensaje);
         $('#mensaje').val(''); //limpiar el input
         cargarMensajes();
     }
