@@ -419,10 +419,10 @@
                 </div>
             </div>
         </div>
+        <script defer src="../javascript/apiMytube.js"></script>
         <script defer src="../javascript/api.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script defer src="../javascript/js_chatterly.js"></script>
-        <!-- <script defer src="../javascript/apiMytube.js"></script> -->
         <script>var id_usuario_actual = <?php echo $id_usuario_actual; ?>;</script>
     </body>
 </html>
