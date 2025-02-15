@@ -1,4 +1,4 @@
-const normalPanel = document.getElementById("bienvenida");
+const normalPanel = document.getElementById("chatterly");
 const optionsPanel = document.getElementById("options");
 const initialpanel = document.getElementById("initialpanel");
 const chat = document.getElementById("chatcontainer");

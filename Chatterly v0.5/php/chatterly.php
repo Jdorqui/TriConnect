@@ -69,7 +69,7 @@
         <link rel="icon" href="../assets/imgs/logo_bg.ico">
     </head>
     <body>
-        <div id="bienvenida">
+        <div id="chatterly">
             <div style="display: flex; flex-direction: column; width: 100vw; height: 100vh;">
                 <div style="background-color: #1e1f22; color: white; padding: 5px; text-align: left; height: 20px;"> <!-- barra superior -->
                     <span style="font-weight: bold; color: #949ba4;">Chatterly</span>
@@ -86,7 +86,7 @@
                         <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
                             <div style="padding: 10px;">
                                 <button id="options-button" style="text-align: center; display: flex; align-items: center;" onclick="closechat();">
-                                    <img src="../assets/imgs/friends_logo.png" alt="account" style="width: 20px; height: 20px; margin-right: 15px;">
+                                    <img src="../assets/imgs/default_profile.png" alt="account" style="width: 20px; height: 20px; margin-right: 15px;">
                                     <span>Amigos</span>
                                 </button>
                                 <div style="height: 2px; background-color: #393e42"></div>
@@ -173,7 +173,7 @@
 
                     <div id="initialpanel" style="background-color: #313338; flex: 1; display: flex; flex-direction: column; min-width: 500px;"> <!-- initialpanel -->
                         <div style="background-color: #313338; display: flex; padding: 10px; align-items: center; color: white; gap: 10px;"> 
-                            <img src="../assets/imgs/friends_logo.png" alt="friends" style="padding: 10px; width: 24px; height: 24px;">
+                            <img src="../assets/imgs/default_profile.png" alt="friends" style="padding: 10px; width: 24px; height: 24px;">
                             <span style="font-size: 16px;">Amigos</span>
                             <div id="divisor" style="width: 2px; background-color: #393e42; height: 100%;"></div>
                             <button class="friend-tab-button" style="width: 60px;" onclick="openonlinemenu()">En linea</button>
