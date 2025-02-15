@@ -7,9 +7,7 @@
         exit();
     }
 
-    // Recupera el usuario y contraseña de la sesión
     $usuario = $_SESSION['usuario'];
-    $password = $_SESSION['password'];
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['profile_picture'])) 
     {
@@ -19,22 +17,21 @@
         $userDir = $baseDir . $userName;
         $targetDir = $userDir . "/img_profile/";
 
-        // Crear las carpetas si no existen
-        if (!is_dir($userDir)) 
+        
+        if (!is_dir($userDir)) //verifica si el directorio del usuario existe
         {
-            mkdir($userDir, 0777, true);
+            mkdir($userDir, 0777, true); //crea el directorio del usuario
         }
         if (!is_dir($targetDir)) 
         {
-            mkdir($targetDir, 0777, true);
+            mkdir($targetDir, 0777, true); //crea el directorio de img_profile
         }
 
-        $fileName = basename($_FILES['profile_picture']['name']);
-        $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-        $targetFile = $targetDir . uniqid() . '.' . $fileType; // Nombre único para evitar conflictos
-
-        // Validar tipo de archivo
-        if (in_array($fileType, ['png', 'jpg', 'jpeg'])) 
+        $fileName = basename($_FILES['profile_picture']['name']); //obtiene el nombre del archivo
+        $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION)); //obtiene la extensión del archivo
+        $targetFile = $targetDir . uniqid() . '.' . $fileType; //cambia el nombre del archivo por un id unico usando el metodo uniqid
+        
+        if (in_array($fileType, ['png', 'jpg', 'jpeg'])) //valida que el archivo sea una imagen
         {
             if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $targetFile)) 
             {

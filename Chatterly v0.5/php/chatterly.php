@@ -1,5 +1,6 @@
 <?php
     session_start();
+    require 'conexion.php';
 
     if (!isset($_SESSION['usuario']) || !isset($_SESSION['password']))  //si el usuario no ha iniciado sesion
     { 
@@ -9,18 +10,6 @@
 
     //recupera el usuario y contraseña de la sesion
     $usuario = $_SESSION['usuario'];
-    $password = $_SESSION['password'];
-
-    try //conectar a la base de datos
-    {
-        $pdo = new PDO('mysql:host=localhost;dbname=chatterly', 'root', '');
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } 
-    catch (PDOException $e) 
-    {
-        echo "Error de conexión: " . $e->getMessage();
-        exit();
-    }
 
     //obtiene el id del usuario
     $stmt = $pdo->prepare("SELECT id_user FROM usuarios WHERE username = ?");
@@ -102,33 +91,33 @@
                                 </button>
                                 <div style="height: 2px; background-color: #393e42"></div>
                                 <p style="text-align: center;">MENSAJES DIRECTOS</p>
-                                    <?php
+                                    <?php //se recorre la lista de amigos para mostrar los mensajes directos con cada uno de ellos 
                                         if (count($amigos) > 0) 
                                         {
-                                            foreach ($amigos as $amigo) 
+                                            foreach ($amigos as $amigo) //recorre la lista de amigos
                                             {
                                                 $amigoDir = "../assets/users/{$amigo['username']}/img_profile/";
                                                 $defaultImage = '../assets/imgs/default_profile.png';
 
-                                                $amigoImages = glob($amigoDir . '*.{jpg,jpeg,png}', GLOB_BRACE);
+                                                $amigoImages = glob($amigoDir . '*.{jpg,jpeg,png}', GLOB_BRACE); //glob — busca coincidencias de nombres de ruta de acuerdo a un patrón por tanto busca las imagenes en la carpeta del amigo y las guarda en un array para luego ordenarlas por fecha de modificacion y mostrar la mas reciente
 
-                                                if (!empty($amigoImages)) 
+                                                if (!empty($amigoImages)) //si hay imagenes en la carpeta del amigo
                                                 {
-                                                    usort($amigoImages, function ($a, $b) 
+                                                    usort($amigoImages, function ($a, $b)  //con usort se ordena el array para ordenar las imagenes por fecha de modificacion
                                                     {
-                                                        return filemtime($b) - filemtime($a);
+                                                        return filemtime($b) - filemtime($a); //filemtime — obtiene la fecha de modificación de un archivo y se ordenan las imagenes por fecha de modificacion
                                                     });
 
-                                                    $foto = $amigoImages[0];
+                                                    $foto = $amigoImages[0]; //se guarda la imagen mas reciente
                                                 }
                                                 else 
                                                 {
-                                                    $foto = $defaultImage;
+                                                    $foto = $defaultImage; //si no hay imagenes se muestra la imagen por defecto
                                                 }
 
-                                                $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1'];
-                                                $nombre = htmlspecialchars($amigo['username'], ENT_QUOTES, 'UTF-8'); // Escapa caracteres especiales
-                                                $foto = htmlspecialchars($foto, ENT_QUOTES, 'UTF-8'); // Escapa la URL
+                                                $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1']; //se obtiene el id del destinatario
+                                                $nombre = htmlspecialchars($amigo['username'], ENT_QUOTES, 'UTF-8'); //se obtiene el nombre del amigo
+                                                $foto = htmlspecialchars($foto, ENT_QUOTES, 'UTF-8'); //se obtiene la foto del amigo
 
                                                 echo "
                                                     <button 
@@ -177,7 +166,6 @@
                                     <div id="options_button">
                                         <img src="../assets/imgs/options_icon.png" alt="options" id="options_icon" onclick="showoptionspanel()">
                                     </div>
-                                    
                                 </div>
                             </div>
                         </div>
@@ -400,16 +388,16 @@
                             ?>
                             <div class="profile-details">
                                 <p>Nombre:</p>
-                                <p><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></p><br>
+                                <p><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></p><br> 
                                 <p>Nombre de usuario:</p>
                                 <p><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></p><br>
                                 <p>Correo electronico:</p>
                                 <p>
                                     <?php
-                                        $stmt = $pdo->prepare("SELECT email FROM usuarios WHERE id_user = ?");
+                                        $stmt = $pdo->prepare("SELECT email FROM usuarios WHERE id_user = ?"); //se realiza una consulta para obtener el email del usuario
                                         $stmt->execute([$id_usuario_actual]);
-                                        $emailData = $stmt->fetch(PDO::FETCH_ASSOC);
-                                        echo htmlspecialchars($emailData['email'], ENT_QUOTES, 'UTF-8');
+                                        $emailData = $stmt->fetch(PDO::FETCH_ASSOC); //se obtiene el email del usuario
+                                        echo htmlspecialchars($emailData['email'], ENT_QUOTES, 'UTF-8'); //se muestra el email del usuario 
                                     ?>
                                 </p>
                             </div>
@@ -421,8 +409,8 @@
         </div>
         <script defer src="../javascript/apiMytube.js"></script>
         <script defer src="../javascript/api.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
         <script defer src="../javascript/js_chatterly.js"></script>
-        <script>var id_usuario_actual = <?php echo $id_usuario_actual; ?>;</script>
+        <script>var id_usuario_actual = <?php echo $id_usuario_actual; ?>;</script> <!-- se guarda el id del usuario en una variable de javascript -->
     </body>
 </html>

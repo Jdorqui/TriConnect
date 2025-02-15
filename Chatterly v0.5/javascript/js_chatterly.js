@@ -67,79 +67,89 @@ function openallfriends()
 }
 
 //amigos
-function manageRequest(id, action) //funcion para gestionar la solicitud
-{
-    fetch('../php/gestionar_solicitud.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `solicitante=${id}&accion=${action}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message);
-        fetchPendingRequests();
-    })
-    .catch(error => console.error('Error al gestionar la solicitud:', error));
-}
-
-function actualizarResultado(mensaje) 
-{
-    document.getElementById('resultado').innerText = mensaje;
-}
-
 function selectFriend(nombre, foto, destinatario) 
 {
-    // Almacena los datos del amigo seleccionado
-    const nombreAmigo = document.getElementById('nombre-amigo'); // Div donde mostrar el nombre
-    const fotoAmigo = document.getElementById('foto-amigo'); // Imagen del amigo
+    const nombreAmigo = document.getElementById('nombre-amigo'); //recoge el nombre del amigo
+    const fotoAmigo = document.getElementById('foto-amigo'); //recoge la foto del amigo
 
-    // Actualiza el DOM con los datos del amigo
-    nombreAmigo.textContent = nombre; // Muestra el nombre del amigo
-    fotoAmigo.src = foto; // Muestra la imagen del amigo
+    nombreAmigo.textContent = nombre; //muestra el nombre del amigo
+    fotoAmigo.src = foto; //muestra la foto del amigo
 
-    //console.log("Amigo seleccionado: ", nombre, foto, destinatario);
-    openchat(destinatario);
+    openchat(destinatario); //abre el chat con el amigo seleccionado
 }
 
 //chat
-function openchat(destinatarioID) 
+function openchat(destinatarioID) //abre el chat con el destinatario seleccionado
 {
-    destinatario = destinatarioID;  // Seteamos el destinatario
+    destinatario = destinatarioID; //establece el destinatario del chat
     chat.style.display = "block";
     pendingMenu.hidden = true;
     document.getElementById("addfriendmenu").style.display = "none";
     initialpanel.style.display = "none";
-    cargarMensajes();  // Carga los mensajes
+    cargarMensajes();
 }
 
-async function cargarMensajes() 
+//chat enter mandar mensaje
+inputMensaje.addEventListener('keydown', function(event) //evento al presionar enter en el input de mensaje
 {
-    if (destinatario === null) return; // Verifica que el destinatario esté definido
+  if (event.key === 'Enter') 
+  {
+    botonEnviar.click();
+  }
+});
 
-    const imgProfileUrl = document.getElementById("profileImg2").src;  // Imagen del usuario actual
-    const fotoFriendUrl = document.getElementById("fotoFriend").src;  // Imagen del amigo
+$('#enviarMensaje').click(async function() //evento al enviar un mensaje
+{
+    const mensaje = $('#mensaje').val();
+    if (mensaje.trim() !== '') 
+    {
+        let mensaje = $('<div>').text($('#mensaje').val()).html().trim();
+
+        enviarMensajes_Api(id_usuario_actual, destinatario, mensaje); //envia el mensaje (chatterly)
+
+        try //intenta enviar el mensaje a mytube
+        {
+            await enviarMensajes_Api(await numeroUsuario_Api(id_usuario_actual), await numeroUsuario_Api(destinatario), mensaje); //envia el mensaje (mytube)
+            $('#mensaje').val(''); //limpiar el input
+            cargarMensajes();
+        }
+        catch (e) 
+        {
+            console.error("No se puede conectar con mytube:", e);
+        }
+
+        $('#mensaje').val(''); //limpiar el input
+        cargarMensajes();
+    }
+});
+
+async function cargarMensajes() //carga los mensajes
+{
+    if (destinatario === null) return; //verifica si hay un destinatario seleccionado
+
+    const imgProfileUrl = document.getElementById("profileImg2").src; //obtiene la imagen de perfil
+    const fotoFriendUrl = document.getElementById("fotoFriend").src; //obtiene la imagen del amigo
 
         try 
         {
-            let mensajes = await cargarMensajes_Api(id_usuario_actual, destinatario); // Parsear la respuesta del servidor
-            $('#chat-messages').empty(); // Limpiar los mensajes previos
+            let mensajes = await cargarMensajes_Api(id_usuario_actual, destinatario); //carga los mensajes
+            $('#chat-messages').empty(); //limpia los mensajes
             
-            mensajes.forEach(function(mensaje) 
+            mensajes.forEach(function(mensaje) //recorre los mensajes y los muestra
             {
-                let fechaEnvio = mensaje.fecha_envio ? new Date(mensaje.fecha_envio).toLocaleString() : "Fecha no disponible"; 
-                let imgUrl = (mensaje.id_emisor == id_usuario_actual) ? imgProfileUrl : fotoFriendUrl;
+                let fechaEnvio = mensaje.fecha_envio ? new Date(mensaje.fecha_envio).toLocaleString() : "Fecha no disponible"; //obtiene la fecha de envio 
+                let imgUrl = (mensaje.id_emisor == id_usuario_actual) ? imgProfileUrl : fotoFriendUrl; //obtiene la imagen del emisor 
             
-                let mensajeHtml = `<div style="padding-left: 10px; display: flex; align-items: center;">`;
-                mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">`;
+                let mensajeHtml = `<div style="padding-left: 10px; display: flex; align-items: center;">`; //crea un div para el mensaje
+                mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">`; //muestra la imagen de perfil
                 
-                if (mensaje.tipo === 'archivo') 
+                if (mensaje.tipo === 'archivo') //si el mensaje es un archivo
                 {
-                    // Obtener el nombre del archivo
-                    const fileName = mensaje.contenido.split('/').pop();
-                    const fileExtension = fileName.split('.').pop().toLowerCase();
-                    let downloadLink = `<a id='link' style="text-align: center;" href="${mensaje.contenido}" download>Descargar [${fileName}]</a>`;
+                    const fileName = mensaje.contenido.split('/').pop(); //obtiene el nombre del archivo
+                    const fileExtension = fileName.split('.').pop().toLowerCase(); //obtiene la extensión del archivo
+                    let downloadLink = `<a id='link' style="text-align: center;" href="${mensaje.contenido}" download>Descargar [${fileName}]</a>`; //crea un enlace de descarga
                     
-                    // Categorías de archivos
+                    //muestra la imagen del archivo adjunto y el enlace de descarga debajo 
                     if (['png', 'jpg', 'jpeg', 'webp'].includes(fileExtension)) 
                     {
                         // Mostrar la imagen y agregar el enlace de descarga debajo
@@ -191,14 +201,14 @@ async function cargarMensajes()
                         mensajeHtml += `</div>`;
                     }
                 }
-                else 
+                else //si el mensaje es un mensaje de texto
                 {
-                    mensajeHtml += `<strong>${mensaje.alias}:</strong> ${mensaje.contenido}`;
+                    mensajeHtml += `<strong>${mensaje.alias}:</strong> ${mensaje.contenido}`; //muestra el mensaje
                 }
                 
-                mensajeHtml += `<div style="font-size: 0.8em; color: #888; min-width: 110px; padding: 5px; align-items: left; margin-left: auto;">${fechaEnvio}</div>`;
+                mensajeHtml += `<div style="font-size: 0.8em; color: #888; min-width: 110px; padding: 5px; align-items: left; margin-left: auto;">${fechaEnvio}</div>`; //muestra la fecha de envio
                 mensajeHtml += '</div>';
-                $('#chat-messages').prepend(mensajeHtml); // Añadir el mensaje al principio del chat
+                $('#chat-messages').prepend(mensajeHtml); //añade el mensaje al chat
             });
             
         } 
@@ -207,35 +217,21 @@ async function cargarMensajes()
             console.error("Error al parsear JSON:", e);
             console.log("Respuesta del servidor:", data);
         }
-    
 }
 
-$('#enviarMensaje').click(async function() 
-{
-    const mensaje = $('#mensaje').val();
-    if (mensaje.trim() !== '') 
-    {
-        let mensaje = $('<div>').text($('#mensaje').val()).html().trim();
-
-        chat_api(id_usuario_actual, destinatario, mensaje);
-        await sendMessageAPI(await numeroUsuario_Api(id_usuario_actual), await numeroUsuario_Api(destinatario), mensaje);
-        $('#mensaje').val(''); //limpiar el input
-        cargarMensajes();
-    }
-});
-
-// Enviar archivo
+//enviar archivo
 $('#uploadfile').click(function() //evento al hacer clic en el botón de subir archivo 
 {
     document.getElementById('fileInput').click();
 });
 
-document.getElementById('fileInput').addEventListener('change', function(event) 
+document.getElementById('fileInput').addEventListener('change', function(event) //evento al pinchar en el input para subir un archivo
 {
-    const file = event.target.files[0];
-        if (file && destinatario !== null) 
+    const file = event.target.files[0]; //obtiene el archivo seleccionado
+        if (file && destinatario !== null)
         {
-            const allowedExtensions = [
+            //extensiones permitidas
+            const allowedExtensions = [ 
                 'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'tiff', 'svg',
                 'mp4', 'mkv', 'mov', 'avi', 'wmv', 'flv', 'webm',
                 'mp3', 'wav', 'flac', 'aac', 'ogg', 'wma', 'm4a',
@@ -246,23 +242,23 @@ document.getElementById('fileInput').addEventListener('change', function(event)
                 'html', 'css', 'js', 'php', 'py', 'java', 'c', 'cpp', 'cs', 'sh', 'bat', 'sql', 'torrent'
         ];
         
-        const fileExtension = file.name.split('.').pop().toLowerCase();
+        const fileExtension = file.name.split('.').pop().toLowerCase(); //obtiene la extensión del archivo
 
-        if (allowedExtensions.includes(fileExtension)) 
+        if (allowedExtensions.includes(fileExtension)) //comprueba si la extensión del archivo es válida
         {
             const formData = new FormData();
-            formData.append('archivo', file);
-            formData.append('destinatario', destinatario);
+            formData.append('archivo', file); //añade el archivo al formData
+            formData.append('destinatario', destinatario); //añade el destinatario al formData
 
-            fetch('uploadfiles.php', {
+            fetch('uploadfiles.php', { //envia el archivo al servidor
                 method: 'POST',
                 body: formData,
             })
             .then(response => response.json())
-            .then(data => {
-                if (data.success) 
+            .then(data => { 
+                if (data.success) //si el archivo se ha subido correctamente
                 {
-                    cargarMensajes(); // Recargar mensajes para incluir el nuevo archivo
+                    cargarMensajes(); //carga los mensajes
                 } 
                 else 
                 {
@@ -275,8 +271,8 @@ document.getElementById('fileInput').addEventListener('change', function(event)
         } 
         else 
         {
-            alert('Formato de archivo no permitido. Selecciona un archivo válido.');
-            event.target.value = ''; // Resetea el input si el archivo no es válido
+            alert('Formato de archivo no permitido. Selecciona un archivo valido.');
+            event.target.value = ''; //limpia el input
         }
     } 
     else 
@@ -286,17 +282,6 @@ document.getElementById('fileInput').addEventListener('change', function(event)
 });
 
 setInterval(cargarMensajes, 500); //cargar mensajes cada 500ms
-
-cargarMensajes();
-
-//chat enter mandar mensaje
-inputMensaje.addEventListener('keydown', function(event) //evento al presionar enter
-{
-  if (event.key === 'Enter') 
-  {
-    botonEnviar.click();
-  }
-});
 
 //emojis
 const emojis = {
@@ -347,49 +332,49 @@ const emojis = {
     ]
 };
 
-for (let category in emojis) // Recorrer categorías y emojis
+function showEmojis() //muestra los emojis
 {
-    const categoryTitle = document.createElement('div'); // Crear un título de categoría
+    const emojisDiv = document.getElementById('emojisDiv');
+    emojisDiv.style.display = emojisDiv.style.display === 'none' ? 'block' : 'none'; //alterna la visibilidad del emojisDiv
+}
+
+for (let category in emojis) //recorre las categorías de emojis
+{
+    const categoryTitle = document.createElement('div'); //crea un div para el titulo de la categoría
     categoryTitle.textContent = category;
     categoryTitle.style = "font-size: 14px; color: #fff; padding-bottom: 10px; padding-top: 10px; font-weight: bold;";
-    emojiList.appendChild(categoryTitle);
+    emojiList.appendChild(categoryTitle); //añade el titulo al emojiList
 
    
-    const emojiContainer = document.createElement('div');  // Crear un contenedor para los emojis de esa categoría
-    emojiContainer.style = "display: flex; flex-wrap: wrap; gap: 10px;";  // Flexbox para los emojis
+    const emojiContainer = document.createElement('div'); //crea un div para los emojis 
+    emojiContainer.style = "display: flex; flex-wrap: wrap; gap: 10px;";  
 
-    emojis[category].forEach((emoji) => { // Crear los emojis de esa categoría
-        const emojiItem = document.createElement('div');
+    emojis[category].forEach((emoji) => { //recorre los emojis de la categoría
+        const emojiItem = document.createElement('div'); //crea un div para el emoji
         emojiItem.textContent = emoji;
         emojiItem.style = `font-size: 20px; cursor: pointer; gap: 5px; text-align: center;`;
         
-        emojiItem.addEventListener('click', () => { // Agregar evento para insertar emoji en el input
-            mensajeInput.value += emoji; // Agrega el emoji al input
+        emojiItem.addEventListener('click', () => { //evento al hacer clic en el emoji
+            mensajeInput.value += emoji; //añade el emoji al input
         });
 
-        emojiContainer.appendChild(emojiItem);
+        emojiContainer.appendChild(emojiItem); //añade el emoji al contenedor
     });
 
-    emojiList.appendChild(emojiContainer);
+    emojiList.appendChild(emojiContainer); //añade el contenedor al emojiList
     
-    const divisor = document.createElement('div'); // Crear un divisor entre las categorías
+    const divisor = document.createElement('div'); //crea un divisor
     divisor.style = "height: 1px; background-color: #444; margin: 15px 0;";
-    emojiList.appendChild(divisor);
+    emojiList.appendChild(divisor); //añade el divisor al emojiList
 }
 
-function showEmojis()
-{
-    const emojisDiv = document.getElementById('emojisDiv');
-    emojisDiv.style.display = emojisDiv.style.display === 'none' ? 'block' : 'none';
-}
-
-function showprofileinfo()
+//imagen perfil
+function showprofileinfo() //muestra el panel de información del perfil
 {
     showoptionspanel();
     document.getElementById("profileinfo").style.display = "block";
 }
 
-//imagen perfil
 const img = document.getElementById('profileImg');
 const img2 = document.getElementById('profileImg2');
 const fileProfile = document.getElementById('fotoProfile');
@@ -410,10 +395,10 @@ fileProfile.addEventListener('change', () => {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) 
+        if (data.success)
         {
             img.src = data.newImagePath; //actualiza la imagen de perfil
-            img2.src = data.newImagePath;
+            img2.src = data.newImagePath; 
         } 
         else 
         {

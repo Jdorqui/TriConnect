@@ -18,7 +18,7 @@ try
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC); //se obtiene el usuario de la base de datos y se guarda en $row 
 
-    if ($row && password_verify($password, $row['password'])) 
+    if ($row && password_verify($password, $row['password'])) //verifica si la contraseña es correcta
     {
         $usuario_id = $row['id_user']; //el id_user se obtiene si la contraseña es correcta
     } 
@@ -28,8 +28,7 @@ try
         exit();
     }
 
-    // Procesar la solicitud
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') 
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') //verifica si se ha recibido la solicitud correctamente
     {
         $accion = $_POST['accion'];
         $solicitante_id = $_POST['solicitante'];
@@ -39,13 +38,14 @@ try
             "DELETE FROM amigos WHERE ((id_user1 = :solicitante_id AND id_user2 = :usuario_id) OR (id_user1 = :usuario_id AND id_user2 = :solicitante_id)) AND estado = 'pendiente'";
 
         $stmt = $pdo->prepare($sql); //se prepara la consulta
-        $stmt->bindParam(':solicitante_id', $solicitante_id, PDO::PARAM_INT);
-        $stmt->bindParam(':usuario_id', $usuario_id, PDO::PARAM_INT);
+        $stmt->bindParam(':solicitante_id', $solicitante_id, PDO::PARAM_INT); 
+        $stmt->bindParam(':usuario_id', $usuario_id, PDO::PARAM_INT); 
 
         if ($stmt->execute()) 
         {
-            header("Location: ../php/chatterly.php");    
-        } else 
+            header("Location: ../php/chatterly.php"); //redirige a chatterly.php
+        } 
+        else 
         {
             echo json_encode(["status" => "error", "message" => "Error al procesar la solicitud."]);
         }

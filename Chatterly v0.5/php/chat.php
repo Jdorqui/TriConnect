@@ -1,7 +1,7 @@
 <?php
 require 'conexion.php';
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$id_usuario_actual = $_POST['usuario'];
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //establecer el modo de error a excepciones
+$id_usuario_actual = $_POST['usuario']; //obtener el id del usuario actual
 
 //obtener los mensajes entre el usuario actual y el destinatario
 if (isset($_POST['destinatario'])) 
