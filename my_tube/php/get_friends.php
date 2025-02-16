@@ -1,6 +1,8 @@
 <?php
 include "db_connection.php";
 
+ini_set('display_errors', 1);
+
 $USERNAME = $_POST['USERNAME'];
 $GET_ALL_FRIENDS_QUERY = $CONN->
     query(
@@ -20,7 +22,7 @@ $GET_ALL_FRIENDS_QUERY = $CONN->
     );
 
 $DATA = array();
-while ($ROW = $GET_ALL_MSGS_QUERY->fetch_assoc()) {
+while ($ROW = $GET_ALL_FRIENDS_QUERY->fetch_assoc()) {
     $DATA[] = $ROW;
 }
 

@@ -23,7 +23,7 @@ function search(searchQuery, event) {
                 let usernames = array["usernames"]
                 let subscribed = array["subscribed"]
                 let friends = array["friends"]
-                console.log(`DEBUG: ${JSON.stringify(array, null, 2)}`);
+                // console.log(`DEBUG: ${JSON.stringify(array, null, 2)}`);
 
                 channels_main_div.innerHTML = '';
                 for (let i = 0; i < usernames.length; i++) {
@@ -49,13 +49,13 @@ function createChannelDiv(channel, subscribed, friends) {
     }
 
     channels_main_div.innerHTML += `
-        <div>
+        <div onclick="changeChannel()">
             <img class="search_user_image" src="../img/logged_out_profile_pic.jpg">
             <div>
                 <div>${channel}</div>
                 <div>subs</div>
             </div>
-            <div>
+            <div style="z-index: 1">
                 ${type}
             </div>
         </div>`;

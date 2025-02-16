@@ -1,7 +1,9 @@
-const friendsNavbar = document.getElementById('friend_navbar');
-const chat = document.getElementById('chat');
+const FRIENDS_NAVBAR = document.getElementById('friend_navbar');
+const USER_HEADER = document.getElementById('user_header');
+const CHAT = document.getElementById('chat');
+const FRIEND_OBJECTS = [];
+let friendsArray = [];
 
-const friendObjects = [];
 let selectedFriend;
 class FriendHandler {
     constructor(div, id, name) {
@@ -14,7 +16,7 @@ class FriendHandler {
 
     setMesssageNumberToZero() {
         this.messageNumber = 0;
-        chat.innerHTML = "";
+        CHAT.innerHTML = "";
     }
 
     checkUnreadMessages() {
@@ -48,34 +50,49 @@ class FriendHandler {
     }
 }
 
-function createFriendDivs() {
+async function createFriendDivs() {
     for (let i = 0; i < friendsArray.length; i++) {
-        let name = friendsArray[i][0];
+        let name = friendsArray[i].SUBSCRIBED_TO;
 
-        friendsNavbar.innerHTML += `
+        FRIENDS_NAVBAR.innerHTML += `
             <div id=friend_${i} onclick="changeChat(${i})" style="position: relative">
                 <img class="every_user_image" src="../img/profile_pic_example.jpg">
                 <div>${name}</div>
                 <div class="new_messages_each_friend" style="display: none">0</div>
             </div>`;
 
-        friendObjects.push(new FriendHandler(friendsNavbar.children[i + 1], i, name));
+        FRIEND_OBJECTS.push(new FriendHandler(FRIENDS_NAVBAR.children[i + 1], i, name));
     }
 
-    // console.log(friendObjects);
+    if (FRIEND_OBJECTS.length > 0) {
+        changeChat(FRIEND_OBJECTS[0].id);
+        document.getElementById("input_text").style.display = "";
+    } else {
+        emptyChat();
+        document.getElementById("input_text").style.display = "none";
+    }
 }
 
 function changeChat(friendId) {
-    selectedFriend = friendObjects[friendId];
+    selectedFriend = FRIEND_OBJECTS[friendId];
     selectedFriend.setMesssageNumberToZero();
 
-    let userHeader = document.getElementById('user_header');
-    userHeader.innerHTML = `
+    USER_HEADER.innerHTML = `
         <img class="every_user_image" src="../img/profile_pic_example.jpg">
         <div>${selectedFriend.name}</div>`;
 
     setReadMessages();
 }
+
+function emptyChat() {
+    USER_HEADER.innerHTML = "";
+    CHAT.innerHTML = "";
+}
+
+(async () => {
+    friendsArray = await getFriends(username);
+    await createFriendDivs();
+})();
 
 function setReadMessages() {
     let formData = new FormData();
@@ -86,12 +103,7 @@ function setReadMessages() {
     selectedFriend.zeroUnreadMessages();
 }
 
-createFriendDivs();
-if (friendObjects.length > 0) {
-    changeChat(friendObjects[0].id);
-}
-
-function createMessage(sender, msg) {
+function createMessage(sender, msg, date) {
     let style = "";
     let colorStyle = "";
     if (sender == username) {
@@ -102,39 +114,36 @@ function createMessage(sender, msg) {
         colorStyle = "background-color: rgba(65, 65, 65, 0.27);";
     }
 
-    let before = chat.innerHTML;
+    let before = CHAT.innerHTML;
 
-    chat.innerHTML = `
+    CHAT.innerHTML = `
         <div class="message_body" style="${style}">
             <img class="every_user_image" src="../img/profile_pic_example.jpg">
             <div style="${colorStyle}">
-                <div>${sender}</div>
+                <div style="font-size: 1vw;">${sender}</div>
                 <div class="message">${msg}</div>
+                <div style="position: absolute; right: 3%; bottom: 10%; font-size: 1vw;">${date}</div>
             </div>
         </div>`;
 
-    chat.innerHTML += before;
+    CHAT.innerHTML += before;
 }
 
 // Usar la función receiveMessages de la API para mandar un mensaje.
 async function sendMessage(input, event) {
     if (event.key == "Enter" && input.value != "") {
-        await sendMessageAPI(username, selectedFriend.name, input.value);
+        let inputValue = input.value;
+        input.value = "";
+
+        await sendMessageAPI(username, selectedFriend.name, inputValue);
 
         let chatterlyUsername = await getChatterlyUsername(username);
         let chatterlyFriend = await getChatterlyUsername(selectedFriend.name);
-
-        console.log(chatterlyUsername, chatterlyFriend);
-        console.log(await esamigos_Api(chatterlyUsername, chatterlyFriend));
         if (await esamigos_Api(chatterlyUsername, chatterlyFriend) == "aceptado") {
-            console.log("sí");
-            console.log(await usuarioNumero_Api(chatterlyUsername));
-            await chat_api(await usuarioNumero_Api(chatterlyUsername), await usuarioNumero_Api(chatterlyFriend), input.value);
+            await chat_api(await usuarioNumero_Api(chatterlyUsername), await usuarioNumero_Api(chatterlyFriend), inputValue);
         }
 
-        input.value = "";
-
-        chat.scrollTop = chat.scrollHeight
+        CHAT.scrollTop = CHAT.scrollHeight
     }
 }
 
@@ -146,12 +155,20 @@ async function getAllMessages(friendObject) {
 
     for (let i = 0; i < newMessages; i++) {
         let sender = jsonData[friendObject.messageNumber].SENDER;
-        let msg = jsonData[friendObject.messageNumber].MSG;
         let seen = jsonData[friendObject.messageNumber].SEEN;
 
         // Comprobar si el mensaje nuevo recibido es del amigo seleccionado.
         if (friendObject.name == selectedFriend.name) {
-            createMessage(sender, msg);
+            let msg = jsonData[friendObject.messageNumber].MSG;
+            let rawDate = new Date(jsonData[friendObject.messageNumber].SEND_DATE);
+            let date;
+            if (rawDate.toLocaleDateString() == new Date().toLocaleDateString()) {
+                date = rawDate.toLocaleTimeString();
+            } else {
+                date = rawDate.toLocaleString();
+            }
+
+            createMessage(sender, msg, date);
         }
         // Por otro lado, añade 1 a los mensajes no vistos por el usuario actual.
         else if (seen == "0" && sender != username) {
@@ -162,9 +179,17 @@ async function getAllMessages(friendObject) {
     }
 }
 
-// Comprobar cada 200 ms todos los mensajes de cada amigo.
-setInterval(function () {
-    for (i = 0; i < friendObjects.length; i++) {
-        getAllMessages(friendObjects[i]);
+// Comprobar cada 250 ms todos los mensajes de cada amigo y comprueba la lista de amigos.
+setInterval(async function () {
+    let tempArray = await getFriends(username);
+    if (friendsArray.length != tempArray.length) {
+        FRIEND_OBJECTS.length = 0;
+        FRIENDS_NAVBAR.innerHTML = "<div>Amigos</div>"
+        friendsArray = tempArray;
+        await createFriendDivs();
     }
-}, 200);
+
+    for (i = 0; i < FRIEND_OBJECTS.length; i++) {
+        await getAllMessages(FRIEND_OBJECTS[i]);
+    }
+}, 250);

@@ -1,10 +1,13 @@
+const MYTUBE_IP = "172.25.170.9";
+// const MYTUBE_IP = "192.168.1.137";
+
 // Iniciar sesión.
 async function login(username, password) {
     let formData = new FormData();
     formData.append('USERNAME', username);
     formData.append('PASSWORD', password);
 
-    let fetchData = await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/login.php", {
+    let fetchData = await fetch(`http://${MYTUBE_IP}/DAM-B/TriConnect/my_tube/php/login.php`, {
         method: "POST",
         body: formData,
     });
@@ -20,7 +23,7 @@ async function register(username, password, email) {
     formData.append('PASSWORD', password);
     formData.append('EMAIL', email);
 
-    let fetchData = await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/sign_up.php", {
+    let fetchData = await fetch(`http://${MYTUBE_IP}/DAM-B/TriConnect/my_tube/php/sign_up.php`, {
         method: "POST",
         body: formData,
     });
@@ -36,7 +39,7 @@ async function sendMessageAPI(sender, receiver, msg) {
     formData.append('RECEIVER', receiver);
     formData.append('MSG', msg);
 
-    let fetchData = await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/send_message.php", {
+    let fetchData = await fetch(`http://${MYTUBE_IP}/DAM-B/TriConnect/my_tube/php/send_message.php`, {
         method: "POST",
         body: formData,
     });
@@ -51,7 +54,7 @@ async function receiveMessages(sender, receiver) {
     formData.append('SENDER', sender);
     formData.append('RECEIVER', receiver);
 
-    let fetchData = await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/receive_messages.php", {
+    let fetchData = await fetch(`http://${MYTUBE_IP}/DAM-B/TriConnect/my_tube/php/receive_messages.php`, {
         method: "POST",
         body: formData,
     });
@@ -60,12 +63,11 @@ async function receiveMessages(sender, receiver) {
     return data;
 }
 
-async function getFriends(username, friend) {
+async function getFriends(username) {
     let formData = new FormData();
     formData.append('USERNAME', username);
-    formData.append('FRIEND', friend);
 
-    let fetchData = await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/get_friends.php", {
+    let fetchData = await fetch(`http://${MYTUBE_IP}/DAM-B/TriConnect/my_tube/php/get_friends.php`, {
         method: "POST",
         body: formData,
     });
@@ -121,8 +123,7 @@ async function validateLoginForm() {
     let formData = new FormData(document.getElementById("login_form"))
     let data = await login(formData.get("USERNAME"), formData.get("PASSWORD"));
     if (data == "SUCCESS") {
-        console.log("<zsdsa");
-        $.get(`../php/set_session.php?USERNAME=${formData.get("USERNAME")}&PASSWORD=${formData.get("PASSWORD")}`);
+        await $.get(`../php/set_session.php?USERNAME=${formData.get("USERNAME")}&PASSWORD=${formData.get("PASSWORD")}`);
     }
 
     checkErrors(data);
@@ -139,7 +140,7 @@ async function validateRegisterForm() {
 // Comprobar si existen errores en el inicio de sesión.
 function checkErrors(data) {
     if (data == "SUCCESS") {
-        // location.reload();
+        location.reload();
     } else {
         createNotification(data);
     }

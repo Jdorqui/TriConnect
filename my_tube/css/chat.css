@@ -110,6 +110,7 @@
 
 /* Cada mensaje. */
 .message_body {
+    position: relative;
     display: flex;
     width: 50%;
     padding: 0.5vw;
