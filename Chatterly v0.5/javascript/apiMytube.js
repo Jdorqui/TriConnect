@@ -61,16 +61,15 @@ async function mytubeconexion()
 
 async function mytube_pruebas()
 {
-    await fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/js/api.js', {
+    await fetch('http://172.25.170.9/DAM-B/TriConnect/my_tube/js/api.js', {
         method: 'POST',
         mode: 'cors'
     })
     .then(response => response.text())
     .then(data => {
-        // Crear un nuevo <script> y añadir el código JavaScript al contenido
         const script = document.createElement('script');
         script.type = 'text/javascript';
-        script.innerHTML = data;  // Añadir el código JavaScript recibido
+        script.innerHTML = data;
     
         document.body.appendChild(script);
     })

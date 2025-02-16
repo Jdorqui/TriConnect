@@ -3,18 +3,18 @@ require 'conexion.php';
 
 $mensaje = ""; //variable para almacenar el mensaje de error o exito
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) //verificar si se ha enviado el formulario
 {
     $email = trim($_POST['email']);
-    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?");
+    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?"); //verificar si el correo esta registrado
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
-    if ($user)  
+    if ($user) //si el correo está registrado
     {
-        if (isset($_POST['new_password']) && isset($_POST['confirm_password']))  
+        if (isset($_POST['new_password']) && isset($_POST['confirm_password'])) //verificar si se han enviado las contraseñas
         {
-            $new_password = $_POST['new_password'];
+            $new_password = $_POST['new_password']; 
             $confirm_password = $_POST['confirm_password'];
 
             //validar que la contraseña tenga al menos 5 caracteres, 1 mayúscula y 1 caracter especial
@@ -22,14 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email']))
             {
                 $mensaje = "La contraseña debe tener al menos 5 caracteres, una mayúscula y un carácter especial.";
             }
-            elseif ($new_password !== $confirm_password)  
+            elseif ($new_password !== $confirm_password) //validar que las contraseñas coincidan
             {
                 $mensaje = "Las contraseñas no coinciden.";
             }
-            else 
+            else //si las contraseñas coinciden y cumplen con los requisitos
             {
-                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-                $update_stmt = $pdo->prepare("UPDATE usuarios SET password = ? WHERE email = ?");
+                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT); //hashea la nueva contraseña
+                $update_stmt = $pdo->prepare("UPDATE usuarios SET password = ? WHERE email = ?"); //actualiza la contraseña
                 $update_stmt->execute([$hashed_password, $email]);
                 $mensaje = "Contraseña restablecida exitosamente.";
             }
