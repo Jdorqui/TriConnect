@@ -1,5 +1,6 @@
-const MYTUBE_IP = "172.25.170.9";
+// const MYTUBE_IP = "172.25.170.9";
 // const MYTUBE_IP = "192.168.1.137";
+const MYTUBE_IP = "10.3.5.111";
 
 // Iniciar sesión.
 async function login(username, password) {
@@ -77,44 +78,63 @@ async function getFriends(username) {
 }
 
 // Parte visual del inicio de sesión y registro.
-let main = document.getElementById("main_div");
-let loginAPIWrapper = document.getElementById("mytube_login_API_wrapper");
-let loginForm = document.getElementById("login_form");
-let registerForm = document.getElementById("register_form");
+function getMain() {
+    return document.getElementById("main_div");
+}
+
+function getLoginAPIWrapper() {
+    return document.getElementById("mytube_login_API_wrapper");
+}
+
+function getLoginForm() {
+    return document.getElementById("login_form");
+}
+
+function getRegister() {
+    return document.getElementById("register_form");
+}
 
 // Mostrar la ventana de inicio de sesión (API).
 function displayLoginAPIWrapper() {
-    loginAPIWrapper.style.display = "";
-    showLoginForm();
-    main.style.filter = "brightness(20%)";
+    try {
+        getLoginAPIWrapper().style.display = "";
+        showLoginForm();
+        getMain().style.filter = "brightness(20%)";
+    } catch (e) {
+        console.log("main no existe");
+    }
 }
 
 // Cerrar la ventana de inicio de sesión (API).
 function closeLoginAPIWrapper() {
-    loginAPIWrapper.style.display = "none";
-    main.style.filter = "brightness(100%)";
+    try {
+        getLoginAPIWrapper().style.display = "none";
+        getMain().style.filter = "brightness(100%)";
+    } catch (e) {
+        console.log("main no existe");
+    }
 }
 
 // Mostrar el div de inicio de sesión.
 function showLoginForm() {
     hideRegisterForm();
-    loginForm.style.display = "";
+    getLoginForm().style.display = "";
 }
 
 // Ocultar el div de inicio de sesión.
 function hideLoginForm() {
-    loginForm.style.display = "none";
+    getLoginForm().style.display = "none";
 }
 
 // Mostrar la ventana de registro.
 function showRegisterForm() {
     hideLoginForm();
-    registerForm.style.display = "";
+    getRegister().style.display = "";
 }
 
 // Cerrar la ventana de registro.
 function hideRegisterForm() {
-    registerForm.style.display = "none";
+    getRegister().style.display = "none";
 }
 
 // Validar el form de inicio de sesión.
@@ -129,8 +149,26 @@ async function validateLoginForm() {
     checkErrors(data);
 }
 
+// Validar el form de inicio de sesión en Chatterly.
+async function validateLoginFormChatterly() {
+    event.preventDefault();
+    let formData = new FormData(document.getElementById("login_form"))
+    let data = await login(formData.get("USERNAME"), formData.get("PASSWORD"));
+    closeLoginAPIWrapper();
+
+    return { "status": data, "user": formData.get("USERNAME") };
+}
+
 // Validar el form de registro.
 async function validateRegisterForm() {
+    event.preventDefault();
+    let formData = new FormData(document.getElementById("register_form"))
+    let data = await register(formData.get("USERNAME"), formData.get("PASSWORD"));
+    checkErrors(data);
+}
+
+// Validar el form de registro en Chatterly.
+async function validateRegisterFormChatterly() {
     event.preventDefault();
     let formData = new FormData(document.getElementById("register_form"))
     let data = await register(formData.get("USERNAME"), formData.get("PASSWORD"));
