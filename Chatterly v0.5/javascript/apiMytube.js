@@ -37,43 +37,15 @@ async function mytubeconexion()
     })
     .catch(error => console.error('Error al cargar la imagen x_button:', error));
 
-    await fetch('http://10.3.5.111/DAM-B/TriConnect/my_tube/js/login_api.js', {
-        method: 'POST',
-        mode: 'cors'
-    })
-    .then(response => response.text())
-    .then(data => {
-        // Crear un nuevo <script> y añadir el código JavaScript al contenido
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.innerHTML = data;  // Añadir el código JavaScript recibido
-    
-        document.body.appendChild(script);
-    })
-    .catch(error => console.error(error));
-
-    document.getElementById("login_form").addEventListener('submit', function(event) 
+    document.getElementById("login_form").addEventListener('submit', async function(event) 
     {
-        console.log(validateLoginForm(event));
+        var datos = await validateLoginFormChatterly(event);
 
+        if (datos.status == 'SUCCESS')
+        {
+            $.get(`../php/insertarUsuarioMytube_Api.php?mytube=${datos.user}&id_user=${id_usuario_actual}`);
+        }
     });
-}
-
-async function mytube_pruebas()
-{
-    await fetch('http://172.25.170.9/DAM-B/TriConnect/my_tube/js/api.js', {
-        method: 'POST',
-        mode: 'cors'
-    })
-    .then(response => response.text())
-    .then(data => {
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.innerHTML = data;
-    
-        document.body.appendChild(script);
-    })
-    .catch(error => console.error(error));
 }
 
 async function login_mytube(usuario, password, email)
@@ -89,7 +61,3 @@ async function login_mytube(usuario, password, email)
         console.log(await register(usuario, password, email));
     }
 }
-
-(async () => {
-    await mytube_pruebas();
-})();

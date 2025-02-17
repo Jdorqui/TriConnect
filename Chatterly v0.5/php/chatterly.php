@@ -349,7 +349,10 @@
                         <div class="form-container">
                             <p class="section-title">AJUSTES DE USUARIO</p>
                             <button id="options-button" onclick="showprofileinfo()">Mi cuenta</button>
-                            <button id="options-button" onclick="login_mytube()">Conectar con MyTube</button>
+                            <button id="options-button" style="display: flex; justify-content: right;" onclick="mytubeconexion()">Conectar con MyTube
+                            <img src="http://10.3.5.111/DAM-B/TriConnect/my_tube/img/mytube_logo.png" style="margin-left: 10px; width: 20px; height: 100%;">
+                            </button>
+                            
                         </div>
                         <div class="divider"></div>
                         <div class="form-container">
@@ -407,6 +410,7 @@
                 </div>
             </div>
         </div>
+        <script src="http://10.3.5.111/DAM-B/TriConnect/my_tube/js/api.js"></script> 
         <script defer src="../javascript/apiMytube.js"></script>
         <script defer src="../javascript/api.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 

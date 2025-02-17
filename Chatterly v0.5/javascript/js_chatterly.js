@@ -109,7 +109,7 @@ $('#enviarMensaje').click(async function() //evento al enviar un mensaje
 
         try //intenta enviar el mensaje a mytube
         {
-            await enviarMensajes_Api(await numeroUsuario_Api(id_usuario_actual), await numeroUsuario_Api(destinatario), mensaje); //envia el mensaje (mytube)
+            await sendMessageAPI(await numeroUsuario_Api(id_usuario_actual), await numeroUsuario_Api(destinatario), mensaje); //envia el mensaje (mytube)
             $('#mensaje').val(''); //limpiar el input
             cargarMensajes();
         }

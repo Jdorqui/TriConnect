@@ -83,6 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) //verificar
                 <?php echo $mensaje; ?>
             </div>
         </div>
-        <script defer src="../javascript/js.js"></script>
+        <script defer src="../javascript/js_registerAndLogin.js"></script>
     </body>
 </html>
