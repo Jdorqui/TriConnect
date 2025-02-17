@@ -1,7 +1,6 @@
 function changeChannel() {
-    display('channel');
+    // display('channel');
 }
-
 
 function subscribe(button, username, channel) {
     if (username == '') {

@@ -140,7 +140,7 @@ async function sendMessage(input, event) {
         let chatterlyUsername = await getChatterlyUsername(username);
         let chatterlyFriend = await getChatterlyUsername(selectedFriend.name);
         if (await esamigos_Api(chatterlyUsername, chatterlyFriend) == "aceptado") {
-            await chat_api(await usuarioNumero_Api(chatterlyUsername), await usuarioNumero_Api(chatterlyFriend), inputValue);
+            await enviarMensajes_Api(await usuarioNumero_Api(chatterlyUsername), await usuarioNumero_Api(chatterlyFriend), inputValue);
         }
 
         CHAT.scrollTop = CHAT.scrollHeight

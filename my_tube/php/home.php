@@ -268,7 +268,7 @@ if (isset($_SESSION['USERNAME'])) {
     <script type="text/javascript" src="../js/channel.js"></script>
     <script type="text/javascript" src="../js/search.js"></script>
     <script type="text/javascript" src="../js/main.js"></script>
-    <!--<script type="text/javascript" src="http://172.24.169.47/PHP/TriConnect/Chatterly%20v0.5/javascript/api.js"></script>-->
+    <script type="text/javascript" src="http://10.3.5.106/PHP/TriConnect/Chatterly%20v0.5/javascript/api.js"></script>
     <script type="text/javascript" src="../js/chatterly.js"></script>
 </body>
 
