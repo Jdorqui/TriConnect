@@ -95,9 +95,13 @@ function loginUsuario()
                 errorMessage.style.color = "#f7767a";
                 document.getElementById("ms3").style.color = "#f7767a";
                 document.getElementById("ms4").style.color = "#f7767a";
-
-                document.getElementById("ms3").textContent = document.getElementById("ms3").textContent + ` - ${data.message}`;
-                document.getElementById("ms4").textContent = document.getElementById("ms4").textContent + ` - ${data.message}`;
+                
+                if(document.getElementById("ms3").textContent.includes(data.message) == false)
+                    {
+                        document.getElementById("ms3").textContent = document.getElementById("ms3").textContent + ` - ${data.message}`;
+                        document.getElementById("ms4").textContent = document.getElementById("ms4").textContent + ` - ${data.message}`;
+                    }
+                
             }
         })
         .catch(error => {
