@@ -6,26 +6,19 @@ async function login_Api(usuario, password)
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `usuario=${encodeURIComponent(usuario)}&password=${encodeURIComponent(password)}`
         });
+
     let data = await fetchData.json();
-    if (data.status === "success") 
-    {
-        console.log("success");
-        return data;
-    }
-    else
-    {
-        errorMessage.textContent = data.message;
-        console.log("success'nt");
-    }
+    return data;
 }
 
-async function enviarMensajes_Api(usuario, destinatario, mensaje) 
+async function enviarMensajes_Api(usuario, destinatario, mensaje, mytube) 
 {
-    let fetchData = await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/chat.php",
+    console.log(mytube);
+    await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/chat.php",
         {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `usuario=${encodeURIComponent(usuario)}&destinatario=${encodeURIComponent(destinatario)}&mensaje=${encodeURIComponent(mensaje)}`
+            body: `usuario=${encodeURIComponent(usuario)}&destinatario=${encodeURIComponent(destinatario)}&mensaje=${encodeURIComponent(mensaje)}&mytube=${encodeURIComponent(mytube)}`
         });
 }
 
@@ -38,6 +31,7 @@ async function cargarMensajes_Api(usuario, destinatario)
             body: `usuario=${encodeURIComponent(usuario)}&destinatario=${encodeURIComponent(destinatario)}`
         });
     let data = await fetchData.json();
+    console.log(data);
     return data; //devuelve un array con los mensajes en formato json
 }
 

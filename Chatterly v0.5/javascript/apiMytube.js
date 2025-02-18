@@ -42,8 +42,25 @@ async function mytubeconexion()
         var datos = await validateLoginFormChatterly(event);
 
         if (datos.status == 'SUCCESS')
+        {         
+            let fetchData = await fetch(`../php/insertarUsuarioMytube_Api.php?mytube=${datos.user}&id_user=${id_usuario_actual}`,
+                {
+                    method: "GET",
+                });
+            let data = await fetchData.text();
+            
+            if(data == "ERROR")
+            {
+                alert("El usuario ya exsiste en MyTube");
+            }
+            else
+            {
+                closeLoginAPIWrapper();
+            }
+        }
+        else
         {
-            $.get(`../php/insertarUsuarioMytube_Api.php?mytube=${datos.user}&id_user=${id_usuario_actual}`);
+            alert(datos.status);
         }
     });
 }

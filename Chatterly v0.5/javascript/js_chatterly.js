@@ -82,6 +82,7 @@ function selectFriend(nombre, foto, destinatario)
 function openchat(destinatarioID) //abre el chat con el destinatario seleccionado
 {
     destinatario = destinatarioID; //establece el destinatario del chat
+    count = 0; //resetea el contador de mensajes
     chat.style.display = "block";
     pendingMenu.hidden = true;
     document.getElementById("addfriendmenu").style.display = "none";
@@ -105,11 +106,11 @@ $('#enviarMensaje').click(async function() //evento al enviar un mensaje
     {
         let mensaje = $('<div>').text($('#mensaje').val()).html().trim();
 
-        enviarMensajes_Api(id_usuario_actual, destinatario, mensaje); //envia el mensaje (chatterly)
+        enviarMensajes_Api(id_usuario_actual, destinatario, mensaje, 0); //envia el mensaje (chatterly)
 
         try //intenta enviar el mensaje a mytube
         {
-            await sendMessageAPI(await numeroUsuario_Api(id_usuario_actual), await numeroUsuario_Api(destinatario), mensaje); //envia el mensaje (mytube)
+            await sendMessageAPI(await numeroUsuario_Api(id_usuario_actual), await numeroUsuario_Api(destinatario), mensaje, 1); //envia el mensaje (mytube)
             $('#mensaje').val(''); //limpiar el input
             cargarMensajes();
         }
@@ -123,8 +124,10 @@ $('#enviarMensaje').click(async function() //evento al enviar un mensaje
     }
 });
 
+count = 0;
 async function cargarMensajes() //carga los mensajes
 {
+    
     if (destinatario === null) return; //verifica si hay un destinatario seleccionado
 
     const imgProfileUrl = document.getElementById("profileImg2").src; //obtiene la imagen de perfil
@@ -133,84 +136,92 @@ async function cargarMensajes() //carga los mensajes
         try 
         {
             let mensajes = await cargarMensajes_Api(id_usuario_actual, destinatario); //carga los mensajes
-            $('#chat-messages').empty(); //limpia los mensajes
-            
-            mensajes.forEach(function(mensaje) //recorre los mensajes y los muestra
+            if(mensajes.length > count) //si hay mensajes nuevos
             {
-                let fechaEnvio = mensaje.fecha_envio ? new Date(mensaje.fecha_envio).toLocaleString() : "Fecha no disponible"; //obtiene la fecha de envio 
-                let imgUrl = (mensaje.id_emisor == id_usuario_actual) ? imgProfileUrl : fotoFriendUrl; //obtiene la imagen del emisor 
-            
-                let mensajeHtml = `<div style="padding-left: 10px; display: flex; align-items: center;">`; //crea un div para el mensaje
-                mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">`; //muestra la imagen de perfil
+                count = mensajes.length; //actualiza el contador de mensajes
+                $('#chat-messages').empty(); //limpia los mensajes
                 
-                if (mensaje.tipo === 'archivo') //si el mensaje es un archivo
+                mensajes.forEach(function(mensaje) //recorre los mensajes y los muestra
                 {
-                    const fileName = mensaje.contenido.split('/').pop(); //obtiene el nombre del archivo
-                    const fileExtension = fileName.split('.').pop().toLowerCase(); //obtiene la extensión del archivo
-                    let downloadLink = `<a id='link' style="text-align: center;" href="${mensaje.contenido}" download>Descargar [${fileName}]</a>`; //crea un enlace de descarga
+                    let fechaEnvio = mensaje.fecha_envio ? new Date(mensaje.fecha_envio).toLocaleString() : "Fecha no disponible"; //obtiene la fecha de envio 
+                    let imgUrl = (mensaje.id_emisor == id_usuario_actual) ? imgProfileUrl : fotoFriendUrl; //obtiene la imagen del emisor 
                     
-                    //muestra la imagen del archivo adjunto y el enlace de descarga debajo 
-                    if (['png', 'jpg', 'jpeg', 'webp'].includes(fileExtension)) 
+                    if(mensaje.mytube == 1) //si el mensaje es de mytube
                     {
-                        // Mostrar la imagen y agregar el enlace de descarga debajo
-                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                        mensajeHtml += `<img src="${mensaje.contenido}" alt="Imagen adjunta" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
-                        mensajeHtml += downloadLink;
-                        mensajeHtml += `</div>`;
+                        imgUrl = "http://10.3.5.111/DAM-B/TriConnect/my_tube/img/mytube_logo.png"; //muestra la imagen de mytube
                     }
-                    else if (['pdf'].includes(fileExtension)) 
+
+                    let mensajeHtml = `<div style="padding-left: 10px; display: flex; align-items: center;">`; //crea un div para el mensaje
+                    mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%;  margin-right: 10px;">`; //muestra la imagen de perfil
+                    
+                    if (mensaje.tipo === 'archivo') //si el mensaje es un archivo
                     {
-                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                        mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo PDF adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
-                        mensajeHtml += downloadLink;
-                        mensajeHtml += `</div>`;
+                        const fileName = mensaje.contenido.split('/').pop(); //obtiene el nombre del archivo
+                        const fileExtension = fileName.split('.').pop().toLowerCase(); //obtiene la extensión del archivo
+                        let downloadLink = `<a id='link' style="text-align: center;" href="${mensaje.contenido}" download>Descargar [${fileName}]</a>`; //crea un enlace de descarga
+                        
+                        //muestra la imagen del archivo adjunto y el enlace de descarga debajo 
+                        if (['png', 'jpg', 'jpeg', 'webp'].includes(fileExtension)) 
+                        {
+                            // Mostrar la imagen y agregar el enlace de descarga debajo
+                            mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                            mensajeHtml += `<img src="${mensaje.contenido}" alt="Imagen adjunta" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                            mensajeHtml += downloadLink;
+                            mensajeHtml += `</div>`;
+                        }
+                        else if (['pdf'].includes(fileExtension)) 
+                        {
+                            mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                            mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo PDF adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                            mensajeHtml += downloadLink;
+                            mensajeHtml += `</div>`;
+                        }
+                        else if (['mp4'].includes(fileExtension)) 
+                        {
+                            mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                            mensajeHtml += `<img src="../assets/placeholders/video.png" alt="Archivo de video adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                            mensajeHtml += downloadLink;
+                            mensajeHtml += `</div>`;
+                        }
+                        else if (['mp3'].includes(fileExtension)) 
+                        {
+                            mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                            mensajeHtml += `<img src="../assets/placeholders/audio.png" alt="Archivo de audio adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                            mensajeHtml += downloadLink;
+                            mensajeHtml += `</div>`;
+                        }
+                        else if (['zip'].includes(fileExtension)) 
+                        {
+                            mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                            mensajeHtml += `<img src="../assets/placeholders/comprimido.png" alt="Archivo comprimido adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                            mensajeHtml += downloadLink;
+                            mensajeHtml += `</div>`;
+                        }
+                        else if (['exe', 'msi'].includes(fileExtension)) 
+                        {
+                            mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                            mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo ejecutable adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                            mensajeHtml += downloadLink;
+                            mensajeHtml += `</div>`;
+                        }
+                        else 
+                        {
+                            mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                            mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                            mensajeHtml += downloadLink;
+                            mensajeHtml += `</div>`;
+                        }
                     }
-                    else if (['mp4'].includes(fileExtension)) 
+                    else //si el mensaje es un mensaje de texto
                     {
-                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                        mensajeHtml += `<img src="../assets/placeholders/video.png" alt="Archivo de video adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
-                        mensajeHtml += downloadLink;
-                        mensajeHtml += `</div>`;
+                        mensajeHtml += `<strong>${mensaje.alias}:</strong> ${mensaje.contenido}`; //muestra el mensaje
                     }
-                    else if (['mp3'].includes(fileExtension)) 
-                    {
-                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                        mensajeHtml += `<img src="../assets/placeholders/audio.png" alt="Archivo de audio adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
-                        mensajeHtml += downloadLink;
-                        mensajeHtml += `</div>`;
-                    }
-                    else if (['zip'].includes(fileExtension)) 
-                    {
-                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                        mensajeHtml += `<img src="../assets/placeholders/comprimido.png" alt="Archivo comprimido adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
-                        mensajeHtml += downloadLink;
-                        mensajeHtml += `</div>`;
-                    }
-                    else if (['exe', 'msi'].includes(fileExtension)) 
-                    {
-                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                        mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo ejecutable adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
-                        mensajeHtml += downloadLink;
-                        mensajeHtml += `</div>`;
-                    }
-                    else 
-                    {
-                        mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                        mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
-                        mensajeHtml += downloadLink;
-                        mensajeHtml += `</div>`;
-                    }
-                }
-                else //si el mensaje es un mensaje de texto
-                {
-                    mensajeHtml += `<strong>${mensaje.alias}:</strong> ${mensaje.contenido}`; //muestra el mensaje
-                }
-                
-                mensajeHtml += `<div style="font-size: 0.8em; color: #888; min-width: 110px; padding: 5px; align-items: left; margin-left: auto;">${fechaEnvio}</div>`; //muestra la fecha de envio
-                mensajeHtml += '</div>';
-                $('#chat-messages').prepend(mensajeHtml); //añade el mensaje al chat
-            });
-            
+                    
+                    mensajeHtml += `<div style="font-size: 0.8em; color: #888; min-width: 110px; padding: 5px; align-items: left; margin-left: auto;">${fechaEnvio}</div>`; //muestra la fecha de envio
+                    mensajeHtml += '</div>';
+                    $('#chat-messages').prepend(mensajeHtml); //añade el mensaje al chat
+                });
+            }
         } 
         catch (e) 
         {

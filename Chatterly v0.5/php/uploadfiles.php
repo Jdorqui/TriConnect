@@ -51,44 +51,21 @@
             exit();
         }
 
-        //extensiones permitidas
-        $allowedFileTypes = [
-            'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'tiff', 'svg',
-            'mp4', 'mkv', 'mov', 'avi', 'wmv', 'flv', 'webm',
-            'mp3', 'wav', 'flac', 'aac', 'ogg', 'wma', 'm4a',
-            'pdf', 'txt', 'rtf', 'csv',
-            'doc', 'docx', 'odt', 'xls', 'xlsx', 'ods', 'ppt', 'pptx', 'odp',
-            'zip', 'rar', '7z', 'tar', 'gz', 'bz2',
-            'exe', 'msi', 'apk', 'dmg', 'iso',
-            'html', 'css', 'js', 'php', 'py', 'java', 'c', 'cpp', 'cs', 'sh', 'bat', 'sql', 'torrent'
-        ];
-        
-        if (in_array($fileType, $allowedFileTypes)) //si el archivo es de un tipo permitido
+        if (move_uploaded_file($_FILES['archivo']['tmp_name'], $targetFile)) //se mueve el archivo al directorio chat_files
         {
-            if (move_uploaded_file($_FILES['archivo']['tmp_name'], $targetFile)) //se mueve el archivo al directorio chat_files
-            {
-                //se inserta el mensaje en la base de datos
-                $stmt = $pdo->prepare("INSERT INTO mensajes (id_emisor, id_receptor, contenido, tipo) VALUES (:id_emisor, :id_receptor, :contenido, 'archivo')");
-                $stmt->execute([
-                    'id_emisor' => $id_usuario_actual,
-                    'id_receptor' => $destinatario,
-                    'contenido' => $targetFile
-                ]); //se inserta el mensaje en la base de datos
+            //se inserta el mensaje en la base de datos
+            $stmt = $pdo->prepare("INSERT INTO mensajes (id_emisor, id_receptor, contenido, tipo) VALUES (:id_emisor, :id_receptor, :contenido, 'archivo')");
+            $stmt->execute([
+                'id_emisor' => $id_usuario_actual,
+                'id_receptor' => $destinatario,
+                'contenido' => $targetFile
+            ]); //se inserta el mensaje en la base de datos
 
-                echo json_encode([
-                    'success' => true,
-                    'newFilePath' => $targetFile,
-                    'fileName' => $fileName
-                ]); //se envia la respuesta
-            } 
-            else 
-            {
-                echo json_encode(['success' => false, 'error' => 'Error al mover el archivo.']);
-            }
-        } 
-        else 
-        {
-            echo json_encode(['success' => false, 'error' => 'Tipo de archivo no permitido.']);
+            echo json_encode([
+                'success' => true,
+                'newFilePath' => $targetFile,
+                'fileName' => $fileName
+            ]); //se envia la respuesta
         }
     } 
     else 
