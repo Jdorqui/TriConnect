@@ -138,7 +138,7 @@ if (isset($_SESSION['USERNAME'])) {
                         <div>
                             Seguridad
                         </div>
-                        <div>
+                        <div onclick="getChatterlyLogin()">
                             <img src="../img/chatterly_logo.png">Conectar con <span
                                 style="color: #6458aa">Chatterly</span>©
                         </div>
@@ -147,7 +147,7 @@ if (isset($_SESSION['USERNAME'])) {
                         </div>
                     </div>
                     <div>
-                        <div>
+                        <div id="user_profile_pic_settings">
                             <div
                                 style="position: relative; display: flex; align-items: center; justify-content: center">
                                 <div
@@ -156,6 +156,9 @@ if (isset($_SESSION['USERNAME'])) {
                                 <img class="" src="../img/profile_pic_example.jpg">
                             </div>
                             <div><?php echo $_SESSION["USERNAME"] ?></div>
+                        </div>
+                        <div id="chatterly_login" style="display: none; height: 100%;">
+
                         </div>
                     </div>
                 </div>
@@ -268,8 +271,8 @@ if (isset($_SESSION['USERNAME'])) {
     <script type="text/javascript" src="../js/channel.js"></script>
     <script type="text/javascript" src="../js/search.js"></script>
     <script type="text/javascript" src="../js/main.js"></script>
-    <script type="text/javascript" src="http://10.3.5.106/PHP/TriConnect/Chatterly%20v0.5/javascript/api.js"></script>
     <script type="text/javascript" src="../js/chatterly.js"></script>
+    <script type="text/javascript" src="http://10.3.5.106/PHP/TriConnect/Chatterly%20v0.5/javascript/api.js"></script>
 </body>
 
 </html>

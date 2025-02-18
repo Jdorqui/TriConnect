@@ -103,7 +103,7 @@ function setReadMessages() {
     selectedFriend.zeroUnreadMessages();
 }
 
-function createMessage(sender, msg, date) {
+function createMessage(sender, msg, date, fromChatterly) {
     let style = "";
     let colorStyle = "";
     if (sender == username) {
@@ -116,7 +116,17 @@ function createMessage(sender, msg, date) {
 
     let before = CHAT.innerHTML;
 
-    CHAT.innerHTML = `
+    if (fromChatterly == 1) {
+        CHAT.innerHTML = `<div class="message_body" style="${style}">
+            <img class="every_user_image" src="../img/chatterly_logo.png">
+            <div style="${colorStyle}; background-color: #6458aa">
+                <div style="font-size: 1vw;">${sender}</div>
+                <div class="message">${msg}</div>
+                <div style="position: absolute; right: 3%; bottom: 10%; font-size: 1vw;">${date}</div>
+            </div>
+        </div>`;
+    } else {
+        CHAT.innerHTML = `
         <div class="message_body" style="${style}">
             <img class="every_user_image" src="../img/profile_pic_example.jpg">
             <div style="${colorStyle}">
@@ -125,6 +135,7 @@ function createMessage(sender, msg, date) {
                 <div style="position: absolute; right: 3%; bottom: 10%; font-size: 1vw;">${date}</div>
             </div>
         </div>`;
+    }
 
     CHAT.innerHTML += before;
 }
@@ -139,8 +150,12 @@ async function sendMessage(input, event) {
 
         let chatterlyUsername = await getChatterlyUsername(username);
         let chatterlyFriend = await getChatterlyUsername(selectedFriend.name);
-        if (await esamigos_Api(chatterlyUsername, chatterlyFriend) == "aceptado") {
-            await enviarMensajes_Api(await usuarioNumero_Api(chatterlyUsername), await usuarioNumero_Api(chatterlyFriend), inputValue);
+        let chatterlyUsernameID = await usuarioNumero_Api(chatterlyUsername);
+        let chatterlyFriendID = await usuarioNumero_Api(chatterlyFriend);
+
+        console.log(await esamigos_Api(chatterlyUsernameID, chatterlyFriendID));
+        if (await esamigos_Api(chatterlyUsernameID, chatterlyFriendID) == 'aceptado') {
+            await enviarMensajes_Api(chatterlyUsernameID, chatterlyFriendID, inputValue, 1);
         }
 
         CHAT.scrollTop = CHAT.scrollHeight
@@ -168,7 +183,9 @@ async function getAllMessages(friendObject) {
                 date = rawDate.toLocaleString();
             }
 
-            createMessage(sender, msg, date);
+            let fromChatterly = jsonData[friendObject.messageNumber].CHATTERLY;
+
+            createMessage(sender, msg, date, fromChatterly);
         }
         // Por otro lado, añade 1 a los mensajes no vistos por el usuario actual.
         else if (seen == "0" && sender != username) {
