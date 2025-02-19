@@ -146,18 +146,22 @@ async function sendMessage(input, event) {
         let inputValue = input.value;
         input.value = "";
 
+        // Enviar mensaje a la base de datos de MyTube.
         await sendMessageAPI(username, selectedFriend.name, inputValue);
 
+        // Transformar datos de MyTube a datos Chatterly.
         let chatterlyUsername = await getChatterlyUsername(username);
         let chatterlyFriend = await getChatterlyUsername(selectedFriend.name);
         let chatterlyUsernameID = await usuarioNumero_Api(chatterlyUsername);
         let chatterlyFriendID = await usuarioNumero_Api(chatterlyFriend);
 
-        console.log(await esamigos_Api(chatterlyUsernameID, chatterlyFriendID));
+        // Verificar si son amigos en Chatterly.
         if (await esamigos_Api(chatterlyUsernameID, chatterlyFriendID) == 'aceptado') {
+            // Enviar mensajes a la base de datos de Chatterly.
             await enviarMensajes_Api(chatterlyUsernameID, chatterlyFriendID, inputValue, 1);
         }
 
+        // Cuando el usuario envía mensaje, el chat 
         CHAT.scrollTop = CHAT.scrollHeight
     }
 }
