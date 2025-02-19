@@ -34,11 +34,12 @@ async function register(username, password, email) {
 }
 
 // Enviar mensaje.
-async function sendMessageAPI(sender, receiver, msg) {
+async function sendMessageAPI(sender, receiver, msg, fromChatterly) {
     let formData = new FormData();
     formData.append('SENDER', sender);
     formData.append('RECEIVER', receiver);
     formData.append('MSG', msg);
+    formData.append('FROM_CHATTERLY', fromChatterly);
 
     let fetchData = await fetch(`http://${MYTUBE_IP}/DAM-B/TriConnect/my_tube/php/send_message.php`, {
         method: "POST",
@@ -46,6 +47,7 @@ async function sendMessageAPI(sender, receiver, msg) {
     });
 
     let data = await fetchData.text();
+    console.log(data);
     return data;
 }
 
@@ -154,7 +156,7 @@ async function validateLoginFormChatterly() {
     event.preventDefault();
     let formData = new FormData(document.getElementById("login_form"))
     let data = await login(formData.get("USERNAME"), formData.get("PASSWORD"));
-    closeLoginAPIWrapper();
+    // closeLoginAPIWrapper();
 
     return { "status": data, "user": formData.get("USERNAME") };
 }
