@@ -1,9 +1,8 @@
-// const MYTUBE_IP = "172.25.170.9";
-// const MYTUBE_IP = "192.168.1.137";
-const MYTUBE_IP = "10.3.5.111";
+// Dependencias:
+// - import.js
 
 // Iniciar sesión.
-async function login(username, password) {
+async function loginAPI(username, password) {
     let formData = new FormData();
     formData.append('USERNAME', username);
     formData.append('PASSWORD', password);
@@ -18,7 +17,7 @@ async function login(username, password) {
 }
 
 // Registrarse.
-async function register(username, password, email) {
+async function registerAPI(username, password, email) {
     let formData = new FormData();
     formData.append('USERNAME', username);
     formData.append('PASSWORD', password);
@@ -47,12 +46,11 @@ async function sendMessageAPI(sender, receiver, msg, fromChatterly) {
     });
 
     let data = await fetchData.text();
-    console.log(data);
     return data;
 }
 
 // Recibir mensajes.
-async function receiveMessages(sender, receiver) {
+async function receiveMessagesAPI(sender, receiver) {
     let formData = new FormData();
     formData.append('SENDER', sender);
     formData.append('RECEIVER', receiver);
@@ -66,7 +64,7 @@ async function receiveMessages(sender, receiver) {
     return data;
 }
 
-async function getFriends(username) {
+async function getFriendsAPI(username) {
     let formData = new FormData();
     formData.append('USERNAME', username);
 
@@ -143,9 +141,11 @@ function hideRegisterForm() {
 async function validateLoginForm() {
     event.preventDefault();
     let formData = new FormData(document.getElementById("login_form"))
-    let data = await login(formData.get("USERNAME"), formData.get("PASSWORD"));
+    let data = await loginAPI(formData.get("USERNAME"), formData.get("PASSWORD"));
     if (data == "SUCCESS") {
-        await $.get(`../php/set_session.php?USERNAME=${formData.get("USERNAME")}&PASSWORD=${formData.get("PASSWORD")}`);
+        await fetch(`../php/set_session.php?USERNAME=${formData.get("USERNAME")}&PASSWORD=${formData.get("PASSWORD")}`, {
+            method: "GET",
+        });
     }
 
     checkErrors(data);
@@ -155,7 +155,7 @@ async function validateLoginForm() {
 async function validateLoginFormChatterly() {
     event.preventDefault();
     let formData = new FormData(document.getElementById("login_form"))
-    let data = await login(formData.get("USERNAME"), formData.get("PASSWORD"));
+    let data = await loginAPI(formData.get("USERNAME"), formData.get("PASSWORD"));
     // closeLoginAPIWrapper();
 
     return { "status": data, "user": formData.get("USERNAME") };
@@ -165,7 +165,7 @@ async function validateLoginFormChatterly() {
 async function validateRegisterForm() {
     event.preventDefault();
     let formData = new FormData(document.getElementById("register_form"))
-    let data = await register(formData.get("USERNAME"), formData.get("PASSWORD"));
+    let data = await registerAPI(formData.get("USERNAME"), formData.get("PASSWORD"));
     checkErrors(data);
 }
 
@@ -173,7 +173,7 @@ async function validateRegisterForm() {
 async function validateRegisterFormChatterly() {
     event.preventDefault();
     let formData = new FormData(document.getElementById("register_form"))
-    let data = await register(formData.get("USERNAME"), formData.get("PASSWORD"));
+    let data = await registerAPI(formData.get("USERNAME"), formData.get("PASSWORD"));
     checkErrors(data);
 }
 

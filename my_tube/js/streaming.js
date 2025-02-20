@@ -1,4 +1,3 @@
-
 // video stuff.
 
 let stream = null;

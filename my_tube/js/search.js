@@ -1,3 +1,6 @@
+// Dependencias:
+// - main.js
+
 search_input.addEventListener("keyup", (event) => {
     search(search_input.value, event);
 });
@@ -7,7 +10,6 @@ function search(searchQuery, event) {
 
     if (divDisplaying == 'search' || event.code == 'Enter' || event == 'test') {
         display('search');
-        // fakeLoading();
 
         let formData = new FormData();
         formData.append('username', username);
@@ -31,11 +33,6 @@ function search(searchQuery, event) {
                 }
             });
     }
-}
-
-// 1 segundo de carga.
-function fakeLoading() {
-
 }
 
 function createChannelDiv(channel, subscribed, friends) {

@@ -1,3 +1,7 @@
+// Dependencias:
+// - jQuery
+// - api.js
+
 let contentDiv = document.getElementById('content');
 let contentDivChildren = contentDiv.children;
 
@@ -28,7 +32,7 @@ function display(id) {
 
 // display('settings');
 // search('', 'test');
-display('chat');
+// display('chat');
 
 async function logout() {
     await $.get("../php/logout.php");

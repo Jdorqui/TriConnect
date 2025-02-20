@@ -26,7 +26,6 @@ if (isset($_SESSION['USERNAME'])) {
 
     $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +34,7 @@ if (isset($_SESSION['USERNAME'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>MyTube</title>
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="stylesheet" href="../css/login_api.css" />
     <link rel="stylesheet" href="../css/chat.css" />
@@ -265,15 +264,8 @@ if (isset($_SESSION['USERNAME'])) {
     <div id="notifications">
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" src="../js/api.js"></script>
-    <script type="text/javascript" src="../js/chat.js"></script>
-    <script type="text/javascript" src="../js/channel.js"></script>
-    <script type="text/javascript" src="../js/search.js"></script>
-    <script type="text/javascript" src="../js/main.js"></script>
-    <script type="text/javascript" src="../js/chatterly.js"></script>
-    <script type="text/javascript" src="http://10.3.5.106/PHP/TriConnect/Chatterly%20v0.5/javascript/api.js"></script>
-    <script type="text/javascript" src="http://10.3.5.118/DAM/TriConnect/Chatterly%20v0.5/javascript/api.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="../js/import.js"></script>
 </body>
 
 </html>

@@ -1,3 +1,6 @@
+// Dependencias:
+// - api.js
+
 function changeChannel() {
     // display('channel');
 }
