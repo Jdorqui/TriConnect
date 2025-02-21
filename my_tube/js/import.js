@@ -1,5 +1,3 @@
-// const MYTUBE_IP = "172.25.170.9";
-// const MYTUBE_IP = "192.168.1.137";
 const CHATTERLY_IP = "http://10.3.5.106/PHP/TriConnect/Chatterly%20v0.5";
 const DETO_IP = "http://10.3.5.118";
 const DEPENDENCIES = [

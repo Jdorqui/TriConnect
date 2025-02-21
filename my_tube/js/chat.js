@@ -1,7 +1,7 @@
 // Dependencias:
 // - api.js
-// - chatterly.js
 // - api.js (Chatterly)
+// - chatterly.js
 
 const FRIENDS_NAVBAR = document.getElementById('friend_navbar');
 const USER_HEADER = document.getElementById('user_header');

@@ -1,6 +1,5 @@
 // Dependencias:
 // - import.js
-// - js_registerAndLogin.js (Chatterly)
 // - api.js (Chatterly)
 
 async function getChatterlyUsername(username) {
