@@ -5,7 +5,6 @@ const DETO_IP = "http://10.3.5.118";
 const DEPENDENCIES = [
     'api',
     'channel',
-    `${CHATTERLY_IP}/javascript/js_registerAndLogin.js`,
     `${CHATTERLY_IP}/javascript/api.js`,
     'chatterly',
     'chat',

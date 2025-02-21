@@ -20,33 +20,14 @@ async function getChatterlyLogin() {
     let fetchData = await fetch(`${CHATTERLY_IP}/html/index_Api.html`, {
         method: 'POST',
         mode: 'cors'
-    })
-
-    document.getElementById('chatterly_login').innerHTML = data;
-    document.getElementById('btn-submit-login').addEventListener('click', async function(event) {
-        await login
     });
 
-            document.getElementById('btn-submit-login').addEventListener("click", async function () {
-                let chatterlyUsername = document.getElementById('usuario-login').value;
-                let pass = document.getElementById('password-login').value;
-                let data = await login_Api(chatterlyUsername, pass);
-                if (data.status === "success") {
-                    await $.get(`../php/set_chatterly_username.php?USERNAME=${username}&CHATTERLY_USERNAME=${chatterlyUsername}`);
-                    document.getElementById('chatterly_login').style.display = "none";
-                } else {
-                    const errorMessage = document.getElementById("error-message");
-                    errorMessage.textContent = data.message;
-
-                    errorMessage.style.color = "#f7767a";
-                    document.getElementById("ms3").style.color = "#f7767a";
-                    document.getElementById("ms4").style.color = "#f7767a";
-
-                    if (document.getElementById("ms3").textContent.includes(data.message) == false) {
-                        document.getElementById("ms3").textContent = document.getElementById("ms3").textContent + ` - ${data.message}`;
-                        document.getElementById("ms4").textContent = document.getElementById("ms4").textContent + ` - ${data.message}`;
-                    }
-                }
-            });
-        });
+    document.getElementById('chatterly_login').innerHTML = fetchData;
+    document.getElementById('btn-submit-login').addEventListener('click', async () => {
+        let data = await loginUsuario_Api();
+        if (data.status === 'success') {
+            let chatterlyUsername = document.getElementById('usuario-login').value;
+            await $.get(`../php/set_chatterly_username.php?USERNAME=${username}&CHATTERLY_USERNAME=${chatterlyUsername}`);
+        }
+    });
 }
