@@ -17,29 +17,24 @@ async function getChatterlyUsername(username) {
 }
 
 async function getChatterlyLogin() {
-    await fetch(`http://${CHATTERLY_IP}/PHP/TriConnect/Chatterly v0.5/html/index_Api.html`, {
+    let fetchData = await fetch(`${CHATTERLY_IP}/html/index_Api.html`, {
         method: 'POST',
         mode: 'cors'
     })
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('chatterly_login').innerHTML = data;
-            document.getElementById('chatterly_login').style.display = "";
-            user_profile_pic_settings.style.display = "none"
+
+    document.getElementById('chatterly_login').innerHTML = data;
+    document.getElementById('btn-submit-login').addEventListener('click', async function(event) {
+        await login
+    });
 
             document.getElementById('btn-submit-login').addEventListener("click", async function () {
                 let chatterlyUsername = document.getElementById('usuario-login').value;
                 let pass = document.getElementById('password-login').value;
-
-                console.log(chatterlyUsername);
-                console.log(pass);
-
                 let data = await login_Api(chatterlyUsername, pass);
                 if (data.status === "success") {
                     await $.get(`../php/set_chatterly_username.php?USERNAME=${username}&CHATTERLY_USERNAME=${chatterlyUsername}`);
                     document.getElementById('chatterly_login').style.display = "none";
-                }
-                else {
+                } else {
                     const errorMessage = document.getElementById("error-message");
                     errorMessage.textContent = data.message;
 
@@ -55,7 +50,3 @@ async function getChatterlyLogin() {
             });
         });
 }
-
-(async () => {
-    await getChatterlyLogin();
-})();

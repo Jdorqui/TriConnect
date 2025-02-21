@@ -131,17 +131,17 @@ if (isset($_SESSION['USERNAME'])) {
                 </div>
                 <div id="settings_div">
                     <div>
-                        <div>
+                        <div onclick="displaySetting('profile')">
                             General
                         </div>
-                        <div>
+                        <div onclick="displaySetting('security')">
                             Seguridad
                         </div>
-                        <div onclick="getChatterlyLogin()">
+                        <div onclick="displaySetting('chatterly')">
                             <img src="../img/chatterly_logo.png">Conectar con <span
                                 style="color: #6458aa">Chatterly</span>©
                         </div>
-                        <div>
+                        <div onclick="displaySetting('deto')">
                             <img src="../img/deto_logo.png">Conectar con <span style="color: #229fa3">DeTo'</span> ©
                         </div>
                     </div>
@@ -156,8 +156,14 @@ if (isset($_SESSION['USERNAME'])) {
                             </div>
                             <div><?php echo $_SESSION["USERNAME"] ?></div>
                         </div>
-                        <div id="chatterly_login" style="display: none; height: 100%;">
-
+                        <div id="security_login_settings" style="display: none; height: 100%;">
+                                SECURITY
+                        </div>
+                        <div id="chatterly_login_settings" style="display: none; height: 100%;">
+                                CHATTERLY
+                        </div>
+                        <div id="deto_login_settings" style="display: none; height: 100%;">
+                                DETO'
                         </div>
                     </div>
                 </div>

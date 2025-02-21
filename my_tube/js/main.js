@@ -27,10 +27,9 @@ function display(id) {
             }
         }
     }
-
 }
 
-// display('settings');
+display('settings');
 // search('', 'test');
 // display('chat');
 
