@@ -17,10 +17,10 @@ async function mytubeconexion()
         method: 'GET',
         mode: 'cors'
     })
-    .then(response => response.blob())  // Obtener la imagen como un blob
+    .then(response => response.blob())  //obtener la imagen como un blob
     .then(blob => {
-        // Crear una URL para la imagen y asignarla al src del <img>
-        const imageUrl = URL.createObjectURL(blob);
+        
+        const imageUrl = URL.createObjectURL(blob); //crear una URL para la imagen y asignarla al src del <img>
         document.getElementById('mytube_logo').src = imageUrl;
     })
     .catch(error => console.error('Error al cargar la imagen mytube_logo:', error));

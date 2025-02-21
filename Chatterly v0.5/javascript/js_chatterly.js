@@ -92,6 +92,7 @@ function selectFriend(nombre, foto, destinatario)
 function openchat(destinatarioID) //abre el chat con el destinatario seleccionado
 {
     destinatario = destinatarioID; //establece el destinatario del chat
+    console.log(destinatario);
     count = 0; //resetea el contador de mensajes
     chat.style.display = "block";
     pendingMenu.hidden = true;
@@ -139,15 +140,16 @@ async function cargarMensajes() //carga los mensajes
 {
     
     if (destinatario === null) return; //verifica si hay un destinatario seleccionado
-
+    
     const imgProfileUrl = document.getElementById("profileImg2").src; //obtiene la imagen de perfil
     const fotoFriendUrl = document.getElementById("fotoFriend").src; //obtiene la imagen del amigo
 
         try 
         {
             let mensajes = await cargarMensajes_Api(id_usuario_actual, destinatario); //carga los mensajes
-            if(mensajes.length > count) //si hay mensajes nuevos
+            if(mensajes.length > count || mensajes.length == 0) //si hay mensajes nuevos
             {
+
                 count = mensajes.length; //actualiza el contador de mensajes
                 $('#chat-messages').empty(); //limpia los mensajes
                 
