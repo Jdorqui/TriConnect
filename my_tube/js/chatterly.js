@@ -1,8 +1,13 @@
+// Dependencias:
+// - import.js
+// - js_registerAndLogin.js (Chatterly)
+// - api.js (Chatterly)
+
 async function getChatterlyUsername(username) {
     let formData = new FormData();
     formData.append('USERNAME', username);
 
-    let fetchData = await fetch(`../php/get_chatterly_username.php?USERNAME=${username}`, {
+    let fetchData = await fetch(`../php/get_chatterly_username.php`, {
         method: "POST",
         body: formData,
     });
@@ -12,8 +17,7 @@ async function getChatterlyUsername(username) {
 }
 
 async function getChatterlyLogin() {
-    await $('body').append('<script type="text/javascript" src="http://10.3.5.106/PHP/TriConnect/Chatterly%20v0.5/javascript/js_registerAndLogin.js"></script>');
-    await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/html/index_Api.html", {
+    await fetch(`http://${CHATTERLY_IP}/PHP/TriConnect/Chatterly v0.5/html/index_Api.html`, {
         method: 'POST',
         mode: 'cors'
     })
@@ -33,7 +37,6 @@ async function getChatterlyLogin() {
                 let data = await login_Api(chatterlyUsername, pass);
                 if (data.status === "success") {
                     await $.get(`../php/set_chatterly_username.php?USERNAME=${username}&CHATTERLY_USERNAME=${chatterlyUsername}`);
-                    
                     document.getElementById('chatterly_login').style.display = "none";
                 }
                 else {

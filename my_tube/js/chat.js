@@ -1,3 +1,8 @@
+// Dependencias:
+// - api.js
+// - chatterly.js
+// - api.js (Chatterly)
+
 const FRIENDS_NAVBAR = document.getElementById('friend_navbar');
 const USER_HEADER = document.getElementById('user_header');
 const CHAT = document.getElementById('chat');
@@ -90,7 +95,7 @@ function emptyChat() {
 }
 
 (async () => {
-    friendsArray = await getFriends(username);
+    friendsArray = await getFriendsAPI(username);
     await createFriendDivs();
 })();
 
@@ -149,19 +154,22 @@ async function sendMessage(input, event) {
         // Enviar mensaje a la base de datos de MyTube.
         await sendMessageAPI(username, selectedFriend.name, inputValue);
 
-        // Transformar datos de MyTube a datos Chatterly.
-        let chatterlyUsername = await getChatterlyUsername(username);
-        let chatterlyFriend = await getChatterlyUsername(selectedFriend.name);
-        let chatterlyUsernameID = await usuarioNumero_Api(chatterlyUsername);
-        let chatterlyFriendID = await usuarioNumero_Api(chatterlyFriend);
+        // Verificar si Chatterly está disponible.
+        if (typeof usuarioNumero_Api === "function") {
+            // Transformar datos de MyTube a datos de Chatterly.
+            let chatterlyUsername = await getChatterlyUsername(username);
+            let chatterlyFriend = await getChatterlyUsername(selectedFriend.name);
+            let chatterlyUsernameID = await usuarioNumero_Api(chatterlyUsername);
+            let chatterlyFriendID = await usuarioNumero_Api(chatterlyFriend);
 
-        // Verificar si son amigos en Chatterly.
-        if (await esamigos_Api(chatterlyUsernameID, chatterlyFriendID) == 'aceptado') {
-            // Enviar mensajes a la base de datos de Chatterly.
-            await enviarMensajes_Api(chatterlyUsernameID, chatterlyFriendID, inputValue, 1);
+            // Verificar si son amigos en Chatterly.
+            if (await esamigos_Api(chatterlyUsernameID, chatterlyFriendID) == 'aceptado') {
+                // Enviar mensajes a la base de datos de Chatterly.
+                await enviarMensajes_Api(chatterlyUsernameID, chatterlyFriendID, inputValue, 1);
+            }
         }
 
-        // Cuando el usuario envía mensaje, el chat 
+        // Cuando el usuario envía mensaje, la vista del chat se coloca al final.
         CHAT.scrollTop = CHAT.scrollHeight
     }
 }
@@ -169,7 +177,7 @@ async function sendMessage(input, event) {
 // Usar la función receiveMessages de la API para recibir todos los mensajes y crearlos.
 // Esta función solo crea los nuevos mensajes.
 async function getAllMessages(friendObject) {
-    let jsonData = await receiveMessages(username, friendObject.name);
+    let jsonData = await receiveMessagesAPI(username, friendObject.name);
     let newMessages = jsonData.length - friendObject.messageNumber;
 
     for (let i = 0; i < newMessages; i++) {
@@ -202,7 +210,7 @@ async function getAllMessages(friendObject) {
 
 // Comprobar cada 250 ms todos los mensajes de cada amigo y comprueba la lista de amigos.
 setInterval(async function () {
-    let tempArray = await getFriends(username);
+    let tempArray = await getFriendsAPI(username);
     if (friendsArray.length != tempArray.length) {
         FRIEND_OBJECTS.length = 0;
         FRIENDS_NAVBAR.innerHTML = "<div>Amigos</div>"
