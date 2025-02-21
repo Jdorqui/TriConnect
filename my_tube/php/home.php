@@ -1,5 +1,5 @@
 <?php
-include "db_connection.php";
+require "db_connection.php";
 
 session_start();
 
@@ -157,13 +157,13 @@ if (isset($_SESSION['USERNAME'])) {
                             <div><?php echo $_SESSION["USERNAME"] ?></div>
                         </div>
                         <div id="security_login_settings" style="display: none; height: 100%;">
-                                SECURITY
+                            SECURITY
                         </div>
                         <div id="chatterly_login_settings" style="display: none; height: 100%;">
-                                CHATTERLY
+                            CHATTERLY
                         </div>
                         <div id="deto_login_settings" style="display: none; height: 100%;">
-                                DETO'
+                            DETO'
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 <?php
-include "db_connection.php";
+require "db_connection.php";
 
 $USERNAME = $_GET['USERNAME'];
 $CHATTERLY_USERNAME = $_GET['CHATTERLY_USERNAME'];
