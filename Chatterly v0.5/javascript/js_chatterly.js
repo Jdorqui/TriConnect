@@ -177,19 +177,27 @@ async function cargarMensajes() //carga los mensajes
                             mensajeHtml += `</div>`;
                         }
                         else if (['mp4'].includes(fileExtension)) 
-                        {
-                            mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                            mensajeHtml += `<img src="../assets/placeholders/video.png" alt="Archivo de video adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
-                            mensajeHtml += downloadLink;
-                            mensajeHtml += `</div>`;
-                        }
+                            {
+                                mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                                mensajeHtml += `<video controls style="max-width: 500px; max-height: 300px; display: block; margin-bottom: 10px;">`;
+                                mensajeHtml += `<source src="${mensaje.contenido}" type="video/mp4">`;
+                                mensajeHtml += `Tu navegador no soporta el elemento de video.`;
+                                mensajeHtml += `</video>`;
+                                mensajeHtml += downloadLink;
+                                mensajeHtml += `</div>`;
+                            }
+                            
                         else if (['mp3'].includes(fileExtension)) 
-                        {
-                            mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                            mensajeHtml += `<img src="../assets/placeholders/audio.png" alt="Archivo de audio adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
-                            mensajeHtml += downloadLink;
-                            mensajeHtml += `</div>`;
-                        }
+                            {
+                                mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
+                                mensajeHtml += `<audio controls style="display: block; margin-bottom: 10px;">`;
+                                mensajeHtml += `<source src="${mensaje.contenido}" type="audio/mpeg">`;
+                                mensajeHtml += `Tu navegador no soporta el elemento de audio.`;
+                                mensajeHtml += `</audio>`;
+                                mensajeHtml += downloadLink;
+                                mensajeHtml += `</div>`;
+                            }
+                            
                         else if (['zip'].includes(fileExtension)) 
                         {
                             mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
@@ -212,17 +220,33 @@ async function cargarMensajes() //carga los mensajes
                             mensajeHtml += `</div>`;
                         }
                     }
-                    else //si el mensaje es un mensaje de texto
+                    else //si el mensaje es de texto
                     {
-                        mensajeHtml += `<strong>${mensaje.alias}:</strong> ${mensaje.contenido}`; //muestra el mensaje
+                        let contenido = mensaje.contenido;
+
+                        let urlRegex = /(https?:\/\/[^\s]+)/g; //detecta si el mensaje contiene enlaces
+                        
+                        contenido = contenido.replace(urlRegex, function(url)  //reemplaza los enlaces por enlaces clicable
+                        {
+                            let youtubeMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]+)/); //comprueba si el enlace es de youtube
+                            if (youtubeMatch) //si el enlace es de youtube se muestra el video
+                            {
+                                let videoId = youtubeMatch[1]; //extrae el ID del video
+                                return `<br><iframe width="500" height="300" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe><br>`; //muestra el video
+                            }
+                            return `<a href="${url}" target="_blank" id="link">${url}</a>`; //enlace normal
+                        });
+
+                        mensajeHtml += `<strong>${mensaje.alias}:</strong> ${contenido}`; //mensaje de texto normal
                     }
+
                     
                     mensajeHtml += `<div style="font-size: 0.8em; color: #888; min-width: 110px; padding: 5px; align-items: left; margin-left: auto;">${fechaEnvio}</div>`; //muestra la fecha de envio
                     mensajeHtml += '</div>';
                     $('#chat-messages').prepend(mensajeHtml); //añade el mensaje al chat
                 });
             }
-        } 
+        }
         catch (e) 
         {
             console.error("Error al parsear JSON:", e);

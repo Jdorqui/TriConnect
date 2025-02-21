@@ -13,7 +13,7 @@ async function login_Api(usuario, password)
 
 async function enviarMensajes_Api(usuario, destinatario, mensaje, mytube) 
 {
-    console.log(mytube);
+    //console.log(mytube);
     await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/chat.php",
         {
             method: "POST",
@@ -31,7 +31,7 @@ async function cargarMensajes_Api(usuario, destinatario)
             body: `usuario=${encodeURIComponent(usuario)}&destinatario=${encodeURIComponent(destinatario)}`
         });
     let data = await fetchData.json();
-    console.log(data);
+    //console.log(data);
     return data; //devuelve un array con los mensajes en formato json
 }
 

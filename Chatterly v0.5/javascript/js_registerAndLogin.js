@@ -2,6 +2,12 @@ const loginDiv = document.getElementById("loginDiv");
 const registroDiv = document.getElementById("registroDiv");
 const bgBody = document.body;
 
+function cerrarLogin()
+{
+    const loginDiv = document.getElementById("loginDiv");
+    loginDiv.style.display = "none";
+}
+
 function mostrarLogin() 
 {
     const loginDiv = document.getElementById("loginDiv");

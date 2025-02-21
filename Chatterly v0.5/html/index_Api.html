@@ -231,7 +231,8 @@ label
     border-radius: 15px; 
 }
 </style>
-<div id="loginDiv" class="menu show">
+<div id="loginDiv" class="menu show" style="position: relative;">
+    <img src="http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/assets/imgs/exit_button.png" style="position: absolute; right: 2%; top: 2%; width: 50px;" onclick="cerrarLogin()">
     <div class="input-group">
         <h1 id="ms1">¡Hola de nuevo!</h1>
         <label id="ms2" for="ms2">¡Nos alegramos mucho de volver a verte!</label>
@@ -252,7 +253,7 @@ label
     </div>
 </div>
 
-<div id="registroDiv" class="menu">
+<div id="registroDiv" class="menu" style="position: relative;">
     <h1 id="ms1">Crear una cuenta</h1>
     <form id="form-registro">
         <div class="input-group">
