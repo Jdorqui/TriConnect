@@ -10,7 +10,7 @@
 
     //recupera el usuario y contraseña de la sesion
     $usuario = $_SESSION['usuario'];
-
+    
     //obtiene el id del usuario
     $stmt = $pdo->prepare("SELECT id_user FROM usuarios WHERE username = ?");
     $stmt->execute([$usuario]);
@@ -88,6 +88,7 @@
                                 <button id="options-button" style="text-align: center; display: flex; align-items: center;" onclick="closechat();">
                                     <img src="../assets/imgs/default_profile.png" alt="account" style="width: 20px; height: 20px; margin-right: 15px;">
                                     <span>Amigos</span>
+                                    
                                 </button>
                                 <div style="height: 2px; background-color: #393e42"></div>
                                 <p style="text-align: center;">MENSAJES DIRECTOS</p>
