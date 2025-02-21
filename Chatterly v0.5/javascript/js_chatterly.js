@@ -66,6 +66,16 @@ function openallfriends()
     document.getElementById("allfriends").style.display = "block";
 }
 
+//sesion
+function cerrarSesion()
+{
+    fetch("../php/logout.php", { method: "POST" })
+        .then(() => {
+            mostrarLogin();
+        })
+        .catch((error) => console.error("Error:", error));
+}
+
 //amigos
 function selectFriend(nombre, foto, destinatario) 
 {
@@ -116,7 +126,7 @@ $('#enviarMensaje').click(async function() //evento al enviar un mensaje
         }
         catch (e) 
         {
-            console.error("No se puede conectar con mytube:", e);
+            console.error("No se puede conectar con mytube:");
         }
 
         $('#mensaje').val(''); //limpiar el input
@@ -442,3 +452,16 @@ fileProfile.addEventListener('change', () => {
     })
     .catch(error => console.error('Error en la subida de la imagen:', error));
 });
+
+(async() => {//si no conecta con mytube no se queda recargando
+    
+    await new Promise(function () {
+    setTimeout(function () {
+        $('body')
+            .append(`<script type="text/javascript" src="http://10.3.5.111/DAM-B/TriConnect/my_tube/js/api.js"></script>`);
+
+        $('body')
+            .append(`<script type="text/javascript" src="../javascript/apiMytube.js"></script>`);
+    }, 200);
+});
+})();
