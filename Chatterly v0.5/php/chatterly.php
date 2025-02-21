@@ -410,8 +410,6 @@
                 </div>
             </div>
         </div>
-        <script src="http://10.3.5.111/DAM-B/TriConnect/my_tube/js/api.js"></script> 
-        <script defer src="../javascript/apiMytube.js"></script>
         <script defer src="../javascript/api.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
         <script defer src="../javascript/js_chatterly.js"></script>
