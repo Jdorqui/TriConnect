@@ -34,7 +34,7 @@
 }
 
 #settings_div>:last-child {
-    background-color: brown;
+    background-color: #0e1012;
     flex-grow: 1;
 }
 
@@ -44,7 +44,7 @@
     height: 30%;
     width: 100%;
 
-    background-color: chocolate;
+    background-color: #191b1c;
 
     align-items: center;
     padding: 2%;

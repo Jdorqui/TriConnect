@@ -1,13 +1,15 @@
 // Dependencias:
 // - import.js
 
+const MYTUBE_IP = "http://10.3.5.111/DAM-B/TriConnect/my_tube";
+
 // Iniciar sesión.
 async function loginAPI(username, password) {
     let formData = new FormData();
     formData.append('USERNAME', username);
     formData.append('PASSWORD', password);
 
-    let fetchData = await fetch(`http://${MYTUBE_IP}/DAM-B/TriConnect/my_tube/php/login.php`, {
+    let fetchData = await fetch(`${MYTUBE_IP}/php/login.php`, {
         method: "POST",
         body: formData,
     });
@@ -23,7 +25,7 @@ async function registerAPI(username, password, email) {
     formData.append('PASSWORD', password);
     formData.append('EMAIL', email);
 
-    let fetchData = await fetch(`http://${MYTUBE_IP}/DAM-B/TriConnect/my_tube/php/sign_up.php`, {
+    let fetchData = await fetch(`${MYTUBE_IP}/php/sign_up.php`, {
         method: "POST",
         body: formData,
     });
@@ -40,7 +42,7 @@ async function sendMessageAPI(sender, receiver, msg, fromChatterly) {
     formData.append('MSG', msg);
     formData.append('FROM_CHATTERLY', fromChatterly);
 
-    let fetchData = await fetch(`http://${MYTUBE_IP}/DAM-B/TriConnect/my_tube/php/send_message.php`, {
+    let fetchData = await fetch(`${MYTUBE_IP}/php/send_message.php`, {
         method: "POST",
         body: formData,
     });
@@ -55,7 +57,7 @@ async function receiveMessagesAPI(sender, receiver) {
     formData.append('SENDER', sender);
     formData.append('RECEIVER', receiver);
 
-    let fetchData = await fetch(`http://${MYTUBE_IP}/DAM-B/TriConnect/my_tube/php/receive_messages.php`, {
+    let fetchData = await fetch(`${MYTUBE_IP}/php/receive_messages.php`, {
         method: "POST",
         body: formData,
     });
@@ -68,7 +70,7 @@ async function getFriendsAPI(username) {
     let formData = new FormData();
     formData.append('USERNAME', username);
 
-    let fetchData = await fetch(`http://${MYTUBE_IP}/DAM-B/TriConnect/my_tube/php/get_friends.php`, {
+    let fetchData = await fetch(`${MYTUBE_IP}/php/get_friends.php`, {
         method: "POST",
         body: formData,
     });
