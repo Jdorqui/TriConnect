@@ -1,8 +1,8 @@
 // Dependencias:
 // - import.js
 
-// const MYTUBE_IP = "http://192.168.1.137/DAM-B/TriConnect/my_tube";
-const MYTUBE_IP = "http://10.3.5.111/DAM-B/TriConnect/my_tube";
+const MYTUBE_IP = "http://192.168.1.137/DAM-B/TriConnect/my_tube";
+// const MYTUBE_IP = "http://10.3.5.111/DAM-B/TriConnect/my_tube";
 
 // Iniciar sesión.
 async function loginAPI(username, password) {
@@ -103,9 +103,7 @@ function displayLoginAPIWrapper() {
         getLoginAPIWrapper().style.display = "";
         showLoginForm();
         getMain().style.filter = "brightness(20%)";
-    } catch (e) {
-        console.log("main no existe");
-    }
+    } catch (e) { }
 }
 
 // Cerrar la ventana de inicio de sesión (API).
@@ -113,9 +111,7 @@ function closeLoginAPIWrapper() {
     try {
         getLoginAPIWrapper().style.display = "none";
         getMain().style.filter = "brightness(100%)";
-    } catch (e) {
-        console.log("main no existe");
-    }
+    } catch (e) { }
 }
 
 // Mostrar el div de inicio de sesión.

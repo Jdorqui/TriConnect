@@ -25,7 +25,6 @@ function search(searchQuery, event) {
                 let usernames = array["usernames"]
                 let subscribed = array["subscribed"]
                 let friends = array["friends"]
-                // console.log(`DEBUG: ${JSON.stringify(array, null, 2)}`);
 
                 channels_main_div.innerHTML = '';
                 for (let i = 0; i < usernames.length; i++) {

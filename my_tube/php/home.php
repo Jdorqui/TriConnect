@@ -5,8 +5,15 @@ session_start();
 
 $USERNAME = "";
 $FRIENDS_ARRAY = "";
+$PROFILE_PIC = "";
 if (isset($_SESSION['USERNAME'])) {
     $USERNAME = $_SESSION['USERNAME'];
+
+    if (file_exists($BASE_DIR . "uploads/" . $USERNAME . "/profile_pic.png")) {
+        $PROFILE_PIC = "../../../../../uploads/" . $USERNAME . "/profile_pic.png";
+    }
+
+    // GET RID OF THIS.
     $GET_ALL_FRIENDS_QUERY = $CONN->
         query(
             "SELECT
@@ -49,6 +56,11 @@ if (isset($_SESSION['USERNAME'])) {
         if ('<?php echo $USERNAME ?>' != "") {
             username = '<?php echo $USERNAME ?>';
         }
+
+        let profile_pic = "../img/profile_pic_example.jpg";
+        if ('<?php echo $PROFILE_PIC ?>' != "") {
+            profile_pic = '<?php echo $PROFILE_PIC ?>';
+        }
     </script>
 </head>
 
@@ -64,7 +76,7 @@ if (isset($_SESSION['USERNAME'])) {
             <!-- TODO -->
             <?php if (isset($_SESSION["USERNAME"])): ?>
                 <div id="user_logged_in_tab" onclick="display('settings')">
-                    <img class="every_user_image" src="../img/profile_pic_example.jpg">
+                    <img class="every_user_image">
                     <div><?php echo $_SESSION["USERNAME"] ?></div>
                 </div>
                 <img src="../img/logout.png" onclick="logout()" style="height: 80%; margin-left: 1vw; cursor:pointer">
@@ -142,16 +154,17 @@ if (isset($_SESSION['USERNAME'])) {
                                 style="color: #6458aa">Chatterly</span>©
                         </div>
                         <div onclick="displaySetting('deto')">
-                            <img src="../img/deto_logo.png">Conectar con <span style="color: #229fa3">DeTo'</span> ©
+                            <img src="../img/deto_logo.png">Conectar con<span style="color: #229fa3">DeTo'</span>©
                         </div>
                     </div>
                     <div>
                         <div id="user_profile_pic_settings">
-                            <div
-                                style="position: relative; display: flex; align-items: center; justify-content: center">
-                                <div
-                                    style="color: black; font-size: 2.5vw; position: absolute; background-color: white; width: 100%; height: 100%; align-items: center; justify-content: center; border-radius: 100%; opacity: 0.4;">
-                                    Cambiar</div>
+                            <div id="user_profile_pic"
+                                style="cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center">
+                                <div id="cambiar_text"
+                                    style="display: none; color: black; font-size: 2.5vw; position: absolute; background-color: white; width: 100%; height: 100%; align-items: center; justify-content: center; border-radius: 100%; opacity: 0.4;">
+                                    Cambiar
+                                </div>
                                 <img class="" src="../img/profile_pic_example.jpg">
                             </div>
                             <div><?php echo $_SESSION["USERNAME"] ?></div>
@@ -272,6 +285,9 @@ if (isset($_SESSION['USERNAME'])) {
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="../js/import.js"></script>
+    <script>
+        setProfilePic(profile_pic);
+    </script>
 </body>
 
 </html>

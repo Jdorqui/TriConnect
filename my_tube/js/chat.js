@@ -9,13 +9,33 @@ const CHAT = document.getElementById('chat');
 const FRIEND_OBJECTS = [];
 let friendsArray = [];
 
+let totalUnreadMessages = 0;
+let totalUnreadMessagesDiv = document.getElementById('new_messages_chat_tab');
+function zeroTotalUnreadMessages() {
+    totalUnreadMessages = 0;
+    setUnreadMessagesDiv(totalUnreadMessagesDiv, totalUnreadMessages);
+}
+
+function setUnreadMessagesDiv(div, unreadMessages) {
+    if (unreadMessages > 99) {
+        div.innerHTML = '+99';
+        div.style.display = '';
+    } else if (unreadMessages > 0) {
+        div.innerHTML = unreadMessages;
+        div.style.display = '';
+    } else {
+        div.innerHTML = 0;
+        div.style.display = 'none';
+    }
+}
+
 let selectedFriend;
 class FriendHandler {
     constructor(div, id, name) {
         this.div = div;
         this.id = id;
         this.name = name;
-        this.messsageNumber = 0;
+        this.messageNumber = 0;
         this.unreadMessages = 0;
     }
 
@@ -26,36 +46,35 @@ class FriendHandler {
 
     checkUnreadMessages() {
         let UMDiv = document.getElementById(`friend_${this.id}`).lastElementChild;
-
-        if (this.unreadMessages > 99) {
-            UMDiv.innerHTML = '+99';
-            UMDiv.style.display = '';
-        } else if (this.unreadMessages > 0) {
-            UMDiv.innerHTML = this.unreadMessages;
-            UMDiv.style.display = '';
-        } else {
-            UMDiv.innerHTML = 0;
-            UMDiv.style.display = 'none';
-        }
+        setUnreadMessagesDiv(UMDiv, this.unreadMessages);
+        setUnreadMessagesDiv(totalUnreadMessagesDiv, totalUnreadMessages);
     }
 
     addUnreadMessage() {
         this.unreadMessages += 1;
+        totalUnreadMessages += 1;
         this.checkUnreadMessages();
     }
 
     subtractUnreadMessage() {
         this.unreadMessages -= 1;
+        totalUnreadMessages -= 1;
         this.checkUnreadMessages();
     }
 
     zeroUnreadMessages() {
+        totalUnreadMessages -= this.unreadMessages;
+        if (totalUnreadMessages == 0) {
+            zeroTotalUnreadMessages();
+        }
+
         this.unreadMessages = 0;
         this.checkUnreadMessages();
     }
 }
 
 async function createFriendDivs() {
+    zeroTotalUnreadMessages();
     for (let i = 0; i < friendsArray.length; i++) {
         let name = friendsArray[i].SUBSCRIBED_TO;
 
@@ -69,8 +88,8 @@ async function createFriendDivs() {
         FRIEND_OBJECTS.push(new FriendHandler(FRIENDS_NAVBAR.children[i + 1], i, name));
     }
 
+    emptyChat();
     if (FRIEND_OBJECTS.length > 0) {
-        changeChat(FRIEND_OBJECTS[0].id);
         document.getElementById("input_text").style.display = "";
     } else {
         emptyChat();
@@ -145,7 +164,7 @@ function createMessage(sender, msg, date, fromChatterly) {
     CHAT.innerHTML += before;
 }
 
-// Usar la función receiveMessages de la API para mandar un mensaje.
+// Función que maneja el envío de los mensajes a las diferentes bases de datos.
 async function sendMessage(input, event) {
     if (event.key == "Enter" && input.value != "") {
         let inputValue = input.value;
@@ -159,6 +178,8 @@ async function sendMessage(input, event) {
             // Transformar datos de MyTube a datos de Chatterly.
             let chatterlyUsername = await getChatterlyUsername(username);
             let chatterlyFriend = await getChatterlyUsername(selectedFriend.name);
+
+            // Usar API de Chatterly.
             let chatterlyUsernameID = await usuarioNumero_Api(chatterlyUsername);
             let chatterlyFriendID = await usuarioNumero_Api(chatterlyFriend);
 
@@ -185,7 +206,7 @@ async function getAllMessages(friendObject) {
         let seen = jsonData[friendObject.messageNumber].SEEN;
 
         // Comprobar si el mensaje nuevo recibido es del amigo seleccionado.
-        if (friendObject.name == selectedFriend.name) {
+        if (selectedFriend != null && friendObject.name == selectedFriend.name) {
             let msg = jsonData[friendObject.messageNumber].MSG;
             let rawDate = new Date(jsonData[friendObject.messageNumber].SEND_DATE);
             let date;
