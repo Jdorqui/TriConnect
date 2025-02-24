@@ -2,13 +2,7 @@
     session_start();
     require 'conexion.php';
 
-    if (!isset($_SESSION['usuario']) || !isset($_SESSION['password'])) 
-    {
-        header("Location: index.html");
-        exit();
-    }
-
-    $usuario = $_SESSION['usuario'];
+    $usuario = $_POST['usuario'];
 
     //obtiene el id del usuario actual
     $stmt = $pdo->prepare("SELECT id_user FROM usuarios WHERE username = ?");
@@ -17,7 +11,7 @@
 
     if (!$usuarioData) 
     {
-        echo "Usuario no encontrado.";
+        echo json_encode(['success' => false, "error" => "Usuario no encontrado."]);
         exit();
     }
     $id_usuario_actual = $usuarioData['id_user'];
@@ -54,11 +48,12 @@
         if (move_uploaded_file($_FILES['archivo']['tmp_name'], $targetFile)) //se mueve el archivo al directorio chat_files
         {
             //se inserta el mensaje en la base de datos
-            $stmt = $pdo->prepare("INSERT INTO mensajes (id_emisor, id_receptor, contenido, tipo) VALUES (:id_emisor, :id_receptor, :contenido, 'archivo')");
+            $stmt = $pdo->prepare("INSERT INTO mensajes (id_emisor, id_receptor, contenido, tipo, mytube) VALUES (:id_emisor, :id_receptor, :contenido, 'archivo', :mytube)");
             $stmt->execute([
                 'id_emisor' => $id_usuario_actual,
                 'id_receptor' => $destinatario,
-                'contenido' => $targetFile
+                'contenido' => $targetFile,
+                'mytube' => $_POST['mytube']
             ]); //se inserta el mensaje en la base de datos
 
             echo json_encode([
