@@ -26,9 +26,7 @@ if ($CHECK_EXISTING_USER_QUERY->num_rows == 0) {
     mkdir($USER_DIR, 0777, true);
 
     $FROM = $BASE_DIR . "DAM-B/TriConnect/my_tube/img/profile_pic.png";
-    echo $FROM . "\n";
     $TO = $USER_DIR . "profile_pic.png";
-    echo $TO;
     copy($FROM, $TO);
 
 } else {

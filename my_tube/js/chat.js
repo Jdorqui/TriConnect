@@ -89,12 +89,6 @@ async function createFriendDivs() {
     }
 
     emptyChat();
-    if (FRIEND_OBJECTS.length > 0) {
-        document.getElementById("input_text").style.display = "";
-    } else {
-        emptyChat();
-        document.getElementById("input_text").style.display = "none";
-    }
 }
 
 function changeChat(friendId) {
@@ -106,11 +100,13 @@ function changeChat(friendId) {
         <div>${selectedFriend.name}</div>`;
 
     setReadMessages();
+    document.getElementById("input_text").parentElement.style.display = "flex";
 }
 
 function emptyChat() {
     USER_HEADER.innerHTML = "";
     CHAT.innerHTML = "";
+    document.getElementById("input_text").parentElement.style.display = "none";
 }
 
 (async () => {
@@ -139,17 +135,17 @@ function createMessage(jsonData, date) {
     let before = CHAT.innerHTML;
     let content = jsonData.MSG;
     if (jsonData.IS_FILE == 1) {
-        content = `<img src="../../../../../uploads/${jsonData.SENDER}/${jsonData.MSG}">`;
+        content = `<img style="width:100%" src="../../../../../uploads/${jsonData.SENDER}/${jsonData.MSG}">`;
     }
 
-    if (jsonData.FROM_CHATTERLY == 1) {
+    if (jsonData.CHATTERLY == 1) {
         CHAT.innerHTML = `
         <div class="message_body" style="${style}">
             <img class="every_user_image" src="../img/chatterly_logo.png">
             <div style="${colorStyle}; background-color: #6458aa">
                 <div style="font-size: 1vw;">${jsonData.SENDER}</div>
                 <div class="message">${content}</div>
-                <div style="position: absolute; right: 3%; bottom: 10%; font-size: 1vw;">${date}</div>
+                <div style="text-align: right; font-size: 1vw;">${date}</div>
             </div>
         </div>`;
     } else {
@@ -159,13 +155,28 @@ function createMessage(jsonData, date) {
             <div style="${colorStyle}">
                 <div style="font-size: 1vw;">${jsonData.SENDER}</div>
                 <div class="message">${content}</div>
-                <div style="position: absolute; right: 3%; bottom: 10%; font-size: 1vw;">${date}</div>
+                <div style="text-align: right; font-size: 1vw;">${date}</div>
             </div>
         </div>`;
     }
 
     CHAT.innerHTML += before;
 }
+
+const SEND_IMAGE_INPUT = document.createElement('input');
+SEND_IMAGE_INPUT.id = 'send_image_input';
+SEND_IMAGE_INPUT.type = 'file';
+SEND_IMAGE_INPUT.accept = 'image/*'
+SEND_IMAGE_INPUT.onchange = async (e) => {
+    let file = e.target.files[0];
+    await sendImageAPI(username, selectedFriend.name, file, 0);
+    console.log(await enviarArchivos_Api(await getChatterlyUsername(username), await usuarioNumero_Api(await getChatterlyUsername(selectedFriend.name)), file, 1));
+}
+
+const UPLOAD_IMAGE_ICON = document.getElementById('upload_image_icon');
+UPLOAD_IMAGE_ICON.addEventListener('click', () => {
+    SEND_IMAGE_INPUT.click();
+});
 
 // Función que maneja el envío de los mensajes a las diferentes bases de datos.
 async function sendMessage(input, event) {
@@ -217,6 +228,7 @@ async function getAllMessages(friendObject) {
             }
 
             createMessage(jsonData[friendObject.messageNumber], date);
+            setReadMessages();
         }
         // Por otro lado, añade 1 a los mensajes no vistos por el usuario actual.
         else if (seen == "0" && sender != username) {

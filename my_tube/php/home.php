@@ -127,7 +127,8 @@ if (isset($_SESSION['USERNAME'])) {
                         <div style="padding: 0.7vw; display: flex; align-items:center; height: 12%; border-top: 0.1vw solid rgb(45, 45, 45);">
                             <input id="input_text" type="text" placeholder="Enviar mensaje"
                                 onkeypress="sendMessage(this, event)">
-                            <img src="../img/upload_image_icon.png" style="margin-left: 1vw; height: 65%; cursor: pointer">
+                            <img id="upload_image_icon" src="../img/upload_image_icon.png" style="margin-left: 1vw; height: 65%; cursor: pointer">
+                            <img src="../img/pixabay_icon.png" style="margin-left: 1vw; height: 65%; cursor: pointer">
                         </div>
                     </div>
                 </div>

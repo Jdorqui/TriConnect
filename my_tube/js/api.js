@@ -182,9 +182,7 @@ async function validateRegisterForm() {
     event.preventDefault();
     let formData = new FormData(document.getElementById("register_form"))
     let data = await registerAPI(formData.get("USERNAME"), formData.get("PASSWORD"));
-    console.log(data);
-    
-    //checkErrors(data);
+    checkErrors(data);
 }
 
 // Validar el form de registro en Chatterly.
