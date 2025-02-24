@@ -36,10 +36,12 @@ INPUT.onchange = async (e) => {
     let formData = new FormData()
     formData.append('profile_pic_input', file)
 
-    await fetch('../php/change_profile_pic.php', {
+    let d = await fetch('../php/change_profile_pic.php', {
         method: "POST",
         body: formData,
     });
+
+    console.log(await d.text());
 
     setProfilePic(`../../../../../uploads/${username}/profile_pic.png`);
 }

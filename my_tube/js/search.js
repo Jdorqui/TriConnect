@@ -46,7 +46,7 @@ function createChannelDiv(channel, subscribed, friends) {
 
     channels_main_div.innerHTML += `
         <div onclick="changeChannel()">
-            <img class="search_user_image" src="../img/logged_out_profile_pic.jpg">
+            <img class="search_user_image" src="../../../../../uploads/${channel}/profile_pic.png">
             <div>
                 <div>${channel}</div>
                 <div>subs</div>

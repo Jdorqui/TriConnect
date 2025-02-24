@@ -18,4 +18,3 @@ if (!file_exists($USER_DIR)) {
 }
 
 move_uploaded_file($UPLOADED_FILE["tmp_name"], $FILE);
-//move_uploaded_file($FILE);

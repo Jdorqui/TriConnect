@@ -29,9 +29,9 @@ function display(id) {
     }
 }
 
-display('settings');
+// display('settings');
 // search('', 'test');
-// display('chat');
+display('chat');
 
 async function logout() {
     await $.get("../php/logout.php");
