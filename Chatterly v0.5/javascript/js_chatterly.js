@@ -163,60 +163,67 @@ async function cargarMensajes() //carga los mensajes
                         imgUrl = "http://10.3.5.111/DAM-B/TriConnect/my_tube/img/mytube_logo.png"; //muestra la imagen de mytube
                     }
 
-                    let mensajeHtml = `<div style="padding-left: 10px; display: flex; align-items: center;">`; //crea un div para el mensaje
-                    mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%;  margin-right: 10px;">`; //muestra la imagen de perfil
-                    
-                    if (mensaje.tipo === 'archivo') //si el mensaje es un archivo
+                    let mensajeHtml = `<div style="padding-left: 10px; padding-top: 10px; margin-top: 5px; display: flex; align-items: flex-start;">`; // crea un div para el mensaje
+                    mensajeHtml += `<img src="${imgUrl}" alt="Imagen de perfil" style="width: 30px; height: 30px; border-radius: 50%; ">`; // muestra la imagen de perfil
+
+                    // Contenedor del mensaje
+                    mensajeHtml += `<div style="display: flex; flex-direction: column; justify-content: flex-start;">`;
+
+                    // Fecha y nombre (Nombre arriba, fecha al lado)
+                    mensajeHtml += `<div style="display: flex; align-items: center;">`;
+                    mensajeHtml += `<strong style="padding-left: 8px; padding-right: 8px; padding-bottom: 5px; font-size: 1.2em; ">${mensaje.alias}</strong>`;
+                    mensajeHtml += `<div style="font-size: 0.8em;  color: #888;">${fechaEnvio}</div>`;
+                    mensajeHtml += `</div>`;
+
+                    // Mensaje o archivo
+                    if (mensaje.tipo === 'archivo') 
                     {
-                        const fileName = mensaje.contenido.split('/').pop(); //obtiene el nombre del archivo
-                        const fileExtension = fileName.split('.').pop().toLowerCase(); //obtiene la extensión del archivo
-                        let downloadLink = `<a id='link' style="text-align: center;" href="${mensaje.contenido}" download>Descargar [${fileName}]</a>`; //crea un enlace de descarga
-                        
-                        //muestra la imagen del archivo adjunto y el enlace de descarga debajo 
-                        if (['png', 'jpg', 'jpeg', 'webp'].includes(fileExtension)) 
+                        const fileName = mensaje.contenido.split('/').pop(); // obtiene el nombre del archivo
+                        const fileExtension = fileName.split('.').pop().toLowerCase(); // obtiene la extensión del archivo
+                        let downloadLink = `<a id='link' style="text-align: center;" href="${mensaje.contenido}" download>Descargar [${fileName}]</a>`; // crea un enlace de descarga
+
+                        // Muestra la imagen del archivo adjunto y el enlace de descarga debajo 
+                        if (['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(fileExtension)) 
                         {
-                            // Mostrar la imagen y agregar el enlace de descarga debajo
-                            mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                            mensajeHtml += `<img src="${mensaje.contenido}" alt="Imagen adjunta" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
-                            mensajeHtml += downloadLink;
+                            mensajeHtml += `<div style=" display: block; margin-top: 10px; padding-left: 10px;">`;
+                            mensajeHtml += `<img src="${mensaje.contenido}" alt="Imagen adjunta" style="max-width: 200px; max-height: 200px; display: block;">`;
+                            mensajeHtml += `<div> ${downloadLink} </div>`;
                             mensajeHtml += `</div>`;
-                        }
+                        } 
                         else if (['pdf'].includes(fileExtension)) 
                         {
+                            mensajeHtml += `<div style=" margin-top: 10px;  display: block;">`;
+                            mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo PDF adjunto" style="max-width: 200px; max-height: 200px; display: block;">`;
+                            mensajeHtml += downloadLink;
+                            mensajeHtml += `</div>`;
+                        } 
+                        else if (['mp4'].includes(fileExtension)) 
+                        {
+                            mensajeHtml += `<div style=" margin-top: 10px; display: block;">`;
+                            mensajeHtml += `<video controls style="max-width: 500px; max-height: 300px; display: block;">`;
+                            mensajeHtml += `<source src="${mensaje.contenido}" type="video/mp4">`;
+                            mensajeHtml += `Tu navegador no soporta el elemento de video.`;
+                            mensajeHtml += `</video>`;
+                            mensajeHtml += downloadLink;
+                            mensajeHtml += `</div>`;
+                        } 
+                        else if (['mp3'].includes(fileExtension)) 
+                        {
                             mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                            mensajeHtml += `<img src="../assets/placeholders/otros.png" alt="Archivo PDF adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
+                            mensajeHtml += `<audio controls style="display: block; margin-bottom: 10px;">`;
+                            mensajeHtml += `<source src="${mensaje.contenido}" type="audio/mpeg">`;
+                            mensajeHtml += `Tu navegador no soporta el elemento de audio.`;
+                            mensajeHtml += `</audio>`;
                             mensajeHtml += downloadLink;
                             mensajeHtml += `</div>`;
                         }
-                        else if (['mp4'].includes(fileExtension)) 
-                            {
-                                mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                                mensajeHtml += `<video controls style="max-width: 500px; max-height: 300px; display: block; margin-bottom: 10px;">`;
-                                mensajeHtml += `<source src="${mensaje.contenido}" type="video/mp4">`;
-                                mensajeHtml += `Tu navegador no soporta el elemento de video.`;
-                                mensajeHtml += `</video>`;
-                                mensajeHtml += downloadLink;
-                                mensajeHtml += `</div>`;
-                            }
-                            
-                        else if (['mp3'].includes(fileExtension)) 
-                            {
-                                mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
-                                mensajeHtml += `<audio controls style="display: block; margin-bottom: 10px;">`;
-                                mensajeHtml += `<source src="${mensaje.contenido}" type="audio/mpeg">`;
-                                mensajeHtml += `Tu navegador no soporta el elemento de audio.`;
-                                mensajeHtml += `</audio>`;
-                                mensajeHtml += downloadLink;
-                                mensajeHtml += `</div>`;
-                            }
-                            
                         else if (['zip'].includes(fileExtension)) 
                         {
                             mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
                             mensajeHtml += `<img src="../assets/placeholders/comprimido.png" alt="Archivo comprimido adjunto" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 10px;">`;
                             mensajeHtml += downloadLink;
                             mensajeHtml += `</div>`;
-                        }
+                        } 
                         else if (['exe', 'msi'].includes(fileExtension)) 
                         {
                             mensajeHtml += `<div style="margin-top: 10px; display: block;">`;
@@ -231,30 +238,28 @@ async function cargarMensajes() //carga los mensajes
                             mensajeHtml += downloadLink;
                             mensajeHtml += `</div>`;
                         }
-                    }
-                    else //si el mensaje es de texto
-                    {
+                    } 
+                    else // si el mensaje es de texto
+                    { 
                         let contenido = mensaje.contenido;
 
-                        let urlRegex = /(https?:\/\/[^\s]+)/g; //detecta si el mensaje contiene enlaces
-                        
-                        contenido = contenido.replace(urlRegex, function(url)  //reemplaza los enlaces por enlaces clicable
-                        {
-                            let youtubeMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]+)/); //comprueba si el enlace es de youtube
-                            if (youtubeMatch) //si el enlace es de youtube se muestra el video
-                            {
-                                let videoId = youtubeMatch[1]; //extrae el ID del video
-                                return `<br><iframe width="500" height="300" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe><br>`; //muestra el video
+                        let urlRegex = /(https?:\/\/[^\s]+)/g; // detecta si el mensaje contiene enlaces
+
+                        contenido = contenido.replace(urlRegex, function (url) { // reemplaza los enlaces por enlaces clicables
+                            let youtubeMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]+)/); // comprueba si el enlace es de youtube
+                            if (youtubeMatch) // si el enlace es de youtube se muestra el video
+                            { 
+                                let videoId = youtubeMatch[1]; // extrae el ID del video
+                                return `<br><iframe width="500" height="300" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe><br>`; // muestra el video
                             }
-                            return `<a href="${url}" target="_blank" id="link">${url}</a>`; //enlace normal
+                            return `<a href="${url}" target="_blank" id="link">${url}</a>`; // enlace normal
                         });
 
-                        mensajeHtml += `<strong>${mensaje.alias}:</strong> ${contenido}`; //mensaje de texto normal
+                        mensajeHtml += `<div style="margin-bottom: 10px;">${contenido}</div>`; // mensaje de texto normal
                     }
 
-                    
-                    mensajeHtml += `<div style="font-size: 0.8em; color: #888; min-width: 110px; padding: 5px; align-items: left; margin-left: auto;">${fechaEnvio}</div>`; //muestra la fecha de envio
-                    mensajeHtml += '</div>';
+                    mensajeHtml += `</div></div>`; // cierra el div del mensaje
+
                     $('#chat-messages').prepend(mensajeHtml); //añade el mensaje al chat
                 });
             }
@@ -272,49 +277,37 @@ $('#uploadfile').click(function() //evento al hacer clic en el botón de subir a
     document.getElementById('fileInput').click();
 });
 
-document.getElementById('fileInput').addEventListener('change', function(event) //evento al pinchar en el input para subir un archivo
+document.getElementById('fileInput').addEventListener('change', async function(event) //evento al pinchar en el input para subir un archivo
 {
     const file = event.target.files[0]; //obtiene el archivo seleccionado
-        if (file && destinatario !== null)
-        {
-            //extensiones permitidas
-            const allowedExtensions = [ 
-                'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'tiff', 'svg',
-                'mp4', 'mkv', 'mov', 'avi', 'wmv', 'flv', 'webm',
-                'mp3', 'wav', 'flac', 'aac', 'ogg', 'wma', 'm4a',
-                'pdf', 'txt', 'rtf', 'csv',
-                'doc', 'docx', 'odt', 'xls', 'xlsx', 'ods', 'ppt', 'pptx', 'odp',
-                'zip', 'rar', '7z', 'tar', 'gz', 'bz2',
-                'exe', 'msi', 'apk', 'dmg', 'iso',
-                'html', 'css', 'js', 'php', 'py', 'java', 'c', 'cpp', 'cs', 'sh', 'bat', 'sql', 'torrent'
+    if (file && destinatario !== null)
+    {
+        //extensiones permitidas
+        const allowedExtensions = [ 
+            'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'tiff', 'svg',
+            'mp4', 'mkv', 'mov', 'avi', 'wmv', 'flv', 'webm',
+            'mp3', 'wav', 'flac', 'aac', 'ogg', 'wma', 'm4a',
+            'pdf', 'txt', 'rtf', 'csv',
+            'doc', 'docx', 'odt', 'xls', 'xlsx', 'ods', 'ppt', 'pptx', 'odp',
+            'zip', 'rar', '7z', 'tar', 'gz', 'bz2',
+            'exe', 'msi', 'apk', 'dmg', 'iso',
+            'html', 'css', 'js', 'php', 'py', 'java', 'c', 'cpp', 'cs', 'sh', 'bat', 'sql', 'torrent'
         ];
         
         const fileExtension = file.name.split('.').pop().toLowerCase(); //obtiene la extensión del archivo
-
         if (allowedExtensions.includes(fileExtension)) //comprueba si la extensión del archivo es válida
         {
-            const formData = new FormData();
-            formData.append('archivo', file); //añade el archivo al formData
-            formData.append('destinatario', destinatario); //añade el destinatario al formData
+            await enviarArchivos_Api(await numeroUsuario_Api(id_usuario_actual), destinatario, file, 0);
 
-            fetch('uploadfiles.php', { //envia el archivo al servidor
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => { 
-                if (data.success) //si el archivo se ha subido correctamente
-                {
-                    cargarMensajes(); //carga los mensajes
-                } 
-                else 
-                {
-                    alert(data.error || 'Error al subir el archivo.');
-                }
-            })
-            .catch(error => {
-                console.error('Error al enviar el archivo:', error);
-            });
+            try
+            {
+                //sendImageAPI(await numeroUsuario_Api(id_usuario_actual), await numeroUsuario_Api(destinatario), file, 1);
+                console.log(await sendImageAPI(await numeroUsuario_Api(id_usuario_actual), await numeroUsuario_Api(destinatario), file, 1));
+            }
+            catch(e)
+            {
+                console.log("No se puede conectar con mytube");
+            }
         } 
         else 
         {

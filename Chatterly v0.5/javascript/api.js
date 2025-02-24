@@ -129,6 +129,21 @@ async function enviarMensajes_Api(usuario, destinatario, mensaje, mytube)
         });
 }
 
+async function enviarArchivos_Api(usuario, destinatario, file, mytube)
+{
+    const formData = new FormData();
+    formData.append('usuario', usuario)
+    formData.append('destinatario', destinatario); //añade el destinatario al formData
+    formData.append('archivo', file); //añade el archivo al formData
+    formData.append('mytube', mytube);
+
+    let fetchData = await fetch('http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/uploadfiles.php', { //envia el archivo al servidor
+        method: 'POST',
+        body: formData,
+    })
+    return await fetchData.json();
+}
+
 async function cargarMensajes_Api(usuario, destinatario) 
 {
     let fetchData = await fetch("http://10.3.5.106/PHP/TriConnect/Chatterly v0.5/php/chat.php",
