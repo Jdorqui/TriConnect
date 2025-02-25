@@ -126,6 +126,7 @@
             font-size: 1.5vw;
             background-color: transparent;
             color: white;
+            width: fit-content !important;
 
             cursor: pointer;
         }

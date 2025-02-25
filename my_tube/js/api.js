@@ -1,8 +1,8 @@
 // Dependencias:
 // - import.js
 
-const MYTUBE_IP = "http://192.168.1.137/DAM-B/TriConnect/my_tube";
-// const MYTUBE_IP = "http://10.3.5.111/DAM-B/TriConnect/my_tube";
+// const MYTUBE_IP = "http://192.168.1.137/DAM-B/TriConnect/my_tube";
+const MYTUBE_IP = "http://10.3.5.111/DAM-B/TriConnect/my_tube";
 
 // Iniciar sesión.
 async function loginAPI(username, password) {
@@ -44,6 +44,23 @@ async function sendMessageAPI(sender, receiver, msg, fromChatterly) {
     formData.append('FROM_CHATTERLY', fromChatterly);
 
     let fetchData = await fetch(`${MYTUBE_IP}/php/send_message.php`, {
+        method: "POST",
+        body: formData,
+    });
+
+    let data = await fetchData.text();
+    return data;
+}
+
+// Enviar imagen.
+async function sendImageAPI(sender, receiver, image, fromChatterly) {
+    let formData = new FormData();
+    formData.append('SENDER', sender);
+    formData.append('RECEIVER', receiver);
+    formData.append('IMAGE', image);
+    formData.append('FROM_CHATTERLY', fromChatterly);
+
+    let fetchData = await fetch(`${MYTUBE_IP}/php/send_image.php`, {
         method: "POST",
         body: formData,
     });

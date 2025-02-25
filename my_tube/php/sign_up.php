@@ -21,6 +21,14 @@ if ($CHECK_EXISTING_USER_QUERY->num_rows == 0) {
 
     $_SESSION["USERNAME"] = $USERNAME;
     $_SESSION["PASSWORD"] = $PASSWORD;
+
+    $USER_DIR = $BASE_DIR . "uploads/$USERNAME/";
+    mkdir($USER_DIR, 0777, true);
+
+    $FROM = $BASE_DIR . "DAM-B/TriConnect/my_tube/img/profile_pic.png";
+    $TO = $USER_DIR . "profile_pic.png";
+    copy($FROM, $TO);
+
 } else {
     echo "ERROR-001: El usuario '$USERNAME' ya existe.";
 
