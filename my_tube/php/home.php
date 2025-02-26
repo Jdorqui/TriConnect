@@ -57,7 +57,7 @@ if (isset($_SESSION['USERNAME'])) {
             username = '<?php echo $USERNAME ?>';
         }
 
-        let profile_pic = "../img/profile_pic_example.jpg";
+        let profile_pic = "../img/logged_out_profile_pic.jpg";
         if ('<?php echo $PROFILE_PIC ?>' != "") {
             profile_pic = '<?php echo $PROFILE_PIC ?>';
         }
@@ -112,7 +112,7 @@ if (isset($_SESSION['USERNAME'])) {
                     <div>
                         <div id="user_header">
                             <?php if ($GET_ALL_FRIENDS_QUERY->num_rows > 0): ?>
-                                <img class="every_user_image" src="../img/profile_pic_example.jpg">
+                                <img class="every_user_image" src="../img/logged_out_profile_pic">
                                 <div>
                                     <div>
                                         <?php
@@ -167,7 +167,7 @@ if (isset($_SESSION['USERNAME'])) {
                                     style="display: none; color: black; font-size: 2.5vw; position: absolute; background-color: white; width: 100%; height: 100%; align-items: center; justify-content: center; border-radius: 100%; opacity: 0.4;">
                                     Cambiar
                                 </div>
-                                <img class="" src="../img/profile_pic_example.jpg">
+                                <img class="" src="../img/logged_out_profile_pic">
                             </div>
                             <div><?php echo $_SESSION["USERNAME"] ?></div>
                         </div>
@@ -187,7 +187,7 @@ if (isset($_SESSION['USERNAME'])) {
                 <div id="channel_div">
                     <div style="width: 100%; height: fit-content; border-bottom: 2px white solid;">
                         <div id="user_channel">
-                            <img src="../img/profile_pic_example.jpg" id="user_channel_profile_pic">
+                            <img src="../img/logged_out_profile_pic" id="user_channel_profile_pic">
                             <div style="flex-grow: 1; display: flex; flex-direction: column; padding: 10px;">
                                 <?php
                                 echo $CHANNEL_ID;
