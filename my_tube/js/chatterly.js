@@ -30,3 +30,7 @@ async function getChatterlyLogin() {
         }
     });
 }
+
+(async () => {
+    await getChatterlyLogin();
+})();
