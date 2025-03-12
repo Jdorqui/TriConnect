@@ -1,27 +1,16 @@
 <?php
     session_start();
+    require 'conexion.php';
 
     if (!isset($_SESSION['usuario']) || !isset($_SESSION['password']))  //si el usuario no ha iniciado sesion
     { 
-        header("Location: index.html"); //redirecciona al index
+        header("Location: ../html/index.html"); //redirecciona al index
         exit(); //finaliza la ejecucion del script
     }
 
     //recupera el usuario y contraseña de la sesion
     $usuario = $_SESSION['usuario'];
-    $password = $_SESSION['password'];
-
-    try //conectar a la base de datos
-    {
-        $pdo = new PDO('mysql:host=localhost;dbname=chatterly', 'root', '');
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } 
-    catch (PDOException $e) 
-    {
-        echo "Error de conexión: " . $e->getMessage();
-        exit();
-    }
-
+    
     //obtiene el id del usuario
     $stmt = $pdo->prepare("SELECT id_user FROM usuarios WHERE username = ?");
     $stmt->execute([$usuario]);
@@ -80,7 +69,7 @@
         <link rel="icon" href="../assets/imgs/logo_bg.ico">
     </head>
     <body>
-        <div id="bienvenida">
+        <div id="chatterly">
             <div style="display: flex; flex-direction: column; width: 100vw; height: 100vh;">
                 <div style="background-color: #1e1f22; color: white; padding: 5px; text-align: left; height: 20px;"> <!-- barra superior -->
                     <span style="font-weight: bold; color: #949ba4;">Chatterly</span>
@@ -97,38 +86,39 @@
                         <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
                             <div style="padding: 10px;">
                                 <button id="options-button" style="text-align: center; display: flex; align-items: center;" onclick="closechat();">
-                                    <img src="../assets/imgs/friends_logo.png" alt="account" style="width: 20px; height: 20px; margin-right: 15px;">
+                                    <img src="../assets/imgs/default_profile.png" alt="account" style="width: 20px; height: 20px; margin-right: 15px;">
                                     <span>Amigos</span>
+                                    
                                 </button>
                                 <div style="height: 2px; background-color: #393e42"></div>
                                 <p style="text-align: center;">MENSAJES DIRECTOS</p>
-                                    <?php
+                                    <?php //se recorre la lista de amigos para mostrar los mensajes directos con cada uno de ellos 
                                         if (count($amigos) > 0) 
                                         {
-                                            foreach ($amigos as $amigo) 
+                                            foreach ($amigos as $amigo) //recorre la lista de amigos
                                             {
                                                 $amigoDir = "../assets/users/{$amigo['username']}/img_profile/";
                                                 $defaultImage = '../assets/imgs/default_profile.png';
 
-                                                $amigoImages = glob($amigoDir . '*.{jpg,jpeg,png}', GLOB_BRACE);
+                                                $amigoImages = glob($amigoDir . '*.{jpg,jpeg,png}', GLOB_BRACE); //glob — busca coincidencias de nombres de ruta de acuerdo a un patrón por tanto busca las imagenes en la carpeta del amigo y las guarda en un array para luego ordenarlas por fecha de modificacion y mostrar la mas reciente
 
-                                                if (!empty($amigoImages)) 
+                                                if (!empty($amigoImages)) //si hay imagenes en la carpeta del amigo
                                                 {
-                                                    usort($amigoImages, function ($a, $b) 
+                                                    usort($amigoImages, function ($a, $b)  //con usort se ordena el array para ordenar las imagenes por fecha de modificacion
                                                     {
-                                                        return filemtime($b) - filemtime($a);
+                                                        return filemtime($b) - filemtime($a); //filemtime — obtiene la fecha de modificación de un archivo y se ordenan las imagenes por fecha de modificacion
                                                     });
 
-                                                    $foto = $amigoImages[0];
+                                                    $foto = $amigoImages[0]; //se guarda la imagen mas reciente
                                                 }
                                                 else 
                                                 {
-                                                    $foto = $defaultImage;
+                                                    $foto = $defaultImage; //si no hay imagenes se muestra la imagen por defecto
                                                 }
 
-                                                $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1'];
-                                                $nombre = htmlspecialchars($amigo['username'], ENT_QUOTES, 'UTF-8'); // Escapa caracteres especiales
-                                                $foto = htmlspecialchars($foto, ENT_QUOTES, 'UTF-8'); // Escapa la URL
+                                                $destinatario = ($amigo['id_user1'] == $id_usuario_actual) ? $amigo['id_user2'] : $amigo['id_user1']; //se obtiene el id del destinatario
+                                                $nombre = htmlspecialchars($amigo['username'], ENT_QUOTES, 'UTF-8'); //se obtiene el nombre del amigo
+                                                $foto = htmlspecialchars($foto, ENT_QUOTES, 'UTF-8'); //se obtiene la foto del amigo
 
                                                 echo "
                                                     <button 
@@ -177,7 +167,6 @@
                                     <div id="options_button">
                                         <img src="../assets/imgs/options_icon.png" alt="options" id="options_icon" onclick="showoptionspanel()">
                                     </div>
-                                    
                                 </div>
                             </div>
                         </div>
@@ -185,7 +174,7 @@
 
                     <div id="initialpanel" style="background-color: #313338; flex: 1; display: flex; flex-direction: column; min-width: 500px;"> <!-- initialpanel -->
                         <div style="background-color: #313338; display: flex; padding: 10px; align-items: center; color: white; gap: 10px;"> 
-                            <img src="../assets/imgs/friends_logo.png" alt="friends" style="padding: 10px; width: 24px; height: 24px;">
+                            <img src="../assets/imgs/default_profile.png" alt="friends" style="padding: 10px; width: 24px; height: 24px;">
                             <span style="font-size: 16px;">Amigos</span>
                             <div id="divisor" style="width: 2px; background-color: #393e42; height: 100%;"></div>
                             <button class="friend-tab-button" style="width: 60px;" onclick="openonlinemenu()">En linea</button>
@@ -361,7 +350,10 @@
                         <div class="form-container">
                             <p class="section-title">AJUSTES DE USUARIO</p>
                             <button id="options-button" onclick="showprofileinfo()">Mi cuenta</button>
-                            <button id="options-button" onclick="login_mytube()">Conectar con MyTube</button>
+                            <button id="options-button" style="display: flex; justify-content: right;" onclick="mytubeconexion()">Conectar con MyTube
+                            <img src="http://10.3.5.111/DAM-B/TriConnect/my_tube/img/mytube_logo.png" style="margin-left: 10px; width: 20px; height: 100%;">
+                            </button>
+                            
                         </div>
                         <div class="divider"></div>
                         <div class="form-container">
@@ -400,16 +392,16 @@
                             ?>
                             <div class="profile-details">
                                 <p>Nombre:</p>
-                                <p><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></p><br>
+                                <p><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></p><br> 
                                 <p>Nombre de usuario:</p>
                                 <p><?php echo htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8'); ?></p><br>
                                 <p>Correo electronico:</p>
                                 <p>
                                     <?php
-                                        $stmt = $pdo->prepare("SELECT email FROM usuarios WHERE id_user = ?");
+                                        $stmt = $pdo->prepare("SELECT email FROM usuarios WHERE id_user = ?"); //se realiza una consulta para obtener el email del usuario
                                         $stmt->execute([$id_usuario_actual]);
-                                        $emailData = $stmt->fetch(PDO::FETCH_ASSOC);
-                                        echo htmlspecialchars($emailData['email'], ENT_QUOTES, 'UTF-8');
+                                        $emailData = $stmt->fetch(PDO::FETCH_ASSOC); //se obtiene el email del usuario
+                                        echo htmlspecialchars($emailData['email'], ENT_QUOTES, 'UTF-8'); //se muestra el email del usuario 
                                     ?>
                                 </p>
                             </div>
@@ -420,9 +412,8 @@
             </div>
         </div>
         <script defer src="../javascript/api.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
         <script defer src="../javascript/js_chatterly.js"></script>
-        <script defer src="../javascript/apiMytube.js"></script>
-        <script>var id_usuario_actual = <?php echo $id_usuario_actual; ?>;</script>
+        <script>var id_usuario_actual = <?php echo $id_usuario_actual; ?>;</script> <!-- se guarda el id del usuario en una variable de javascript -->
     </body>
 </html>

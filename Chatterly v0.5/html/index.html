@@ -21,7 +21,7 @@
             </div>
             <div class="">
                 <a id="link" href="../php/forgotPassword.php">¿Olvidaste tu contraseña?</a>
-                <button type="button" id="btn-submit-login" onclick="loginUsuario()" style="margin-top: 15px; margin-bottom: 15px;">Iniciar Sesion</button> <!-- se oculta el div login y se muesta bienvenida --> 
+                <button type="button" id="btn-submit-login" onclick="login()" style="margin-top: 15px; margin-bottom: 15px;">Iniciar Sesion</button> <!-- se oculta el div login y se muesta bienvenida --> 
                 <a id="link" href="#" onclick="mostrarRegistro()" style="margin-top: 5px;">¿No tienes cuenta, registrate?</a>
             </div>
             <div>
@@ -57,12 +57,13 @@
                     <label style="font-size: 12px;" for="terminos">He leido y acepto las <a href="../html/terms of service.html" id="link">Condiciones del Servicio</a> y la  <a href="../html/privacity policy.html" id="link">Politica de privacidad</a> de Chatterly.</label>
                 </div>
                 <div>
-                    <button type="button" onclick="registrarUsuario()">Continuar</button>
+                    <button type="button" onclick="registrarUsuario_Api()">Continuar</button>
                     <a id="link" style="top: 15px;" href="#" onclick="mostrarLogin()">¿Ya tienes cuenta?</a>
                 </div><br>
                 <div id="error-message-registro" style="color: red; display: none;"></div> 
             </form>
         </div>
-        <script defer src="../javascript/js.js"></script>
+        <script defer src="../javascript/api.js"></script>
+        <script defer src="../javascript/js_login.js"></script>
     </body>
 </html>

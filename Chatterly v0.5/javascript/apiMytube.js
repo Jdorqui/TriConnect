@@ -17,10 +17,10 @@ async function mytubeconexion()
         method: 'GET',
         mode: 'cors'
     })
-    .then(response => response.blob())  // Obtener la imagen como un blob
+    .then(response => response.blob())  //obtener la imagen como un blob
     .then(blob => {
-        // Crear una URL para la imagen y asignarla al src del <img>
-        const imageUrl = URL.createObjectURL(blob);
+        
+        const imageUrl = URL.createObjectURL(blob); //crear una URL para la imagen y asignarla al src del <img>
         document.getElementById('mytube_logo').src = imageUrl;
     })
     .catch(error => console.error('Error al cargar la imagen mytube_logo:', error));
@@ -37,44 +37,32 @@ async function mytubeconexion()
     })
     .catch(error => console.error('Error al cargar la imagen x_button:', error));
 
-    await fetch('https://10.3.5.111/DAM-B/TriConnect/my_tube/js/login_api.js', {
-        method: 'POST',
-        mode: 'cors'
-    })
-    .then(response => response.text())
-    .then(data => {
-        // Crear un nuevo <script> y añadir el código JavaScript al contenido
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.innerHTML = data;  // Añadir el código JavaScript recibido
-    
-        document.body.appendChild(script);
-    })
-    .catch(error => console.error(error));
-
-    document.getElementById("login_form").addEventListener('submit', function(event) 
+    document.getElementById("login_form").addEventListener('submit', async function(event) 
     {
-        console.log(validateLoginForm(event));
+        var datos = await validateLoginFormChatterly(event);
 
+        if (datos.status == 'SUCCESS')
+        {         
+            let fetchData = await fetch(`../php/insertarUsuarioMytube_Api.php?mytube=${datos.user}&id_user=${id_usuario_actual}`,
+                {
+                    method: "GET",
+                });
+            let data = await fetchData.text();
+            
+            if(data == "ERROR")
+            {
+                alert("El usuario ya exsiste en MyTube");
+            }
+            else
+            {
+                closeLoginAPIWrapper();
+            }
+        }
+        else
+        {
+            alert(datos.status);
+        }
     });
-}
-
-async function mytube_pruebas()
-{
-    await fetch('https://10.3.5.111/DAM-B/TriConnect/my_tube/js/api.js', {
-        method: 'POST',
-        mode: 'cors'
-    })
-    .then(response => response.text())
-    .then(data => {
-        // Crear un nuevo <script> y añadir el código JavaScript al contenido
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.innerHTML = data;  // Añadir el código JavaScript recibido
-    
-        document.body.appendChild(script);
-    })
-    .catch(error => console.error(error));
 }
 
 async function login_mytube(usuario, password, email)
@@ -90,10 +78,3 @@ async function login_mytube(usuario, password, email)
         console.log(await register(usuario, password, email));
     }
 }
-
-(async () => {
-    await mytube_pruebas();
-    await sendMessage("a", "b", "hola");
-    console.log(await receiveMessages("a", "b"));
-})();
-

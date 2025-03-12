@@ -21,13 +21,22 @@
     border-bottom: 0.1vw solid white;
 }
 
+/* Cada canal. */
 #search_div>div>:not(:first-child)>div {
     display: flex;
+    width: 50%;
     height: 8vw;
+
+    padding: 1%;
 
     /*background-color:rgb(94, 96, 95);*/
 
-    margin-bottom: 2vw;
+    margin-bottom: 1vw;
+    cursor: pointer;
+}
+
+#search_div>div>:not(:first-child)>div:hover {
+    background-color: rgb(40, 40, 40);
 }
 
 .search_user_image {
@@ -45,8 +54,6 @@
 
     margin: auto;
     margin-right: 0;
-
-    width: 25%;
 }
 
 .subscription,

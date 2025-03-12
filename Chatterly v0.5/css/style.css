@@ -353,8 +353,6 @@ button.active
 
 #chat-messages div 
 {
-    padding: 11px;
-    gap: 5px;
     display: flex;
     flex-direction: row;
     align-items: flex-start;

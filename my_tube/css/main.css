@@ -30,7 +30,7 @@ body {
 #header {
     box-sizing: border-box;
 
-    background-color: rgb(33, 33, 33);
+    background-color: #191b1c;
     padding: 1vw;
     font-size: 3vw;
 
@@ -39,7 +39,7 @@ body {
     display: flex;
     align-items: center;
 
-    border: 0.1vw solid white;
+    border: 0.1vw solid rgb(45, 45, 45);
 }
 
 #mytube_logo {
@@ -62,7 +62,7 @@ body {
     background-color: black;
     color: white;
 
-    border: 0.1vw solid white;
+    border: 0.1vw solid rgb(45, 45, 45);
     border-radius: 1.5vw;
 
     font-size: 1.5vw;
@@ -79,7 +79,7 @@ body {
     padding-right: 1vw;
 
     background-color: black;
-    border: 0.1vw solid white;
+    border: 0.1vw solid rgb(45, 45, 45);
     border-radius: 1.5vw;
 
     cursor: pointer;
@@ -110,7 +110,7 @@ body {
 #navbar {
     width: 4.5%;
 
-    border: 0.1vw solid white;
+    border: 0.1vw solid rgb(45, 45, 45);
     border-top: 0;
 }
 
@@ -149,7 +149,7 @@ body {
 
     align-content: center;
 
-    border: 0.1vw solid white;
+    border: 0.1vw solid rgb(45, 45, 45);
     border-top: 0;
     border-left: 0;
 
@@ -184,7 +184,7 @@ body {
 
 .notification {
     background-color: rgb(12, 12, 12);
-    border: 1px solid white;
+    border: 1px solid rgb(45, 45, 45);
     border-radius: 20px;
 
     width: 100%;

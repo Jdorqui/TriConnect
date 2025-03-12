@@ -1,3 +1,7 @@
+// Dependencias:
+// - jQuery
+// - api.js
+
 let contentDiv = document.getElementById('content');
 let contentDivChildren = contentDiv.children;
 
@@ -11,7 +15,7 @@ let divDisplaying = '';
 function display(id) {
     divDisplaying = id;
 
-    if (id != 'home' && username == '') {
+    if ((id != 'home' && id != 'search') && username == '') {
         displayLoginAPIWrapper();
     } else {
         for (let i = 0; i < contentDivChildren.length; i++) {
@@ -23,8 +27,13 @@ function display(id) {
             }
         }
     }
-
 }
 
-display('settings');
+// display('settings');
 // search('', 'test');
+display('chat');
+
+async function logout() {
+    await $.get("../php/logout.php");
+    location.reload();
+}

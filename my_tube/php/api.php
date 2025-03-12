@@ -1,7 +1,7 @@
 <?php if (true): ?>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
-        * {
+        #mytube_login_API_wrapper * {
             box-sizing: border-box;
             font-family: "Montserrat", serif;
             font-optical-sizing: auto;
@@ -126,6 +126,7 @@
             font-size: 1.5vw;
             background-color: transparent;
             color: white;
+            width: fit-content !important;
 
             cursor: pointer;
         }

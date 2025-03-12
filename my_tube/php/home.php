@@ -1,13 +1,19 @@
 <?php
-include "db_connection.php";
+require "db_connection.php";
 
 session_start();
 
 $USERNAME = "";
 $FRIENDS_ARRAY = "";
-print_r($_SESSION);
+$PROFILE_PIC = "";
 if (isset($_SESSION['USERNAME'])) {
     $USERNAME = $_SESSION['USERNAME'];
+
+    if (file_exists($BASE_DIR . "uploads/" . $USERNAME . "/profile_pic.png")) {
+        $PROFILE_PIC = "../../../../../uploads/" . $USERNAME . "/profile_pic.png";
+    }
+
+    // GET RID OF THIS.
     $GET_ALL_FRIENDS_QUERY = $CONN->
         query(
             "SELECT
@@ -27,7 +33,6 @@ if (isset($_SESSION['USERNAME'])) {
 
     $FRIENDS_ARRAY = json_encode($GET_ALL_FRIENDS_QUERY->fetch_all());
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -36,24 +41,25 @@ if (isset($_SESSION['USERNAME'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>MyTube</title>
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="stylesheet" href="../css/login_api.css" />
     <link rel="stylesheet" href="../css/chat.css" />
     <link rel="stylesheet" href="../css/search.css" />
     <link rel="stylesheet" href="../css/settings.css" />
+    <link rel="stylesheet" href="../css/channel.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script>
         let username = "";
-        let friendsArray = "";
         if ('<?php echo $USERNAME ?>' != "") {
             username = '<?php echo $USERNAME ?>';
         }
 
-        if ('<?php echo $FRIENDS_ARRAY ?>' != "") {
-            friendsArray = JSON.parse('<?php echo $FRIENDS_ARRAY ?>');
+        let profile_pic = "../img/logged_out_profile_pic.jpg";
+        if ('<?php echo $PROFILE_PIC ?>' != "") {
+            profile_pic = '<?php echo $PROFILE_PIC ?>';
         }
     </script>
 </head>
@@ -68,12 +74,12 @@ if (isset($_SESSION['USERNAME'])) {
             <input id="search_input" type="text" placeholder="Buscar vídeo o canal">
 
             <!-- TODO -->
-
             <?php if (isset($_SESSION["USERNAME"])): ?>
                 <div id="user_logged_in_tab" onclick="display('settings')">
-                    <img class="every_user_image" src="../img/profile_pic_example.jpg">
+                    <img class="every_user_image">
                     <div><?php echo $_SESSION["USERNAME"] ?></div>
                 </div>
+                <img src="../img/logout.png" onclick="logout()" style="height: 80%; margin-left: 1vw; cursor:pointer">
             <?php else: ?>
                 <div id="user_logged_out_tab" onclick="displayLoginAPIWrapper()">
                     <img class="every_user_image" src="../img/logged_out_profile_pic.jpg">
@@ -106,7 +112,7 @@ if (isset($_SESSION['USERNAME'])) {
                     <div>
                         <div id="user_header">
                             <?php if ($GET_ALL_FRIENDS_QUERY->num_rows > 0): ?>
-                                <img class="every_user_image" src="../img/profile_pic_example.jpg">
+                                <img class="every_user_image" src="../img/logged_out_profile_pic">
                                 <div>
                                     <div>
                                         <?php
@@ -118,9 +124,11 @@ if (isset($_SESSION['USERNAME'])) {
                             <?php endif; ?>
                         </div>
                         <div id="chat"></div>
-                        <div style="padding: 0.7vw;">
+                        <div style="padding: 0.7vw; display: flex; align-items:center; height: 12%; border-top: 0.1vw solid rgb(45, 45, 45);">
                             <input id="input_text" type="text" placeholder="Enviar mensaje"
                                 onkeypress="sendMessage(this, event)">
+                            <img id="upload_image_icon" src="../img/upload_image_icon.png" style="margin-left: 1vw; height: 65%; cursor: pointer">
+                            <img src="../img/pixabay_icon.png" style="margin-left: 1vw; height: 65%; cursor: pointer">
                         </div>
                     </div>
                 </div>
@@ -137,38 +145,88 @@ if (isset($_SESSION['USERNAME'])) {
                 </div>
                 <div id="settings_div">
                     <div>
-                        <div>
+                        <div onclick="displaySetting('profile')">
                             General
                         </div>
-                        <div>
+                        <div onclick="displaySetting('security')">
                             Seguridad
                         </div>
-                        <div>
+                        <div onclick="displaySetting('chatterly')">
                             <img src="../img/chatterly_logo.png">Conectar con <span
                                 style="color: #6458aa">Chatterly</span>©
                         </div>
-                        <div>
-                            <img src="../img/deto_logo.png">Conectar con <span style="color: #229fa3">DeTo'</span> ©
+                        <div onclick="displaySetting('deto')">
+                            <img src="../img/deto_logo.png">Conectar con<span style="color: #229fa3">DeTo'</span>©
                         </div>
                     </div>
                     <div>
-                        <div>
-                            <div
-                                style="position: relative; display: flex; align-items: center; justify-content: center">
-                                <div
-                                    style="color: black; font-size: 2.5vw; position: absolute; background-color: white; width: 100%; height: 100%; align-items: center; justify-content: center; border-radius: 100%; opacity: 0.4;">
-                                    Cambiar</div>
-                                <img class="" src="../img/profile_pic_example.jpg">
+                        <div id="user_profile_pic_settings">
+                            <div id="user_profile_pic"
+                                style="cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center">
+                                <div id="cambiar_text"
+                                    style="display: none; color: black; font-size: 2.5vw; position: absolute; background-color: white; width: 100%; height: 100%; align-items: center; justify-content: center; border-radius: 100%; opacity: 0.4;">
+                                    Cambiar
+                                </div>
+                                <img class="" src="../img/logged_out_profile_pic">
                             </div>
                             <div><?php echo $_SESSION["USERNAME"] ?></div>
+                        </div>
+                        <div id="security_login_settings" style="display: none; height: 100%;">
+                            SECURITY
+                        </div>
+                        <div id="chatterly_login_settings" style="display: none; height: 100%;">
+                            CHATTERLY
+                        </div>
+                        <div id="deto_login_settings" style="display: none; height: 100%;">
+                            DETO'
                         </div>
                     </div>
                 </div>
                 <div>
-
                 </div>
                 <div id="channel_div">
-                    CHANNEL
+                    <div style="width: 100%; height: fit-content; border-bottom: 2px white solid;">
+                        <div id="user_channel">
+                            <img src="../img/logged_out_profile_pic" id="user_channel_profile_pic">
+                            <div style="flex-grow: 1; display: flex; flex-direction: column; padding: 10px;">
+                                <?php
+                                echo $CHANNEL_ID;
+                                ?>
+                                <div style="display: flex; flex-grow: 1">
+                                    <?php if ($CHECK_CHANNEL_SUBSCRIBED_TO_USER_QUERY->num_rows > 0 && $CHECK_USER_SUBSCRIBED_QUERY->num_rows > 0): ?>
+                                        <div class="subscribe_button" onclick="unsubscribe(username, channelID)"
+                                            id="subscription" style="background-color: blue">Amigos</div>
+                                        <div id="chat_button" onclick="location.href='chat.php'">Enviar mensaje</div>
+                                    <?php elseif ($CHECK_USER_SUBSCRIBED_QUERY->num_rows > 0): ?>
+                                        <div class="subscribe_button" onclick="unsubscribe(username, channelID)"
+                                            id="subscription">Suscrito</div>
+                                    <?php else: ?>
+                                        <div class="subscribe_button" onclick="subscribe(username, channelID)"
+                                            id="subscription">Suscribirse</div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="channel_navbar">
+                            <span>
+                                Home
+                            </span>
+                            <span>
+                                Videos
+                            </span>
+                            <span>
+                                Live
+                            </span>
+                            <span>
+                                Community
+                            </span>
+                            <span>
+                                Search
+                            </span>
+                        </div>
+                    </div>
+                    <div style="background-color:blue; flex-grow: 1;">
+                    </div>
                 </div>
             </div>
         </div>
@@ -227,14 +285,11 @@ if (isset($_SESSION['USERNAME'])) {
     <div id="notifications">
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" src="http://10.3.5.106/PHP/TriConnect/Chatterly%20v0.5/javascript/api.js"></script>
-    <script type="text/javascript" src="../js/prueba.js"></script>
-    <script type="text/javascript" src="../js/api.js"></script>
-    <script type="text/javascript" src="../js/channel.js"></script>
-    <script type="text/javascript" src="../js/search.js"></script>
-    <script type="text/javascript" src="../js/main.js"></script>
-    <script type="text/javascript" src="../js/chat.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="../js/import.js"></script>
+    <script>
+        setProfilePic(profile_pic);
+    </script>
 </body>
 
 </html>

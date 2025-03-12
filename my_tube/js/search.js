@@ -1,3 +1,6 @@
+// Dependencias:
+// - main.js
+
 search_input.addEventListener("keyup", (event) => {
     search(search_input.value, event);
 });
@@ -7,7 +10,6 @@ function search(searchQuery, event) {
 
     if (divDisplaying == 'search' || event.code == 'Enter' || event == 'test') {
         display('search');
-        // fakeLoading();
 
         let formData = new FormData();
         formData.append('username', username);
@@ -23,7 +25,6 @@ function search(searchQuery, event) {
                 let usernames = array["usernames"]
                 let subscribed = array["subscribed"]
                 let friends = array["friends"]
-                console.log(`DEBUG: ${JSON.stringify(array, null, 2)}`);
 
                 channels_main_div.innerHTML = '';
                 for (let i = 0; i < usernames.length; i++) {
@@ -31,11 +32,6 @@ function search(searchQuery, event) {
                 }
             });
     }
-}
-
-// 1 segundo de carga.
-function fakeLoading() {
-
 }
 
 function createChannelDiv(channel, subscribed, friends) {
@@ -49,13 +45,13 @@ function createChannelDiv(channel, subscribed, friends) {
     }
 
     channels_main_div.innerHTML += `
-        <div>
-            <img class="search_user_image" src="../img/logged_out_profile_pic.jpg">
+        <div onclick="changeChannel()">
+            <img class="search_user_image" src="../../../../../uploads/${channel}/profile_pic.png">
             <div>
                 <div>${channel}</div>
                 <div>subs</div>
             </div>
-            <div>
+            <div style="z-index: 1">
                 ${type}
             </div>
         </div>`;

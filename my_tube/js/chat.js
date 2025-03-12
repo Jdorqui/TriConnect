@@ -1,81 +1,118 @@
-const friendsNavbar = document.getElementById('friend_navbar');
-const chat = document.getElementById('chat');
+// Dependencias:
+// - api.js
+// - api.js (Chatterly)
+// - chatterly.js
 
-const friendObjects = [];
+const FRIENDS_NAVBAR = document.getElementById('friend_navbar');
+const USER_HEADER = document.getElementById('user_header');
+const CHAT = document.getElementById('chat');
+const FRIEND_OBJECTS = [];
+let friendsArray = [];
+
+let totalUnreadMessages = 0;
+let totalUnreadMessagesDiv = document.getElementById('new_messages_chat_tab');
+function zeroTotalUnreadMessages() {
+    totalUnreadMessages = 0;
+    setUnreadMessagesDiv(totalUnreadMessagesDiv, totalUnreadMessages);
+}
+
+function setUnreadMessagesDiv(div, unreadMessages) {
+    if (unreadMessages > 99) {
+        div.innerHTML = '+99';
+        div.style.display = '';
+    } else if (unreadMessages > 0) {
+        div.innerHTML = unreadMessages;
+        div.style.display = '';
+    } else {
+        div.innerHTML = 0;
+        div.style.display = 'none';
+    }
+}
+
 let selectedFriend;
 class FriendHandler {
     constructor(div, id, name) {
         this.div = div;
         this.id = id;
         this.name = name;
-        this.messsageNumber = 0;
+        this.messageNumber = 0;
         this.unreadMessages = 0;
     }
 
     setMesssageNumberToZero() {
         this.messageNumber = 0;
-        chat.innerHTML = "";
+        CHAT.innerHTML = "";
     }
 
     checkUnreadMessages() {
         let UMDiv = document.getElementById(`friend_${this.id}`).lastElementChild;
-
-        if (this.unreadMessages > 99) {
-            UMDiv.innerHTML = '+99';
-            UMDiv.style.display = '';
-        } else if (this.unreadMessages > 0) {
-            UMDiv.innerHTML = this.unreadMessages;
-            UMDiv.style.display = '';
-        } else {
-            UMDiv.innerHTML = 0;
-            UMDiv.style.display = 'none';
-        }
+        setUnreadMessagesDiv(UMDiv, this.unreadMessages);
+        setUnreadMessagesDiv(totalUnreadMessagesDiv, totalUnreadMessages);
     }
 
     addUnreadMessage() {
         this.unreadMessages += 1;
+        totalUnreadMessages += 1;
         this.checkUnreadMessages();
     }
 
     subtractUnreadMessage() {
         this.unreadMessages -= 1;
+        totalUnreadMessages -= 1;
         this.checkUnreadMessages();
     }
 
     zeroUnreadMessages() {
+        totalUnreadMessages -= this.unreadMessages;
+        if (totalUnreadMessages == 0) {
+            zeroTotalUnreadMessages();
+        }
+
         this.unreadMessages = 0;
         this.checkUnreadMessages();
     }
 }
 
-function createFriendDivs() {
+async function createFriendDivs() {
+    zeroTotalUnreadMessages();
     for (let i = 0; i < friendsArray.length; i++) {
-        let name = friendsArray[i][0];
+        let name = friendsArray[i].SUBSCRIBED_TO;
 
-        friendsNavbar.innerHTML += `
+        FRIENDS_NAVBAR.innerHTML += `
             <div id=friend_${i} onclick="changeChat(${i})" style="position: relative">
-                <img class="every_user_image" src="../img/profile_pic_example.jpg">
+                <img class="every_user_image" src="../../../../../uploads/${name}/profile_pic.png">
                 <div>${name}</div>
                 <div class="new_messages_each_friend" style="display: none">0</div>
             </div>`;
 
-        friendObjects.push(new FriendHandler(friendsNavbar.children[i + 1], i, name));
+        FRIEND_OBJECTS.push(new FriendHandler(FRIENDS_NAVBAR.children[i + 1], i, name));
     }
 
-    // console.log(friendObjects);
+    emptyChat();
 }
 
 function changeChat(friendId) {
-    selectedFriend = friendObjects[friendId];
+    selectedFriend = FRIEND_OBJECTS[friendId];
     selectedFriend.setMesssageNumberToZero();
 
-    let userHeader = document.getElementById('user_header');
-    userHeader.innerHTML = `
-        <img class="every_user_image" src="../img/profile_pic_example.jpg">
+    USER_HEADER.innerHTML = `
+        <img class="every_user_image" src="../../../../../uploads/${selectedFriend.name}/profile_pic.png">
         <div>${selectedFriend.name}</div>`;
 
     setReadMessages();
+    document.getElementById("input_text").parentElement.style.display = "flex";
 }
+
+function emptyChat() {
+    USER_HEADER.innerHTML = "";
+    CHAT.innerHTML = "";
+    document.getElementById("input_text").parentElement.style.display = "none";
+}
+
+(async () => {
+    friendsArray = await getFriendsAPI(username);
+    await createFriendDivs();
+})();
 
 function setReadMessages() {
     let formData = new FormData();
@@ -86,60 +123,112 @@ function setReadMessages() {
     selectedFriend.zeroUnreadMessages();
 }
 
-createFriendDivs();
-if (friendObjects.length > 0) {
-    changeChat(friendObjects[0].id);
-}
-
-function createMessage(sender, msg) {
-    let style = "";
-    let colorStyle = "";
-    if (sender == username) {
+function createMessage(jsonData, date) {
+    let style = "margin-right: auto"
+    let colorStyle = "background-color: rgba(65, 65, 65, 0.27);";
+    if (jsonData.SENDER == username) {
         style = "margin-left: auto"
         colorStyle = "background-color: rgba(255, 0, 0, 0.267);"
-    } else {
-        style = "margin-right: auto"
-        colorStyle = "background-color: rgba(65, 65, 65, 0.27);";
     }
 
-    let before = chat.innerHTML;
+    let senderImg = `../../../../../uploads/${jsonData.SENDER}/profile_pic.png`;
+    let before = CHAT.innerHTML;
+    let content = jsonData.MSG;
+    if (jsonData.IS_FILE == 1) {
+        content = `<img style="width:100%" src="../../../../../uploads/${jsonData.SENDER}/${jsonData.MSG}">`;
+    }
 
-    chat.innerHTML = `
+    if (jsonData.CHATTERLY == 1) {
+        CHAT.innerHTML = `
         <div class="message_body" style="${style}">
-            <img class="every_user_image" src="../img/profile_pic_example.jpg">
-            <div style="${colorStyle}">
-                <div>${sender}</div>
-                <div class="message">${msg}</div>
+            <img class="every_user_image" src="../img/chatterly_logo.png">
+            <div style="${colorStyle}; background-color: #6458aa">
+                <div style="font-size: 1vw;">${jsonData.SENDER}</div>
+                <div class="message">${content}</div>
+                <div style="text-align: right; font-size: 1vw;">${date}</div>
             </div>
         </div>`;
+    } else {
+        CHAT.innerHTML = `
+        <div class="message_body" style="${style}">
+            <img class="every_user_image" src="${senderImg}">
+            <div style="${colorStyle}">
+                <div style="font-size: 1vw;">${jsonData.SENDER}</div>
+                <div class="message">${content}</div>
+                <div style="text-align: right; font-size: 1vw;">${date}</div>
+            </div>
+        </div>`;
+    }
 
-    chat.innerHTML += before;
+    CHAT.innerHTML += before;
 }
 
-// Usar la función receiveMessages de la API para mandar un mensaje.
+const SEND_IMAGE_INPUT = document.createElement('input');
+SEND_IMAGE_INPUT.id = 'send_image_input';
+SEND_IMAGE_INPUT.type = 'file';
+SEND_IMAGE_INPUT.accept = 'image/*'
+SEND_IMAGE_INPUT.onchange = async (e) => {
+    let file = e.target.files[0];
+    await sendImageAPI(username, selectedFriend.name, file, 0);
+    console.log(await enviarArchivos_Api(await getChatterlyUsername(username), await usuarioNumero_Api(await getChatterlyUsername(selectedFriend.name)), file, 1));
+}
+
+const UPLOAD_IMAGE_ICON = document.getElementById('upload_image_icon');
+UPLOAD_IMAGE_ICON.addEventListener('click', () => {
+    SEND_IMAGE_INPUT.click();
+});
+
+// Función que maneja el envío de los mensajes a las diferentes bases de datos.
 async function sendMessage(input, event) {
     if (event.key == "Enter" && input.value != "") {
-        await api.sendMessage(username, selectedFriend.name, input.value);
+        let inputValue = input.value;
         input.value = "";
 
-        chat.scrollTop = chat.scrollHeight
+        // Enviar mensaje a la base de datos de MyTube.
+        await sendMessageAPI(username, selectedFriend.name, inputValue);
+
+        // Verificar si Chatterly está disponible.
+        if (typeof usuarioNumero_Api === "function") {
+            // Transformar datos de MyTube a datos de Chatterly.
+            let chatterlyUsername = await getChatterlyUsername(username);
+            let chatterlyFriend = await getChatterlyUsername(selectedFriend.name);
+
+            // Usar API de Chatterly.
+            let chatterlyUsernameID = await usuarioNumero_Api(chatterlyUsername);
+            let chatterlyFriendID = await usuarioNumero_Api(chatterlyFriend);
+
+            // Verificar si son amigos en Chatterly.
+            if (await esamigos_Api(chatterlyUsernameID, chatterlyFriendID) == 'aceptado') {
+                // Enviar mensajes a la base de datos de Chatterly.
+                await enviarMensajes_Api(chatterlyUsernameID, chatterlyFriendID, inputValue, 1);
+            }
+        }
+
+        // Cuando el usuario envía mensaje, la vista del chat se coloca al final.
+        CHAT.scrollTop = CHAT.scrollHeight
     }
 }
 
 // Usar la función receiveMessages de la API para recibir todos los mensajes y crearlos.
 // Esta función solo crea los nuevos mensajes.
 async function getAllMessages(friendObject) {
-    let jsonData = await api.receiveMessages(username, friendObject.name);
+    let jsonData = await receiveMessagesAPI(username, friendObject.name);
     let newMessages = jsonData.length - friendObject.messageNumber;
 
     for (let i = 0; i < newMessages; i++) {
         let sender = jsonData[friendObject.messageNumber].SENDER;
-        let msg = jsonData[friendObject.messageNumber].MSG;
         let seen = jsonData[friendObject.messageNumber].SEEN;
 
         // Comprobar si el mensaje nuevo recibido es del amigo seleccionado.
-        if (friendObject.name == selectedFriend.name) {
-            createMessage(sender, msg);
+        if (selectedFriend != null && friendObject.name == selectedFriend.name) {
+            let rawDate = new Date(jsonData[friendObject.messageNumber].SEND_DATE);
+            let date = rawDate.toLocaleString();
+            if (rawDate.toLocaleDateString() == new Date().toLocaleDateString()) {
+                date = rawDate.toLocaleTimeString();
+            }
+
+            createMessage(jsonData[friendObject.messageNumber], date);
+            setReadMessages();
         }
         // Por otro lado, añade 1 a los mensajes no vistos por el usuario actual.
         else if (seen == "0" && sender != username) {
@@ -150,9 +239,17 @@ async function getAllMessages(friendObject) {
     }
 }
 
-// Comprobar cada 200 ms todos los mensajes de cada amigo.
-setInterval(function () {
-    for (i = 0; i < friendObjects.length; i++) {
-        getAllMessages(friendObjects[i]);
+// Comprobar cada 250 ms todos los mensajes de cada amigo y comprueba la lista de amigos.
+setInterval(async function () {
+    let tempArray = await getFriendsAPI(username);
+    if (friendsArray.length != tempArray.length) {
+        FRIEND_OBJECTS.length = 0;
+        FRIENDS_NAVBAR.innerHTML = "<div>Amigos</div>"
+        friendsArray = tempArray;
+        await createFriendDivs();
     }
-}, 200);
+
+    for (i = 0; i < FRIEND_OBJECTS.length; i++) {
+        await getAllMessages(FRIEND_OBJECTS[i]);
+    }
+}, 250);

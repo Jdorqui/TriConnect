@@ -1,10 +1,16 @@
+// Dependencias:
+// - import.js
+
+// const MYTUBE_IP = "http://192.168.1.137/DAM-B/TriConnect/my_tube";
+const MYTUBE_IP = "http://10.3.5.111/DAM-B/TriConnect/my_tube";
+
 // Iniciar sesión.
-async function login(username, password) {
+async function loginAPI(username, password) {
     let formData = new FormData();
     formData.append('USERNAME', username);
     formData.append('PASSWORD', password);
 
-    let fetchData = await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/login.php", {
+    let fetchData = await fetch(`${MYTUBE_IP}/php/login.php`, {
         method: "POST",
         body: formData,
     });
@@ -14,13 +20,13 @@ async function login(username, password) {
 }
 
 // Registrarse.
-async function register(username, password, email) {
+async function registerAPI(username, password, email) {
     let formData = new FormData();
     formData.append('USERNAME', username);
     formData.append('PASSWORD', password);
     formData.append('EMAIL', email);
 
-    let fetchData = await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/sign_up.php", {
+    let fetchData = await fetch(`${MYTUBE_IP}/php/sign_up.php`, {
         method: "POST",
         body: formData,
     });
@@ -30,13 +36,31 @@ async function register(username, password, email) {
 }
 
 // Enviar mensaje.
-async function sendMessage(sender, receiver, msg) {
+async function sendMessageAPI(sender, receiver, msg, fromChatterly) {
     let formData = new FormData();
     formData.append('SENDER', sender);
     formData.append('RECEIVER', receiver);
     formData.append('MSG', msg);
+    formData.append('FROM_CHATTERLY', fromChatterly);
 
-    let fetchData = await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/send_message.php", {
+    let fetchData = await fetch(`${MYTUBE_IP}/php/send_message.php`, {
+        method: "POST",
+        body: formData,
+    });
+
+    let data = await fetchData.text();
+    return data;
+}
+
+// Enviar imagen.
+async function sendImageAPI(sender, receiver, image, fromChatterly) {
+    let formData = new FormData();
+    formData.append('SENDER', sender);
+    formData.append('RECEIVER', receiver);
+    formData.append('IMAGE', image);
+    formData.append('FROM_CHATTERLY', fromChatterly);
+
+    let fetchData = await fetch(`${MYTUBE_IP}/php/send_image.php`, {
         method: "POST",
         body: formData,
     });
@@ -46,12 +70,12 @@ async function sendMessage(sender, receiver, msg) {
 }
 
 // Recibir mensajes.
-async function receiveMessages(sender, receiver) {
+async function receiveMessagesAPI(sender, receiver) {
     let formData = new FormData();
     formData.append('SENDER', sender);
     formData.append('RECEIVER', receiver);
 
-    let fetchData = await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/receive_messages.php", {
+    let fetchData = await fetch(`${MYTUBE_IP}/php/receive_messages.php`, {
         method: "POST",
         body: formData,
     });
@@ -60,12 +84,11 @@ async function receiveMessages(sender, receiver) {
     return data;
 }
 
-async function isFriend(username, friend) {
+async function getFriendsAPI(username) {
     let formData = new FormData();
     formData.append('USERNAME', username);
-    formData.append('FRIEND', friend);
 
-    let fetchData = await fetch("http://10.3.5.111/DAM-B/TriConnect/my_tube/php/is_friend.php", {
+    let fetchData = await fetch(`${MYTUBE_IP}/php/get_friends.php`, {
         method: "POST",
         body: formData,
     });
@@ -75,60 +98,98 @@ async function isFriend(username, friend) {
 }
 
 // Parte visual del inicio de sesión y registro.
-let main = document.getElementById("main_div");
-let loginAPIWrapper = document.getElementById("mytube_login_API_wrapper");
-let loginForm = document.getElementById("login_form");
-let registerForm = document.getElementById("register_form");
+function getMain() {
+    return document.getElementById("main_div");
+}
+
+function getLoginAPIWrapper() {
+    return document.getElementById("mytube_login_API_wrapper");
+}
+
+function getLoginForm() {
+    return document.getElementById("login_form");
+}
+
+function getRegister() {
+    return document.getElementById("register_form");
+}
 
 // Mostrar la ventana de inicio de sesión (API).
 function displayLoginAPIWrapper() {
-    loginAPIWrapper.style.display = "";
-    showLoginForm();
-    main.style.filter = "brightness(20%)";
+    try {
+        getLoginAPIWrapper().style.display = "";
+        showLoginForm();
+        getMain().style.filter = "brightness(20%)";
+    } catch (e) { }
 }
 
 // Cerrar la ventana de inicio de sesión (API).
 function closeLoginAPIWrapper() {
-    loginAPIWrapper.style.display = "none";
-    main.style.filter = "brightness(100%)";
+    try {
+        getLoginAPIWrapper().style.display = "none";
+        getMain().style.filter = "brightness(100%)";
+    } catch (e) { }
 }
 
 // Mostrar el div de inicio de sesión.
 function showLoginForm() {
     hideRegisterForm();
-    loginForm.style.display = "";
+    getLoginForm().style.display = "";
 }
 
 // Ocultar el div de inicio de sesión.
 function hideLoginForm() {
-    loginForm.style.display = "none";
+    getLoginForm().style.display = "none";
 }
 
 // Mostrar la ventana de registro.
 function showRegisterForm() {
     hideLoginForm();
-    registerForm.style.display = "";
+    getRegister().style.display = "";
 }
 
 // Cerrar la ventana de registro.
 function hideRegisterForm() {
-    registerForm.style.display = "none";
+    getRegister().style.display = "none";
 }
 
 // Validar el form de inicio de sesión.
 async function validateLoginForm() {
     event.preventDefault();
     let formData = new FormData(document.getElementById("login_form"))
-    console.log(formData);
-    let data = await login(formData.get("USERNAME"), formData.get("PASSWORD"));
+    let data = await loginAPI(formData.get("USERNAME"), formData.get("PASSWORD"));
+    if (data == "SUCCESS") {
+        await fetch(`../php/set_session.php?USERNAME=${formData.get("USERNAME")}&PASSWORD=${formData.get("PASSWORD")}`, {
+            method: "GET",
+        });
+    }
+
     checkErrors(data);
+}
+
+// Validar el form de inicio de sesión en Chatterly.
+async function validateLoginFormChatterly() {
+    event.preventDefault();
+    let formData = new FormData(document.getElementById("login_form"))
+    let data = await loginAPI(formData.get("USERNAME"), formData.get("PASSWORD"));
+    // closeLoginAPIWrapper();
+
+    return { "status": data, "user": formData.get("USERNAME") };
 }
 
 // Validar el form de registro.
 async function validateRegisterForm() {
     event.preventDefault();
     let formData = new FormData(document.getElementById("register_form"))
-    let data = await register(formData.get("USERNAME"), formData.get("PASSWORD"));
+    let data = await registerAPI(formData.get("USERNAME"), formData.get("PASSWORD"));
+    checkErrors(data);
+}
+
+// Validar el form de registro en Chatterly.
+async function validateRegisterFormChatterly() {
+    event.preventDefault();
+    let formData = new FormData(document.getElementById("register_form"))
+    let data = await registerAPI(formData.get("USERNAME"), formData.get("PASSWORD"));
     checkErrors(data);
 }
 
