@@ -16,9 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
 
     if ($anuncio) {
         // Eliminar el anuncio
-        $delete_stmt = $conn->prepare("DELETE FROM anuncios WHERE id = :id");
+        /*$delete_stmt = $conn->prepare("DELETE FROM anuncios WHERE id = :id");
+        $delete_stmt->bindParam(':id', $anuncio_id, PDO::PARAM_INT);*/
+        $delete_stmt = $conn->prepare("UPDATE anuncios SET estado = 'eliminado' WHERE id = :id");
         $delete_stmt->bindParam(':id', $anuncio_id, PDO::PARAM_INT);
-
         if ($delete_stmt->execute()) {
             // Redirigir con mensaje de éxito
             header("Location: cuenta.php?mensaje=Anuncio eliminado con éxito");

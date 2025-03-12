@@ -6,7 +6,7 @@ include_once 'logueado.php';  // Asegúrate de incluir el archivo que verifica s
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToDo' - Inicio</title>
+    <title>ToDo' - Iniciooooooooo</title>
     <link rel="stylesheet" href="../css/inicio.css">
 </head>
 

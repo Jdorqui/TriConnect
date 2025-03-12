@@ -6,7 +6,7 @@ include_once 'config.php';
 $user_id = $_SESSION['user_id'];
 
 // Consulta para obtener los productos del usuario logueado
-$stmt = $conn->prepare("SELECT * FROM anuncios WHERE user_id = :user_id");
+$stmt = $conn->prepare("SELECT * FROM anuncios WHERE user_id = :user_id and estado <> 'eliminado' ORDER BY fecha_publicacion DESC");
 $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 $stmt->execute();
 
